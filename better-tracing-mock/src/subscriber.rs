@@ -8,7 +8,7 @@
 //! # Examples
 //!
 //! ```
-//! use tracing_mock::{expect, subscriber, field};
+//! use better_tracing_mock::{expect, subscriber, field};
 //!
 //! let (subscriber, handle) = subscriber::mock()
 //!     // Expect a single event with a specified message
@@ -32,7 +32,7 @@
 //! their respective fields:
 //!
 //! ```
-//! use tracing_mock::{expect, subscriber, field};
+//! use better_tracing_mock::{expect, subscriber, field};
 //!
 //! let span = expect::span()
 //!     .named("my_span");
@@ -75,7 +75,7 @@
 //! span before recording an event, the test will fail:
 //!
 //! ```should_panic
-//! use tracing_mock::{expect, subscriber, field};
+//! use better_tracing_mock::{expect, subscriber, field};
 //!
 //! let span = expect::span()
 //!     .named("my_span");
@@ -132,7 +132,7 @@
 //!         kind: Kind(EVENT),
 //!     },
 //!     parent: Current,
-//! }', tracing/tracing-mock/src/expect.rs:59:33
+//! }', tracing/better-tracing-mock/src/expect.rs:59:33
 //! ```
 //!
 //! [`Subscriber`]: trait@tracing::Subscriber
@@ -218,7 +218,7 @@ pub struct MockHandle(Arc<Mutex<VecDeque<Expect>>>, String);
 ///
 ///
 /// ```
-/// use tracing_mock::{expect, subscriber, field};
+/// use better_tracing_mock::{expect, subscriber, field};
 ///
 /// let span = expect::span()
 ///     .named("my_span");
@@ -296,7 +296,7 @@ where
     /// event, the test will fail:
     ///
     /// ```should_panic
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let (subscriber_1, handle_1) = subscriber::mock()
     ///     .named("subscriber-1")
@@ -328,7 +328,7 @@ where
     ///     Event(
     ///         MockEvent,
     ///     ),
-    /// ]', tracing-mock/src/subscriber.rs:1276:13
+    /// ]', better-tracing-mock/src/subscriber.rs:1276:13
     /// ```
     pub fn named(self, name: impl ToString) -> Self {
         Self {
@@ -351,7 +351,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let (subscriber, handle) = subscriber::mock()
     ///     .event(expect::event())
@@ -367,7 +367,7 @@ where
     /// A span is entered before the event, causing the test to fail:
     ///
     /// ```should_panic
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let (subscriber, handle) = subscriber::mock()
     ///     .event(expect::event())
@@ -405,7 +405,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -426,7 +426,7 @@ where
     /// test to fail:
     ///
     /// ```should_panic
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -465,7 +465,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -488,7 +488,7 @@ where
     /// test to fail:
     ///
     /// ```should_panic
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -532,7 +532,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -554,7 +554,7 @@ where
     /// test to fail:
     ///
     /// ```should_panic
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -594,7 +594,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -615,7 +615,7 @@ where
     /// test to fail:
     ///
     /// ```should_panic
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -677,7 +677,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let cause = expect::span().named("cause");
     /// let consequence = expect::span().named("consequence");
@@ -701,7 +701,7 @@ where
     /// this test to fail:
     ///
     /// ```should_panic
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let cause = expect::span().named("cause");
     /// let consequence = expect::span().named("consequence");
@@ -747,7 +747,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .named("my_span");
@@ -771,7 +771,7 @@ where
     /// causing the test to fail:
     ///
     /// ```should_panic
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .named("my_span");
@@ -812,7 +812,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let (subscriber, handle) = subscriber::mock()
     ///     .with_filter(|meta| meta.level() <= &tracing::Level::WARN)
@@ -855,7 +855,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let (subscriber, handle) = subscriber::mock()
     ///     .with_max_level_hint(tracing::Level::INFO)
@@ -891,7 +891,7 @@ where
     /// expect a single event, but receive three:
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let (subscriber, handle) = subscriber::mock()
     ///     .event(expect::event())
@@ -909,7 +909,7 @@ where
     /// After including `only`, the test will fail:
     ///
     /// ```should_panic
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let (subscriber, handle) = subscriber::mock()
     ///     .event(expect::event())
@@ -942,7 +942,7 @@ where
     /// codebase:
     ///
     /// ```
-    /// use tracing_mock::subscriber;
+    /// use better_tracing_mock::subscriber;
     ///
     /// tracing::subscriber::with_default(subscriber::mock().run(), || {
     ///     let foo1 = tracing::span!(tracing::Level::TRACE, "foo");
@@ -966,7 +966,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// // subscriber and handle are returned from `run_with_handle()`
     /// let (subscriber, handle) = subscriber::mock()
@@ -1051,7 +1051,7 @@ where
         match self.expected.lock().unwrap().pop_front() {
             None => {}
             Some(Expect::Event(mut expected)) => {
-                #[cfg(feature = "tracing-subscriber")]
+                #[cfg(feature = "better-subscriber")]
                 {
                     if expected.scope_mut().is_some() {
                         unimplemented!(
@@ -1311,7 +1311,7 @@ where
 }
 
 impl MockHandle {
-    #[cfg(feature = "tracing-subscriber")]
+    #[cfg(feature = "better-subscriber")]
     pub(crate) fn new(expected: Arc<Mutex<VecDeque<Expect>>>, name: String) -> Self {
         Self(expected, name)
     }
@@ -1329,7 +1329,7 @@ impl MockHandle {
     /// # Examples
     ///
     /// ```
-    /// use tracing_mock::{expect, subscriber};
+    /// use better_tracing_mock::{expect, subscriber};
     ///
     /// let (subscriber, handle) = subscriber::mock()
     ///     .event(expect::event())

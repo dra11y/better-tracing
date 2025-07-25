@@ -13,7 +13,7 @@ use crate::{filter::FilterId, registry::Registry};
 ///
 /// ```rust
 /// use tracing::Subscriber;
-/// use tracing_subscriber::{Layer, registry::LookupSpan};
+/// use better_subscriber::{Layer, registry::LookupSpan};
 ///
 /// pub struct MyLayer;
 ///
@@ -127,7 +127,7 @@ where
     ///
     /// ```rust
     /// use tracing::{Event, Subscriber};
-    /// use tracing_subscriber::{
+    /// use better_subscriber::{
     ///     layer::{Context, Layer},
     ///     prelude::*,
     ///     registry::LookupSpan,
@@ -144,7 +144,7 @@ where
     ///     }
     /// }
     ///
-    /// tracing::subscriber::with_default(tracing_subscriber::registry().with(PrintingLayer), || {
+    /// tracing::subscriber::with_default(better_subscriber::registry().with(PrintingLayer), || {
     ///     tracing::info!("no span");
     ///     // Prints: Event in span: None
     ///

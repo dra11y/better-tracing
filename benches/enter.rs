@@ -1,9 +1,9 @@
+use better_subscriber::prelude::*;
 use criterion::{criterion_group, criterion_main, Criterion};
-use tracing_subscriber::prelude::*;
 
 fn enter(c: &mut Criterion) {
     let mut group = c.benchmark_group("enter");
-    let _subscriber = tracing_subscriber::fmt()
+    let _subscriber = better_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
         .finish()
         .set_default();
@@ -19,7 +19,7 @@ fn enter(c: &mut Criterion) {
 
 fn enter_exit(c: &mut Criterion) {
     let mut group = c.benchmark_group("enter_exit");
-    let _subscriber = tracing_subscriber::fmt()
+    let _subscriber = better_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
         .finish()
         .set_default();
@@ -35,7 +35,7 @@ fn enter_exit(c: &mut Criterion) {
 
 fn enter_many(c: &mut Criterion) {
     let mut group = c.benchmark_group("enter_many");
-    let _subscriber = tracing_subscriber::fmt()
+    let _subscriber = better_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
         .finish()
         .set_default();

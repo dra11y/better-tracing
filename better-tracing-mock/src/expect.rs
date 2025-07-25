@@ -6,7 +6,7 @@
 //! # Examples
 //!
 //! ```
-//! use tracing_mock::{expect, subscriber};
+//! use better_tracing_mock::{expect, subscriber};
 //!
 //! let (subscriber, handle) = subscriber::mock()
 //!     // Expect an event with message
@@ -53,7 +53,7 @@ pub(crate) enum Expect {
 /// # Examples
 ///
 /// ```
-/// use tracing_mock::{expect, subscriber};
+/// use better_tracing_mock::{expect, subscriber};
 ///
 /// let (subscriber, handle) = subscriber::mock()
 ///     .event(expect::event())
@@ -70,7 +70,7 @@ pub(crate) enum Expect {
 /// will fail:
 ///
 /// ```should_panic
-/// use tracing_mock::{expect, subscriber};
+/// use better_tracing_mock::{expect, subscriber};
 ///
 /// let (subscriber, handle) = subscriber::mock()
 ///     .event(expect::event())
@@ -98,7 +98,7 @@ pub fn event() -> ExpectedEvent {
 /// # Examples
 ///
 /// ```
-/// use tracing_mock::{expect, subscriber};
+/// use better_tracing_mock::{expect, subscriber};
 ///
 /// let (subscriber, handle) = subscriber::mock()
 ///     .new_span(expect::span())
@@ -117,7 +117,7 @@ pub fn event() -> ExpectedEvent {
 /// will fail:
 ///
 /// ```should_panic
-/// use tracing_mock::{expect, subscriber};
+/// use better_tracing_mock::{expect, subscriber};
 ///
 /// let (subscriber, handle) = subscriber::mock()
 ///     .enter(expect::span())
@@ -146,7 +146,7 @@ pub fn span() -> ExpectedSpan {
 /// # Examples
 ///
 /// ```
-/// use tracing_mock::{expect, subscriber};
+/// use better_tracing_mock::{expect, subscriber};
 ///
 /// let event = expect::event()
 ///     .with_fields(expect::field("field.name").with_value(&"field_value"));
@@ -165,7 +165,7 @@ pub fn span() -> ExpectedSpan {
 /// A different field value will cause the test to fail:
 ///
 /// ```should_panic
-/// use tracing_mock::{expect, subscriber};
+/// use better_tracing_mock::{expect, subscriber};
 ///
 /// let event = expect::event()
 ///     .with_fields(expect::field("field.name").with_value(&"field_value"));
@@ -202,7 +202,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use tracing_mock::{expect, subscriber};
+/// use better_tracing_mock::{expect, subscriber};
 ///
 /// let event = expect::event().with_fields(
 ///     expect::msg("message"));
@@ -221,7 +221,7 @@ where
 /// A different message value will cause the test to fail:
 ///
 /// ```should_panic
-/// use tracing_mock::{expect, subscriber};
+/// use better_tracing_mock::{expect, subscriber};
 ///
 /// let event = expect::event().with_fields(
 ///     expect::msg("message"));

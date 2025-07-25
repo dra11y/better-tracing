@@ -1,6 +1,6 @@
 use tracing::Level;
-use tracing_mock::{expect, layer};
-use tracing_subscriber::{field::Visit, layer::Filter, prelude::*};
+use better_tracing_mock::{expect, layer};
+use better_subscriber::{field::Visit, layer::Filter, prelude::*};
 
 struct FilterEvent;
 
@@ -8,7 +8,7 @@ impl<S> Filter<S> for FilterEvent {
     fn enabled(
         &self,
         _meta: &tracing::Metadata<'_>,
-        _cx: &tracing_subscriber::layer::Context<'_, S>,
+        _cx: &better_subscriber::layer::Context<'_, S>,
     ) -> bool {
         true
     }
@@ -16,7 +16,7 @@ impl<S> Filter<S> for FilterEvent {
     fn event_enabled(
         &self,
         event: &tracing::Event<'_>,
-        _cx: &tracing_subscriber::layer::Context<'_, S>,
+        _cx: &better_subscriber::layer::Context<'_, S>,
     ) -> bool {
         struct ShouldEnable(bool);
         impl Visit for ShouldEnable {
@@ -47,7 +47,7 @@ fn per_layer_event_field_filtering() {
         .only()
         .run_with_handle();
 
-    let _subscriber = tracing_subscriber::registry()
+    let _subscriber = better_subscriber::registry()
         .with(expect.with_filter(FilterEvent))
         .set_default();
 

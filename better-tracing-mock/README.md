@@ -2,7 +2,7 @@
 
 [splash]: https://raw.githubusercontent.com/tokio-rs/tracing/main/assets/splash.svg
 
-# tracing-mock
+# better-tracing-mock
 
 Utilities for testing [`tracing`] and crates that uses it.
 
@@ -15,14 +15,14 @@ Utilities for testing [`tracing`] and crates that uses it.
 
 [Documentation][docs-v0.2.x-url] | [Chat][discord-url]
 
-[crates-badge]: https://img.shields.io/crates/v/tracing-mock.svg
-[crates-url]: https://crates.io/crates/tracing-mock
-[docs-badge]: https://docs.rs/tracing-mock/badge.svg
-[docs-url]: https://docs.rs/tracing-mock/latest
+[crates-badge]: https://img.shields.io/crates/v/better-tracing-mock.svg
+[crates-url]: https://crates.io/crates/better-tracing-mock
+[docs-badge]: https://docs.rs/better-tracing-mock/badge.svg
+[docs-url]: https://docs.rs/better-tracing-mock/latest
 [docs-v0.2.x-badge]: https://img.shields.io/badge/docs-v0.2.x-blue
-[docs-v0.2.x-url]: https://tracing.rs/tracing_mock
+[docs-v0.2.x-url]: https://tracing.rs/better_tracing_mock
 [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[mit-url]: https://github.com/tokio-rs/tracing/blog/main/tracing-mock/LICENSE
+[mit-url]: https://github.com/tokio-rs/tracing/blog/main/better-tracing-mock/LICENSE
 [actions-badge]: https://github.com/tokio-rs/tracing/workflows/CI/badge.svg
 [actions-url]:https://github.com/tokio-rs/tracing/actions?query=workflow%3ACI
 [discord-badge]: https://img.shields.io/discord/500028886025895936?logo=discord&label=discord&logoColor=white
@@ -31,7 +31,7 @@ Utilities for testing [`tracing`] and crates that uses it.
 ## Overview
 
 [`tracing`] is a framework for instrumenting Rust programs to collect
-structured, event-based diagnostic information. `tracing-mock` provides
+structured, event-based diagnostic information. `better-tracing-mock` provides
 tools for making assertions about what `tracing` diagnostics are emitted
 by code under test.
 
@@ -42,14 +42,14 @@ by code under test.
 
 ## Usage
 
-The `tracing-mock` crate provides a mock [`Subscriber`][tracing-subscriber] that
+The `better-tracing-mock` crate provides a mock [`Subscriber`][better-subscriber] that
 allows asserting on the order and contents of [spans][tracing-spans] and
 [events][tracing-events].
 
-To get started with `tracing-mock`, check the documentation in the
+To get started with `better-tracing-mock`, check the documentation in the
 [`subscriber`][mock-subscriber-mod] module and [`MockSubscriber`] struct.
 
-While `tracing-mock` is in beta, it is recommended that an exact version is
+While `better-tracing-mock` is in beta, it is recommended that an exact version is
 specified in the cargo manifest. Otherwise, `cargo update` will take the latest
 beta version, which may contain breaking changes compared to previous betas.
 
@@ -57,14 +57,14 @@ To do so, add the following to `Cargo.toml`:
 
 ```toml
 [dependencies]
-tracing-mock = "= 0.1.0-beta.1"
+better-tracing-mock = "= 0.1.0-beta.1"
 ```
 
 [tracing-spans]: https://docs.rs/tracing/0.1/tracing/#spans
 [tracing-events]: https://docs.rs/tracing/0.1/tracing/#events
-[tracing-subscriber]: https://docs.rs/tracing/0.1/tracing/trait.Subscriber.html
-[mock-subscriber-mod]: https://docs.rs/tracing-mock/0.1.0-beta.1/tracing_mock/subscriber/index.html
-[`MockSubscriber`]: https://docs.rs/tracing-mock/0.1.0-beta.1/tracing_mock/subscriber/struct.MockSubscriber.html
+[better-subscriber]: https://docs.rs/tracing/0.1/tracing/trait.Subscriber.html
+[mock-subscriber-mod]: https://docs.rs/better-tracing-mock/0.1.0-beta.1/better_tracing_mock/subscriber/index.html
+[`MockSubscriber`]: https://docs.rs/better-tracing-mock/0.1.0-beta.1/better_tracing_mock/subscriber/struct.MockSubscriber.html
 
 ## Examples
 
@@ -72,7 +72,7 @@ Below is an example that checks that an event contains a message:
 
 ```rust
 use tracing::subscriber::with_default;
-use tracing_mock::{expect, subscriber};
+use better_tracing_mock::{expect, subscriber};
 
 fn yak_shaving() {
     tracing::info!("preparing to shave yaks");
@@ -90,7 +90,7 @@ with_default(subscriber, || {
 handle.assert_finished();
 ```
 
-Below is a slightly more complex example. `tracing-mock` asserts that, in order:
+Below is a slightly more complex example. `better-tracing-mock` asserts that, in order:
 - a span is created with a single field/value pair
 - the span is entered
 - an event is created with the field `number_of_yaks`, a corresponding
@@ -102,7 +102,7 @@ Below is a slightly more complex example. `tracing-mock` asserts that, in order:
 
 ```rust
 use tracing::subscriber::with_default;
-use tracing_mock::{expect, subscriber};
+use better_tracing_mock::{expect, subscriber};
 
 #[tracing::instrument]
 fn yak_shaving(number_of_yaks: u32) {

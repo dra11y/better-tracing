@@ -66,7 +66,7 @@ where
     /// above a certain level:
     ///
     /// ```ignore
-    /// use tracing_subscriber::{
+    /// use better_subscriber::{
     ///     filter::{filter_fn, LevelFilter, combinator::And},
     ///     prelude::*,
     /// };
@@ -83,8 +83,8 @@ where
     /// // if *both* filters would enable it:
     /// let filter = And::new(level_filter, target_filter);
     ///
-    /// tracing_subscriber::registry()
-    ///     .with(tracing_subscriber::fmt::layer().with_filter(filter))
+    /// better_subscriber::registry()
+    ///     .with(better_subscriber::fmt::layer().with_filter(filter))
     ///     .init();
     ///
     /// // This event will *not* be enabled:
@@ -216,7 +216,7 @@ where
     /// and events with a particular target:
     ///
     /// ```ignore
-    /// use tracing_subscriber::{
+    /// use better_subscriber::{
     ///     filter::{filter_fn, LevelFilter, combinator::Or},
     ///     prelude::*,
     /// };
@@ -234,8 +234,8 @@ where
     /// // `interesting_target`.
     /// let filter = Or::new(level_filter, target_filter);
     ///
-    /// tracing_subscriber::registry()
-    ///     .with(tracing_subscriber::fmt::layer().with_filter(filter))
+    /// better_subscriber::registry()
+    ///     .with(better_subscriber::fmt::layer().with_filter(filter))
     ///     .init();
     ///
     /// // This event will *not* be enabled:
@@ -255,7 +255,7 @@ where
     /// conjunction with the [`And`] combinator:
     ///
     /// ```ignore
-    /// use tracing_subscriber::{
+    /// use better_subscriber::{
     ///     filter::{filter_fn, LevelFilter, combinator},
     ///     prelude::*,
     /// };
@@ -275,8 +275,8 @@ where
     /// // `my_crate`, enable it if it has the `WARN` level or lower:
     /// // let filter = combinator::Or::new(filter, LevelFilter::WARN);
     ///
-    /// tracing_subscriber::registry()
-    ///     .with(tracing_subscriber::fmt::layer().with_filter(filter))
+    /// better_subscriber::registry()
+    ///     .with(better_subscriber::fmt::layer().with_filter(filter))
     ///     .init();
     /// ```
     ///

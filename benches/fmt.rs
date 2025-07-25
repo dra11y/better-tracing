@@ -87,7 +87,7 @@ fn bench_thrpt(c: &mut Criterion, name: &'static str, mut f: impl FnMut(&mut Gro
 }
 
 fn mk_dispatch() -> tracing::Dispatch {
-    let subscriber = tracing_subscriber::FmtSubscriber::builder()
+    let subscriber = better_subscriber::FmtSubscriber::builder()
         .with_writer(NoWriter::new)
         .finish();
     tracing::Dispatch::new(subscriber)

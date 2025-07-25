@@ -1,5 +1,5 @@
 use super::*;
-use tracing_mock::{expect, layer::MockLayer};
+use better_tracing_mock::{expect, layer::MockLayer};
 
 #[test]
 fn basic_trees() {
@@ -52,7 +52,7 @@ fn basic_trees() {
         )
         .with_filter(LevelFilter::INFO);
 
-    let subscriber = tracing_subscriber::registry().with(info_tree).with(all);
+    let subscriber = better_subscriber::registry().with(info_tree).with(all);
     let _guard = dbg!(subscriber).set_default();
 
     tracing::info!("hello world");
@@ -150,7 +150,7 @@ fn filter_span_scopes() {
         .and_then(b_layer)
         .with_filter(LevelFilter::INFO);
 
-    let subscriber = tracing_subscriber::registry()
+    let subscriber = better_subscriber::registry()
         .with(info_tree)
         .with(all_layer);
     let _guard = dbg!(subscriber).set_default();

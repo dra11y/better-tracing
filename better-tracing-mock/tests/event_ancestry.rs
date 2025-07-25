@@ -1,28 +1,25 @@
-//! Tests assertions for the parent made on [`ExpectedSpan`].
+//! Tests assertions for the parent made on [`ExpectedEvent`].
 //!
 //! The tests in this module completely cover the positive and negative cases
-//! when expecting that a span is a contextual or explicit root or expecting
-//! that a span has a specific contextual or explicit parent.
+//! when expecting that an event is a contextual or explicit root or expecting
+//! that an event has a specific contextual or explicit parent.
 //!
-//! [`ExpectedSpan`]: crate::span::ExpectedSpan
-//!
+//! [`ExpectedEvent`]: crate::event::ExpectedEvent
+use better_tracing_mock::{expect, subscriber};
 use tracing::{subscriber::with_default, Level};
-use tracing_mock::{expect, subscriber};
 
 #[test]
 fn contextual_parent() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_contextual_parent("contextual parent"));
+    let event = expect::event().with_ancestry(expect::has_contextual_parent("contextual parent"));
 
     let (subscriber, handle) = subscriber::mock()
         .enter(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _guard = tracing::info_span!("contextual parent").entered();
-        tracing::info_span!("span");
+        tracing::info!(field = &"value");
     });
 
     handle.assert_finished();
@@ -34,18 +31,16 @@ fn contextual_parent() {
     [contextual_parent_wrong_name] but got one named `another parent` instead."
 )]
 fn contextual_parent_wrong_name() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_contextual_parent("contextual parent"));
+    let event = expect::event().with_ancestry(expect::has_contextual_parent("contextual parent"));
 
     let (subscriber, handle) = subscriber::mock()
         .enter(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _guard = tracing::info_span!("another parent").entered();
-        tracing::info_span!("span");
+        tracing::info!(field = &"value");
     });
 
     handle.assert_finished();
@@ -56,21 +51,18 @@ fn contextual_parent_wrong_name() {
     [contextual_parent_wrong_id] but got one with Id `2` instead")]
 fn contextual_parent_wrong_id() {
     let id = expect::id();
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_contextual_parent(&id));
+    let event = expect::event().with_ancestry(expect::has_contextual_parent(&id));
 
     let (subscriber, handle) = subscriber::mock()
         .new_span(&id)
-        .new_span(expect::span())
         .enter(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _span = tracing::info_span!("contextual parent");
         let _guard = tracing::info_span!("another parent").entered();
-        tracing::info_span!("span");
+        tracing::info!(field = &"value");
     });
 
     handle.assert_finished();
@@ -83,18 +75,16 @@ fn contextual_parent_wrong_id() {
 )]
 fn contextual_parent_wrong_level() {
     let parent = expect::span().at_level(Level::INFO);
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_contextual_parent(parent));
+    let event = expect::event().with_ancestry(expect::has_contextual_parent(parent));
 
     let (subscriber, handle) = subscriber::mock()
         .enter(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _guard = tracing::debug_span!("contextual parent").entered();
-        tracing::info_span!("span");
+        tracing::info!(field = &"value");
     });
 
     handle.assert_finished();
@@ -104,14 +94,12 @@ fn contextual_parent_wrong_level() {
 #[should_panic(expected = "to have a contextual parent span, but it is actually a \
     contextual root")]
 fn expect_contextual_parent_actual_contextual_root() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_contextual_parent("contextual parent"));
+    let event = expect::event().with_ancestry(expect::has_contextual_parent("contextual parent"));
 
-    let (subscriber, handle) = subscriber::mock().new_span(span).run_with_handle();
+    let (subscriber, handle) = subscriber::mock().event(event).run_with_handle();
 
     with_default(subscriber, || {
-        tracing::info_span!("span");
+        tracing::info!(field = &"value");
     });
 
     handle.assert_finished();
@@ -121,18 +109,13 @@ fn expect_contextual_parent_actual_contextual_root() {
 #[should_panic(expected = "to have a contextual parent span, but it actually has an \
     explicit parent span")]
 fn expect_contextual_parent_actual_explicit_parent() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_contextual_parent("contextual parent"));
+    let event = expect::event().with_ancestry(expect::has_contextual_parent("contextual parent"));
 
-    let (subscriber, handle) = subscriber::mock()
-        .new_span(expect::span())
-        .new_span(span)
-        .run_with_handle();
+    let (subscriber, handle) = subscriber::mock().event(event).run_with_handle();
 
     with_default(subscriber, || {
         let span = tracing::info_span!("explicit parent");
-        tracing::info_span!(parent: span.id(), "span");
+        tracing::info!(parent: span.id(), field = &"value");
     });
 
     handle.assert_finished();
@@ -142,18 +125,16 @@ fn expect_contextual_parent_actual_explicit_parent() {
 #[should_panic(expected = "to have a contextual parent span, but it is actually an \
     explicit root")]
 fn expect_contextual_parent_actual_explicit_root() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_contextual_parent("contextual parent"));
+    let event = expect::event().with_ancestry(expect::has_contextual_parent("contextual parent"));
 
     let (subscriber, handle) = subscriber::mock()
         .enter(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _guard = tracing::info_span!("contextual parent").entered();
-        tracing::info_span!(parent: None, "span");
+        tracing::info!(parent: None, field = &"value");
     });
 
     handle.assert_finished();
@@ -161,14 +142,12 @@ fn expect_contextual_parent_actual_explicit_root() {
 
 #[test]
 fn contextual_root() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::is_contextual_root());
+    let event = expect::event().with_ancestry(expect::is_contextual_root());
 
-    let (subscriber, handle) = subscriber::mock().new_span(span).run_with_handle();
+    let (subscriber, handle) = subscriber::mock().event(event).run_with_handle();
 
     with_default(subscriber, || {
-        tracing::info_span!("span");
+        tracing::info!(field = &"value");
     });
 
     handle.assert_finished();
@@ -177,18 +156,16 @@ fn contextual_root() {
 #[test]
 #[should_panic(expected = "to be a contextual root, but it actually has a contextual parent span")]
 fn expect_contextual_root_actual_contextual_parent() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::is_contextual_root());
+    let event = expect::event().with_ancestry(expect::is_contextual_root());
 
     let (subscriber, handle) = subscriber::mock()
         .enter(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _guard = tracing::info_span!("contextual parent").entered();
-        tracing::info_span!("span");
+        tracing::info!(field = &"value");
     });
 
     handle.assert_finished();
@@ -197,18 +174,13 @@ fn expect_contextual_root_actual_contextual_parent() {
 #[test]
 #[should_panic(expected = "to be a contextual root, but it actually has an explicit parent span")]
 fn expect_contextual_root_actual_explicit_parent() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::is_contextual_root());
+    let event = expect::event().with_ancestry(expect::is_contextual_root());
 
-    let (subscriber, handle) = subscriber::mock()
-        .new_span(expect::span())
-        .new_span(span)
-        .run_with_handle();
+    let (subscriber, handle) = subscriber::mock().event(event).run_with_handle();
 
     with_default(subscriber, || {
         let span = tracing::info_span!("explicit parent");
-        tracing::info_span!(parent: span.id(), "span");
+        tracing::info!(parent: span.id(), field = &"value");
     });
 
     handle.assert_finished();
@@ -217,18 +189,16 @@ fn expect_contextual_root_actual_explicit_parent() {
 #[test]
 #[should_panic(expected = "to be a contextual root, but it is actually an explicit root")]
 fn expect_contextual_root_actual_explicit_root() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::is_contextual_root());
+    let event = expect::event().with_ancestry(expect::is_contextual_root());
 
     let (subscriber, handle) = subscriber::mock()
         .enter(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _guard = tracing::info_span!("contextual parent").entered();
-        tracing::info_span!(parent: None, "span");
+        tracing::info!(parent: None, field = &"value");
     });
 
     handle.assert_finished();
@@ -236,18 +206,13 @@ fn expect_contextual_root_actual_explicit_root() {
 
 #[test]
 fn explicit_parent() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_explicit_parent("explicit parent"));
+    let event = expect::event().with_ancestry(expect::has_explicit_parent("explicit parent"));
 
-    let (subscriber, handle) = subscriber::mock()
-        .new_span(expect::span())
-        .new_span(span)
-        .run_with_handle();
+    let (subscriber, handle) = subscriber::mock().event(event).run_with_handle();
 
     with_default(subscriber, || {
         let span = tracing::info_span!("explicit parent");
-        tracing::info_span!(parent: span.id(), "span");
+        tracing::info!(parent: span.id(), field = &"value");
     });
 
     handle.assert_finished();
@@ -259,18 +224,13 @@ fn explicit_parent() {
     [explicit_parent_wrong_name] but got one named `another parent` instead."
 )]
 fn explicit_parent_wrong_name() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_explicit_parent("explicit parent"));
+    let event = expect::event().with_ancestry(expect::has_explicit_parent("explicit parent"));
 
-    let (subscriber, handle) = subscriber::mock()
-        .new_span(expect::span())
-        .new_span(span)
-        .run_with_handle();
+    let (subscriber, handle) = subscriber::mock().event(event).run_with_handle();
 
     with_default(subscriber, || {
         let span = tracing::info_span!("another parent");
-        tracing::info_span!(parent: span.id(), "span");
+        tracing::info!(parent: span.id(), field = &"value");
     });
 
     handle.assert_finished();
@@ -281,20 +241,18 @@ fn explicit_parent_wrong_name() {
     [explicit_parent_wrong_id] but got one with Id `2` instead")]
 fn explicit_parent_wrong_id() {
     let id = expect::id();
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_explicit_parent(&id));
+    let event = expect::event().with_ancestry(expect::has_explicit_parent(&id));
 
     let (subscriber, handle) = subscriber::mock()
         .new_span(&id)
         .new_span(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _span = tracing::info_span!("explicit parent");
         let another_span = tracing::info_span!("another parent");
-        tracing::info_span!(parent: another_span.id(), "span");
+        tracing::info!(parent: another_span.id(), field = &"value");
     });
 
     handle.assert_finished();
@@ -305,18 +263,13 @@ fn explicit_parent_wrong_id() {
     [explicit_parent_wrong_level] but got one at level `Level(Debug)` instead.")]
 fn explicit_parent_wrong_level() {
     let parent = expect::span().at_level(Level::INFO);
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_explicit_parent(parent));
+    let event = expect::event().with_ancestry(expect::has_explicit_parent(parent));
 
-    let (subscriber, handle) = subscriber::mock()
-        .new_span(expect::span())
-        .new_span(span)
-        .run_with_handle();
+    let (subscriber, handle) = subscriber::mock().event(event).run_with_handle();
 
     with_default(subscriber, || {
         let span = tracing::debug_span!("explicit parent");
-        tracing::info_span!(parent: span.id(), "span");
+        tracing::info!(parent: span.id(), field = &"value");
     });
 
     handle.assert_finished();
@@ -326,18 +279,16 @@ fn explicit_parent_wrong_level() {
 #[should_panic(expected = "to have an explicit parent span, but it actually has a \
     contextual parent span")]
 fn expect_explicit_parent_actual_contextual_parent() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_explicit_parent("explicit parent"));
+    let event = expect::event().with_ancestry(expect::has_explicit_parent("explicit parent"));
 
     let (subscriber, handle) = subscriber::mock()
         .enter(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _guard = tracing::info_span!("contextual parent").entered();
-        tracing::info_span!("span");
+        tracing::info!(field = &"value");
     });
 
     handle.assert_finished();
@@ -347,14 +298,12 @@ fn expect_explicit_parent_actual_contextual_parent() {
 #[should_panic(expected = "to have an explicit parent span, but it is actually a \
     contextual root")]
 fn expect_explicit_parent_actual_contextual_root() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_explicit_parent("explicit parent"));
+    let event = expect::event().with_ancestry(expect::has_explicit_parent("explicit parent"));
 
-    let (subscriber, handle) = subscriber::mock().new_span(span).run_with_handle();
+    let (subscriber, handle) = subscriber::mock().event(event).run_with_handle();
 
     with_default(subscriber, || {
-        tracing::info_span!("span");
+        tracing::info!(field = &"value");
     });
 
     handle.assert_finished();
@@ -364,18 +313,16 @@ fn expect_explicit_parent_actual_contextual_root() {
 #[should_panic(expected = "to have an explicit parent span, but it is actually an \
     explicit root")]
 fn expect_explicit_parent_actual_explicit_root() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::has_explicit_parent("explicit parent"));
+    let event = expect::event().with_ancestry(expect::has_explicit_parent("explicit parent"));
 
     let (subscriber, handle) = subscriber::mock()
         .enter(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _guard = tracing::info_span!("contextual parent").entered();
-        tracing::info_span!(parent: None, "span");
+        tracing::info!(parent: None, field = &"value");
     });
 
     handle.assert_finished();
@@ -383,19 +330,16 @@ fn expect_explicit_parent_actual_explicit_root() {
 
 #[test]
 fn explicit_root() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::is_explicit_root());
+    let event = expect::event().with_ancestry(expect::is_explicit_root());
 
     let (subscriber, handle) = subscriber::mock()
-        .new_span(expect::span())
         .enter(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _guard = tracing::info_span!("contextual parent").entered();
-        tracing::info_span!(parent: None, "span");
+        tracing::info!(parent: None, field = &"value");
     });
 
     handle.assert_finished();
@@ -404,18 +348,16 @@ fn explicit_root() {
 #[test]
 #[should_panic(expected = "to be an explicit root, but it actually has a contextual parent span")]
 fn expect_explicit_root_actual_contextual_parent() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::is_explicit_root());
+    let event = expect::event().with_ancestry(expect::is_explicit_root());
 
     let (subscriber, handle) = subscriber::mock()
         .enter(expect::span())
-        .new_span(span)
+        .event(event)
         .run_with_handle();
 
     with_default(subscriber, || {
         let _guard = tracing::info_span!("contextual parent").entered();
-        tracing::info_span!("span");
+        tracing::info!(field = &"value");
     });
 
     handle.assert_finished();
@@ -424,14 +366,12 @@ fn expect_explicit_root_actual_contextual_parent() {
 #[test]
 #[should_panic(expected = "to be an explicit root, but it is actually a contextual root")]
 fn expect_explicit_root_actual_contextual_root() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::is_explicit_root());
+    let event = expect::event().with_ancestry(expect::is_explicit_root());
 
-    let (subscriber, handle) = subscriber::mock().new_span(span).run_with_handle();
+    let (subscriber, handle) = subscriber::mock().event(event).run_with_handle();
 
     with_default(subscriber, || {
-        tracing::info_span!("span");
+        tracing::info!(field = &"value");
     });
 
     handle.assert_finished();
@@ -440,18 +380,13 @@ fn expect_explicit_root_actual_contextual_root() {
 #[test]
 #[should_panic(expected = "to be an explicit root, but it actually has an explicit parent span")]
 fn expect_explicit_root_actual_explicit_parent() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::is_explicit_root());
+    let event = expect::event().with_ancestry(expect::is_explicit_root());
 
-    let (subscriber, handle) = subscriber::mock()
-        .new_span(expect::span())
-        .new_span(span)
-        .run_with_handle();
+    let (subscriber, handle) = subscriber::mock().event(event).run_with_handle();
 
     with_default(subscriber, || {
         let span = tracing::info_span!("explicit parent");
-        tracing::info_span!(parent: span.id(), "span");
+        tracing::info!(parent: span.id(), field = &"value");
     });
 
     handle.assert_finished();
@@ -459,14 +394,12 @@ fn expect_explicit_root_actual_explicit_parent() {
 
 #[test]
 fn explicit_and_contextual_root_is_explicit() {
-    let span = expect::span()
-        .named("span")
-        .with_ancestry(expect::is_explicit_root());
+    let event = expect::event().with_ancestry(expect::is_explicit_root());
 
-    let (subscriber, handle) = subscriber::mock().new_span(span).run_with_handle();
+    let (subscriber, handle) = subscriber::mock().event(event).run_with_handle();
 
     with_default(subscriber, || {
-        tracing::info_span!(parent: None, "span");
+        tracing::info!(parent: None, field = &"value");
     });
 
     handle.assert_finished();

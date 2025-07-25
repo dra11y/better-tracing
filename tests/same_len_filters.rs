@@ -3,8 +3,8 @@
 #![cfg(feature = "env-filter")]
 
 use tracing::{self, subscriber::with_default, Level};
-use tracing_mock::*;
-use tracing_subscriber::{filter::EnvFilter, prelude::*};
+use better_tracing_mock::*;
+use better_subscriber::{filter::EnvFilter, prelude::*};
 
 #[test]
 fn same_length_targets() {

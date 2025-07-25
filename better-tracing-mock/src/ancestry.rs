@@ -156,7 +156,7 @@ pub(crate) fn get_ancestry(
     if item.is_contextual() {
         if let Some(parent_id) = lookup_current() {
             let contextual_parent_span = actual_span(&parent_id).expect(
-                "tracing-mock: contextual parent cannot \
+                "better-tracing-mock: contextual parent cannot \
                             be looked up by ID. Was it recorded correctly?",
             );
             ActualAncestry::HasContextualParent(contextual_parent_span)
@@ -167,11 +167,11 @@ pub(crate) fn get_ancestry(
         ActualAncestry::IsExplicitRoot
     } else {
         let parent_id = item.parent().expect(
-            "tracing-mock: is_contextual=false is_root=false \
+            "better-tracing-mock: is_contextual=false is_root=false \
                         but no explicit parent found. This is a bug!",
         );
         let explicit_parent_span = actual_span(parent_id).expect(
-            "tracing-mock: explicit parent cannot be looked \
+            "better-tracing-mock: explicit parent cannot be looked \
                         up by ID. Is the provided Span ID valid: {parent_id}",
         );
         ActualAncestry::HasExplicitParent(explicit_parent_span)

@@ -1,5 +1,5 @@
 use super::*;
-use tracing_subscriber::{
+use better_subscriber::{
     filter::{filter_fn, FilterExt, LevelFilter},
     prelude::*,
 };
@@ -25,7 +25,7 @@ fn and() {
     // spans and events that *both* filters will enable:
     let filter = target_filter.and(level_filter);
 
-    let _subscriber = tracing_subscriber::registry()
+    let _subscriber = better_subscriber::registry()
         .with(layer.with_filter(filter))
         .set_default();
 

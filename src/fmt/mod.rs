@@ -13,7 +13,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! tracing-subscriber = "0.3"
+//! better-subscriber = "0.3"
 //! ```
 //!
 //! *Compiler support: [requires `rustc` 1.65+][msrv]*
@@ -22,9 +22,9 @@
 //!
 //! Add the following to your executable to initialize the default subscriber:
 //! ```rust
-//! use tracing_subscriber;
+//! use better_subscriber;
 //!
-//! tracing_subscriber::fmt::init();
+//! better_subscriber::fmt::init();
 //! ```
 //!
 //! ## Filtering Events with Environment Variables
@@ -54,7 +54,7 @@
 //! You can create one by calling:
 //!
 //! ```rust
-//! let subscriber = tracing_subscriber::fmt()
+//! let subscriber = better_subscriber::fmt()
 //!     // ... add configuration
 //!     .finish();
 //! ```
@@ -106,7 +106,7 @@
 //! set specific formatting settings. For example:
 //!
 //! ```
-//! use tracing_subscriber::fmt;
+//! use better_subscriber::fmt;
 //!
 //! // Configure a custom event formatter
 //! let format = fmt::format()
@@ -118,7 +118,7 @@
 //!
 //! // Create a `fmt` subscriber that uses our custom event format, and set it
 //! // as the default.
-//! tracing_subscriber::fmt()
+//! better_subscriber::fmt()
 //!     .event_format(format)
 //!     .init();
 //! ```
@@ -133,7 +133,7 @@
 //! variables, you can use the [`EnvFilter`] as follows:
 //!
 //! ```rust
-//! use tracing_subscriber::EnvFilter;
+//! use better_subscriber::EnvFilter;
 //!
 //! let filter = EnvFilter::from_default_env();
 //! ```
@@ -151,7 +151,7 @@
 //! A subscriber can be installed globally using:
 //! ```rust
 //! use tracing;
-//! use tracing_subscriber::FmtSubscriber;
+//! use better_subscriber::FmtSubscriber;
 //!
 //! let subscriber = FmtSubscriber::new();
 //!
@@ -166,8 +166,8 @@
 //! Composing an [`EnvFilter`] `Layer` and a [format `Layer`][super::fmt::Layer]:
 //!
 //! ```rust
-//! use tracing_subscriber::{fmt, EnvFilter};
-//! use tracing_subscriber::prelude::*;
+//! use better_subscriber::{fmt, EnvFilter};
+//! use better_subscriber::prelude::*;
 //!
 //! let fmt_layer = fmt::layer()
 //!     .with_target(false);
@@ -175,7 +175,7 @@
 //!     .or_else(|_| EnvFilter::try_new("info"))
 //!     .unwrap();
 //!
-//! tracing_subscriber::registry()
+//! better_subscriber::registry()
 //!     .with(filter_layer)
 //!     .with(fmt_layer)
 //!     .init();
@@ -263,17 +263,17 @@ pub struct SubscriberBuilder<
 /// Using [`init`] to set the default subscriber:
 ///
 /// ```rust
-/// tracing_subscriber::fmt().init();
+/// better_subscriber::fmt().init();
 /// ```
 ///
 /// Configuring the output format:
 ///
 /// ```rust
 ///
-/// tracing_subscriber::fmt()
+/// better_subscriber::fmt()
 ///     // Configure formatting settings.
 ///     .with_target(false)
-///     .with_timer(tracing_subscriber::fmt::time::uptime())
+///     .with_timer(better_subscriber::fmt::time::uptime())
 ///     .with_level(true)
 ///     // Set the subscriber as the default.
 ///     .init();
@@ -285,7 +285,7 @@ pub struct SubscriberBuilder<
 /// use std::error::Error;
 ///
 /// fn init_subscriber() -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
-///     tracing_subscriber::fmt()
+///     better_subscriber::fmt()
 ///         // Configure the subscriber to emit logs in JSON format.
 ///         .json()
 ///         // Configure the subscriber to flatten event fields in the output JSON objects.
@@ -301,7 +301,7 @@ pub struct SubscriberBuilder<
 /// constructed subscriber, which may then be passed to other functions:
 ///
 /// ```rust
-/// let subscriber = tracing_subscriber::fmt()
+/// let subscriber = better_subscriber::fmt()
 ///     .with_max_level(tracing::Level::DEBUG)
 ///     .compact()
 ///     .finish();
@@ -591,8 +591,8 @@ where
     /// will synthesize events whenever spans are created and closed:
     ///
     /// ```rust
-    /// use tracing_subscriber::fmt::format::FmtSpan;
-    /// use tracing_subscriber::fmt;
+    /// use better_subscriber::fmt::format::FmtSpan;
+    /// use better_subscriber::fmt;
     ///
     /// let subscriber = fmt()
     ///     .with_span_events(FmtSpan::NEW | FmtSpan::CLOSE)
@@ -860,17 +860,17 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     ///
     /// For example:
     /// ```rust
-    /// use tracing_subscriber::fmt::format;
-    /// use tracing_subscriber::prelude::*;
+    /// use better_subscriber::fmt::format;
+    /// use better_subscriber::prelude::*;
     ///
     /// let formatter =
     ///     // Construct a custom formatter for `Debug` fields
     ///     format::debug_fn(|writer, field, value| write!(writer, "{}: {:?}", field, value))
-    ///         // Use the `tracing_subscriber::MakeFmtExt` trait to wrap the
+    ///         // Use the `better_subscriber::MakeFmtExt` trait to wrap the
     ///         // formatter so that a delimiter is added between fields.
     ///         .delimited(", ");
     ///
-    /// let subscriber = tracing_subscriber::fmt()
+    /// let subscriber = better_subscriber::fmt()
     ///     .fmt_fields(formatter)
     ///     .finish();
     /// # drop(subscriber)
@@ -898,7 +898,7 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     /// Setting a filter based on the value of the `RUST_LOG` environment
     /// variable:
     /// ```rust
-    /// use tracing_subscriber::{fmt, EnvFilter};
+    /// use better_subscriber::{fmt, EnvFilter};
     ///
     /// fmt()
     ///     .with_env_filter(EnvFilter::from_default_env())
@@ -907,7 +907,7 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     ///
     /// Setting a filter based on a pre-set filter directive string:
     /// ```rust
-    /// use tracing_subscriber::fmt;
+    /// use better_subscriber::fmt;
     ///
     /// fmt()
     ///     .with_env_filter("my_crate=info,my_crate::my_mod=debug,[my_span]=trace")
@@ -916,7 +916,7 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     ///
     /// Adding additional directives to a filter constructed from an env var:
     /// ```rust
-    /// use tracing_subscriber::{fmt, filter::{EnvFilter, LevelFilter}};
+    /// use better_subscriber::{fmt, filter::{EnvFilter, LevelFilter}};
     ///
     /// # fn filter() -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
     /// let filter = EnvFilter::try_from_env("MY_CUSTOM_FILTER_ENV_VAR")?
@@ -960,7 +960,7 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     ///
     /// Enable up to the `DEBUG` verbosity level:
     /// ```rust
-    /// use tracing_subscriber::fmt;
+    /// use better_subscriber::fmt;
     /// use tracing::Level;
     ///
     /// fmt()
@@ -969,7 +969,7 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     /// ```
     /// This subscriber won't record any spans or events!
     /// ```rust
-    /// use tracing_subscriber::{fmt, filter::LevelFilter};
+    /// use better_subscriber::{fmt, filter::LevelFilter};
     ///
     /// let subscriber = fmt()
     ///     .with_max_level(LevelFilter::OFF)
@@ -1001,9 +1001,9 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     /// Setting a type implementing [`FormatEvent`] as the formatter:
     ///
     /// ```rust
-    /// use tracing_subscriber::fmt::format;
+    /// use better_subscriber::fmt::format;
     ///
-    /// let subscriber = tracing_subscriber::fmt()
+    /// let subscriber = better_subscriber::fmt()
     ///     .event_format(format().compact())
     ///     .finish();
     /// ```
@@ -1028,7 +1028,7 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     /// Using `stderr` rather than `stdout`:
     ///
     /// ```rust
-    /// use tracing_subscriber::fmt;
+    /// use better_subscriber::fmt;
     /// use std::io;
     ///
     /// fmt()
@@ -1056,7 +1056,7 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     /// globally as it may cause conflicts.
     ///
     /// ```rust
-    /// use tracing_subscriber::fmt;
+    /// use better_subscriber::fmt;
     /// use tracing::subscriber;
     ///
     /// subscriber::set_default(
@@ -1085,7 +1085,7 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     /// Updating an event formatter:
     ///
     /// ```rust
-    /// let subscriber = tracing_subscriber::fmt()
+    /// let subscriber = better_subscriber::fmt()
     ///     .map_event_format(|e| e.compact())
     ///     .finish();
     /// ```
@@ -1110,8 +1110,8 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     /// Updating a field formatter:
     ///
     /// ```rust
-    /// use tracing_subscriber::field::MakeExt;
-    /// let subscriber = tracing_subscriber::fmt()
+    /// use better_subscriber::field::MakeExt;
+    /// let subscriber = better_subscriber::fmt()
     ///     .map_fmt_fields(|f| f.debug_alt())
     ///     .finish();
     /// ```
@@ -1135,10 +1135,10 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
     ///
     /// ```rust
     /// use tracing::Level;
-    /// use tracing_subscriber::fmt::{self, writer::MakeWriterExt};
+    /// use better_subscriber::fmt::{self, writer::MakeWriterExt};
     ///
     /// let stderr = std::io::stderr.with_max_level(Level::WARN);
-    /// let layer = tracing_subscriber::fmt()
+    /// let layer = better_subscriber::fmt()
     ///     .map_writer(move |w| stderr.or_else(w))
     ///     .finish();
     /// ```
@@ -1164,7 +1164,7 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
 ///
 /// ```rust
 /// # fn doc() -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
-/// tracing_subscriber::fmt().try_init()
+/// better_subscriber::fmt().try_init()
 /// # }
 /// ```
 ///
@@ -1229,8 +1229,8 @@ pub fn try_init() -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
 /// If the `env-filter` feature is enabled, this is shorthand for
 ///
 /// ```rust
-/// # use tracing_subscriber::EnvFilter;
-/// tracing_subscriber::fmt()
+/// # use better_subscriber::EnvFilter;
+/// better_subscriber::fmt()
 ///     .with_env_filter(EnvFilter::from_default_env())
 ///     .init();
 /// ```

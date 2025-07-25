@@ -3,8 +3,8 @@
 mod per_layer;
 
 use tracing::{self, subscriber::with_default, Level};
-use tracing_mock::{expect, layer, subscriber};
-use tracing_subscriber::{
+use better_tracing_mock::{expect, layer, subscriber};
+use better_subscriber::{
     filter::{EnvFilter, LevelFilter},
     prelude::*,
     Registry,
@@ -230,7 +230,7 @@ fn span_name_filter_is_dynamic() {
 #[test]
 fn method_name_resolution() {
     #[allow(unused_imports)]
-    use tracing_subscriber::layer::{Filter, Layer};
+    use better_subscriber::layer::{Filter, Layer};
 
     let filter = EnvFilter::new("hello_world=info");
     filter.max_level_hint();
@@ -458,7 +458,7 @@ mod per_layer_filter {
             .only()
             .run_with_handle();
 
-        let _subscriber = tracing_subscriber::registry()
+        let _subscriber = better_subscriber::registry()
             .with(layer.with_filter(filter))
             .set_default();
 
@@ -492,7 +492,7 @@ mod per_layer_filter {
             .only()
             .run_with_handle();
 
-        let _subscriber = tracing_subscriber::registry()
+        let _subscriber = better_subscriber::registry()
             .with(layer.with_filter(filter))
             .set_default();
 
@@ -514,7 +514,7 @@ mod per_layer_filter {
             .only()
             .run_with_handle();
 
-        let _subscriber = tracing_subscriber::registry()
+        let _subscriber = better_subscriber::registry()
             .with(layer.with_filter(filter))
             .set_default();
 
@@ -548,7 +548,7 @@ mod per_layer_filter {
             .only()
             .run_with_handle();
 
-        let _subscriber = tracing_subscriber::registry()
+        let _subscriber = better_subscriber::registry()
             .with(layer.with_filter(filter))
             .set_default();
 
@@ -581,7 +581,7 @@ mod per_layer_filter {
             .only()
             .run_with_handle();
 
-        let _subscriber = tracing_subscriber::registry()
+        let _subscriber = better_subscriber::registry()
             .with(layer.with_filter(filter))
             .set_default();
 
@@ -613,7 +613,7 @@ mod per_layer_filter {
             .only()
             .run_with_handle();
 
-        let _subscriber = tracing_subscriber::registry()
+        let _subscriber = better_subscriber::registry()
             .with(layer.with_filter(filter))
             .set_default();
 
@@ -666,7 +666,7 @@ mod per_layer_filter {
             .only()
             .run_with_handle();
 
-        let _subscriber = tracing_subscriber::registry()
+        let _subscriber = better_subscriber::registry()
             .with(layer.with_filter(filter))
             .set_default();
 
@@ -730,7 +730,7 @@ mod per_layer_filter {
             (layer.with_filter(filter), handle)
         };
 
-        let _subscriber = tracing_subscriber::registry()
+        let _subscriber = better_subscriber::registry()
             .with(layer1)
             .with(layer2)
             .set_default();

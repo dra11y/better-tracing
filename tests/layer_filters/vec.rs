@@ -1,6 +1,6 @@
 use super::*;
 use tracing::Subscriber;
-use tracing_mock::{expect, layer::MockLayer};
+use better_tracing_mock::{expect, layer::MockLayer};
 
 #[test]
 fn with_filters_unboxed() {
@@ -25,7 +25,7 @@ fn with_filters_unboxed() {
         .run_with_handle();
     let info_layer = info_layer.with_filter(LevelFilter::INFO);
 
-    let _subscriber = tracing_subscriber::registry()
+    let _subscriber = better_subscriber::registry()
         .with(vec![trace_layer, debug_layer, info_layer])
         .set_default();
 
@@ -63,7 +63,7 @@ fn with_filters_boxed() {
         .with_filter(filter::filter_fn(|meta| meta.target() == "my_target"))
         .boxed();
 
-    let _subscriber = tracing_subscriber::registry()
+    let _subscriber = better_subscriber::registry()
         .with(vec![unfiltered_layer, debug_layer, target_layer])
         .set_default();
 
@@ -88,7 +88,7 @@ fn mixed_max_level_hint() {
         .with_filter(LevelFilter::DEBUG)
         .boxed();
 
-    let subscriber = tracing_subscriber::registry().with(vec![unfiltered, info, debug]);
+    let subscriber = better_subscriber::registry().with(vec![unfiltered, info, debug]);
 
     assert_eq!(subscriber.max_level_hint(), None);
 }
@@ -108,7 +108,7 @@ fn all_filtered_max_level_hint() {
         .with_filter(LevelFilter::DEBUG)
         .boxed();
 
-    let subscriber = tracing_subscriber::registry().with(vec![warn, info, debug]);
+    let subscriber = better_subscriber::registry().with(vec![warn, info, debug]);
 
     assert_eq!(subscriber.max_level_hint(), Some(LevelFilter::DEBUG));
 }
@@ -116,6 +116,6 @@ fn all_filtered_max_level_hint() {
 #[test]
 fn empty_vec() {
     // Just a None means everything is off
-    let subscriber = tracing_subscriber::registry().with(Vec::<MockLayer>::new());
+    let subscriber = better_subscriber::registry().with(Vec::<MockLayer>::new());
     assert_eq!(subscriber.max_level_hint(), Some(LevelFilter::OFF));
 }

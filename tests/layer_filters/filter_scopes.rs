@@ -1,5 +1,5 @@
 use super::*;
-use tracing_mock::{expect, layer::MockLayer};
+use better_tracing_mock::{expect, layer::MockLayer};
 
 #[test]
 fn filters_span_scopes() {
@@ -58,7 +58,7 @@ fn filters_span_scopes() {
         .only()
         .run_with_handle();
 
-    let _subscriber = tracing_subscriber::registry()
+    let _subscriber = better_subscriber::registry()
         .with(debug_layer.with_filter(LevelFilter::DEBUG))
         .with(info_layer.with_filter(LevelFilter::INFO))
         .with(warn_layer.with_filter(LevelFilter::WARN))
@@ -125,7 +125,7 @@ fn filters_interleaved_span_scopes() {
         .only()
         .run_with_handle();
 
-    let _subscriber = tracing_subscriber::registry()
+    let _subscriber = better_subscriber::registry()
         .with(all_layer.with_filter(LevelFilter::INFO))
         .with(a_layer.with_filter(filter::filter_fn(|meta| {
             let target = meta.target();

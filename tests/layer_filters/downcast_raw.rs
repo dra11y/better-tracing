@@ -1,7 +1,7 @@
 use tracing::Subscriber;
-use tracing_subscriber::filter::Targets;
-use tracing_subscriber::prelude::*;
-use tracing_subscriber::Layer;
+use better_subscriber::filter::Targets;
+use better_subscriber::prelude::*;
+use better_subscriber::Layer;
 
 #[test]
 fn downcast_ref_to_inner_layer_and_filter() {
@@ -13,13 +13,13 @@ fn downcast_ref_to_inner_layer_and_filter() {
     impl<S> Layer<S> for WrappedLayer
     where
         S: Subscriber,
-        S: for<'lookup> tracing_subscriber::registry::LookupSpan<'lookup>,
+        S: for<'lookup> better_subscriber::registry::LookupSpan<'lookup>,
     {
     }
 
     let layer = WrappedLayer;
     let filter = Targets::new().with_default(tracing::Level::INFO);
-    let registry = tracing_subscriber::registry().with(layer.with_filter(filter));
+    let registry = better_subscriber::registry().with(layer.with_filter(filter));
     let dispatch = tracing::dispatcher::Dispatch::new(registry);
 
     // The filter is available
@@ -43,7 +43,7 @@ fn forward_downcast_raw_to_layer() {
     impl<S> Layer<S> for WrappedLayer
     where
         S: Subscriber,
-        S: for<'lookup> tracing_subscriber::registry::LookupSpan<'lookup>,
+        S: for<'lookup> better_subscriber::registry::LookupSpan<'lookup>,
     {
         unsafe fn downcast_raw(&self, id: std::any::TypeId) -> Option<*const ()> {
             match id {
@@ -60,7 +60,7 @@ fn forward_downcast_raw_to_layer() {
         with_context: WithContext,
     };
     let filter = Targets::new().with_default(tracing::Level::INFO);
-    let registry = tracing_subscriber::registry().with(layer.with_filter(filter));
+    let registry = better_subscriber::registry().with(layer.with_filter(filter));
     let dispatch = tracing::dispatcher::Dispatch::new(registry);
 
     // Types from a custom implementation of `downcast_raw` are available
