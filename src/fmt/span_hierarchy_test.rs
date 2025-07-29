@@ -65,7 +65,12 @@ mod tests {
                 .map(|scope| {
                     // Collect spans and reverse for root-to-leaf order
                     let spans: Vec<_> = scope.collect();
-                    spans.iter().rev().map(|span| span.name()).collect::<Vec<_>>().join(":")
+                    spans
+                        .iter()
+                        .rev()
+                        .map(|span| span.name())
+                        .collect::<Vec<_>>()
+                        .join(":")
                 })
                 .unwrap_or_else(|| "NO_CURRENT_SPAN".to_string());
 

@@ -1353,8 +1353,6 @@ where
         }
     }
 
-
-
     /// Returns the current span for this formatter.
     pub fn current_span(&self) -> Current {
         self.ctx.current_span()
