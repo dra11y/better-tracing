@@ -1,11 +1,76 @@
-//! # better-tracing
-//! ### Community fork 🍴 of `tracing-subscriber` focused on usability and accessibility.
+//! ## Community fork 🍴 of `tracing-subscriber` focused on usability and accessibility.
+//!
+//! [![Crates.io][crates-badge]][crates-url]
+//! [![Documentation][docs-badge]][docs-url]
+//! [![Documentation (v0.2.x)][docs-v0.2.x-badge]][docs-v0.2.x-url]
+//! [![MIT licensed][mit-badge]][mit-url]
+//! [![changelog][changelog-badge]][changelog-url]
+//! ![maintenance status][maint-badge]
+//! [Documentation](https://docs.rs/better-tracing/latest)
 //!
 //! **better-tracing** = **tracing-subscriber** + **smart defaults and features that just work**
-//! Utilities for implementing and composing [`tracing`][tracing] subscribers.
-//! This fork provides sensible defaults, accessible formatting, and resolves architectural limitations while maintaining full drop-in compatibility.
 //!
 //! See the [CHANGELOG](https://github.com/dra11y/better-tracing/blob/main/CHANGELOG.md) for implemented features and fixes.
+//!
+//! Utilities for implementing and composing [`tracing`][tracing] subscribers. This fork provides sensible defaults, accessible formatting, and resolves architectural limitations while maintaining full drop-in compatibility.
+//!
+//! | Feature | better-tracing | tracing-subscriber |
+//! |---------|----------------|-------------------|
+//! | **Drop-in compatibility** | ✅ | ✅ |
+//! | **External formatters access exiting span on EXIT/CLOSE** | ✅ | ❌ |
+//! | **Sane defaults with zero configuration** | ⏳ | ❌ |
+//! | **Better builders** you don't have to fight with | ⏳ | ❌ |
+//!
+//! *Compiler support: [requires `rustc` 1.65+][msrv]*
+//!
+//! [msrv]: #supported-rust-versions
+//!
+//! # Fork Improvements
+//!
+//! ## Fixed Span Context for EXIT/CLOSE Events
+//!
+//! In `tracing-subscriber`, `lookup_current()` returned the parent span instead of the exiting span during `FmtSpan::EXIT` and `FmtSpan::CLOSE` events. `better-tracing` fixes this.
+//!
+//! ```rust
+//! use better_tracing::fmt::format::FmtSpan;
+//!
+//! // Custom formatter that can now access the exiting span
+//! use better_tracing::{
+//!     fmt::{FmtContext, FormatEvent, FormatFields, format::Writer},
+//!     registry::LookupSpan,
+//! };
+//! use tracing::{Event, Subscriber};
+//! use std::fmt;
+//!
+//! struct MyFormatter;
+//!
+//! impl<S, N> FormatEvent<S, N> for MyFormatter
+//! where
+//!     S: Subscriber + for<'a> LookupSpan<'a>,
+//!     N: for<'a> FormatFields<'a> + 'static,
+//! {
+//!     fn format_event(
+//!         &self,
+//!         ctx: &FmtContext<'_, S, N>,
+//!         mut writer: Writer<'_>,
+//!         event: &Event<'_>,
+//!     ) -> fmt::Result {
+//!         // Now returns the correct exiting span during EXIT/CLOSE events
+//!         if let Some(span) = ctx.lookup_current() {
+//!             write!(writer, "{}:", span.name())?;
+//!         }
+//!         Ok(())
+//!     }
+//! }
+//!
+//! // Set up subscriber with the custom formatter and EXIT events
+//! let subscriber = better_tracing::fmt()
+//!     .event_format(MyFormatter)
+//!     .with_span_events(FmtSpan::EXIT)
+//!     .finish();
+//! ```
+//!
+//! # From upstream `tracing-subscriber`
 //!
 //! [`tracing`] is a framework for instrumenting Rust programs to collect
 //! scoped, structured, and async-aware diagnostics. The [`Subscriber`] trait
@@ -17,11 +82,7 @@
 //! `better-tracing` is intended for use by both `Subscriber` authors and
 //! application authors using `tracing` to instrument their applications.
 //!
-//! *Compiler support: [requires `rustc` 1.65+][msrv]*
-//!
-//! [msrv]: #supported-rust-versions
-//!
-//! ## `Layer`s and `Filter`s
+//! # `Layer`s and `Filter`s
 //!
 //! The most important component of the `better-tracing` API is the
 //! [`Layer`] trait, which provides a composable abstraction for building
@@ -45,13 +106,13 @@
 //! [`Filter`]: crate::layer::Filter
 //! [plf]: crate::layer#per-layer-filtering
 //!
-//! ## Included Subscribers
+//! # Included Subscribers
 //!
 //! The following `Subscriber`s are provided for application authors:
 //!
 //! - [`fmt`] - Formats and logs tracing data (requires the `fmt` feature flag)
 //!
-//! ## Feature Flags
+//! # Feature Flags
 //!
 //! - `std`: Enables APIs that depend on the Rust standard library
 //!   (enabled by default).
@@ -72,7 +133,7 @@
 //!
 //! [`registry`]: mod@registry
 //!
-//! ### Optional Dependencies
+//! ## Optional Dependencies
 //!
 //! - [`tracing-log`]: Enables better formatting for events emitted by `log`
 //!   macros in the `fmt` subscriber. Enabled by default.
@@ -83,7 +144,7 @@
 //! - [`parking_lot`]: Use the `parking_lot` crate's `RwLock` implementation
 //!   rather than the Rust standard library's implementation.
 //!
-//! ### `no_std` Support
+//! ## `no_std` Support
 //!
 //! In embedded systems and other bare-metal applications, `tracing` can be
 //! used without requiring the Rust standard library, although some features are
@@ -111,7 +172,7 @@
 //! better-tracing = { version = "0.3", default-features = false, features = ["alloc"] }
 //! ```
 //!
-//! ### Unstable Features
+//! ## Unstable Features
 //!
 //! These feature flags enable **unstable** features. The public API may break in 0.1.x
 //! releases. To enable these features, the `--cfg tracing_unstable` must be passed to
@@ -122,7 +183,7 @@
 //! * `valuable`: Enables support for serializing values recorded using the
 //!   [`valuable`] crate as structured JSON in the [`format::Json`] formatter.
 //!
-//! #### Enabling Unstable Features
+//! ## Enabling Unstable Features
 //!
 //! The easiest way to set the `tracing_unstable` cfg is to use the `RUSTFLAGS`
 //! env variable when running `cargo` commands:
@@ -142,20 +203,42 @@
 //! [`valuable`]: https://crates.io/crates/valuable
 //! [`format::Json`]: crate::fmt::format::Json
 //!
-//! ## Supported Rust Versions
+//! # Supported Rust Versions
 //!
-//! Tracing is built against the latest stable release. The minimum supported
-//! version is 1.65. The current Tracing version is not guaranteed to build on
-//! Rust versions earlier than the minimum supported version.
+//! This fork follows the same minimum supported Rust version as the upstream `tracing-subscriber`.
+//! The minimum supported version is 1.65. The current version is not guaranteed to build on Rust
+//! versions earlier than the minimum supported version.
 //!
-//! Tracing follows the same compiler support policies as the rest of the Tokio
-//! project. The current stable Rust compiler and the three most recent minor
-//! versions before it will always be supported. For example, if the current
-//! stable compiler version is 1.69, the minimum supported version will not be
-//! increased past 1.66, three minor versions prior. Increasing the minimum
-//! supported compiler version is not considered a semver breaking change as
-//! long as doing so complies with this policy.
+//! better-tracing follows a similar compiler support policy to the upstream project. The current stable Rust compiler and the three most recent minor versions before it will always be supported. For example, if the current stable compiler version is 1.69, the minimum supported version will not be increased past 1.66, three minor versions prior. Increasing the minimum supported compiler version is not considered a semver breaking change as long as doing so complies with this policy.
 //!
+//! # License
+//!
+//! This project is licensed under the [MIT license](LICENSE).
+//!
+//! # Disclaimer
+//!
+//! This is an independent community fork of `tracing-subscriber`. This project is not affiliated with, endorsed by, sponsored by, or supported by the Tokio team, the Tokio project, or any of the original `tracing-subscriber` maintainers. All trademarks are the property of their respective owners.
+//!
+//! The name "tracing" and related trademarks belong to their respective owners. This fork exists to provide enhanced functionality while maintaining compatibility with the upstream project.
+//!
+//! # Contribution
+//!
+//! Unless you explicitly state otherwise, any contribution intentionally submitted
+//! for inclusion in better-tracing by you, shall be licensed as MIT, without any additional
+//! terms or conditions.
+//!
+//! [tracing]: https://github.com/tokio-rs/tracing/tree/main/tracing
+//! [crates-badge]: https://img.shields.io/crates/v/better-tracing.svg
+//! [crates-url]: https://crates.io/crates/better-tracing
+//! [docs-badge]: https://docs.rs/better-tracing/badge.svg
+//! [docs-url]: https://docs.rs/better-tracing/latest
+//! [docs-v0.2.x-badge]: https://img.shields.io/badge/docs-v0.2.x-blue
+//! [docs-v0.2.x-url]: https://docs.rs/better-tracing
+//! [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+//! [mit-url]: LICENSE
+//! [changelog-badge]: https://img.shields.io/badge/changelog-Keep%20a%20Changelog-E05735?labelColor=555555&logo=keepachangelog
+//! [maint-badge]: https://img.shields.io/badge/maintenance-experimental-blue.svg
+//! [changelog-url]: CHANGELOG.md
 //! [`Subscriber`]: tracing_core::subscriber::Subscriber
 //! [`tracing`]: https://docs.rs/tracing/latest/tracing
 //! [`EnvFilter`]: filter::EnvFilter

@@ -89,9 +89,6 @@ time = { version = "0.3.2", features = ["formatting", "macros"] }
 [lints]
 workspace = true
 
-[badges]
-maintenance = { status = "experimental" }
-
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
