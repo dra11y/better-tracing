@@ -47,7 +47,7 @@ impl Builder {
     ///
     /// ```rust
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-    /// use better_subscriber::filter::{EnvFilter, LevelFilter};
+    /// use better_tracing::filter::{EnvFilter, LevelFilter};
     ///
     /// let filter = EnvFilter::builder()
     ///     .with_default_directive(LevelFilter::INFO.into())
@@ -63,7 +63,7 @@ impl Builder {
     /// the default directive:
     ///
     /// ```rust
-    /// use better_subscriber::filter::{EnvFilter, LevelFilter};
+    /// use better_tracing::filter::{EnvFilter, LevelFilter};
     ///
     /// let filter = EnvFilter::builder()
     ///     .with_default_directive(LevelFilter::INFO.into())
@@ -77,7 +77,7 @@ impl Builder {
     /// directives, the default directive is not used:
     ///
     /// ```rust
-    /// use better_subscriber::filter::{EnvFilter, LevelFilter};
+    /// use better_tracing::filter::{EnvFilter, LevelFilter};
     ///
     /// let filter = EnvFilter::builder()
     ///     .with_default_directive(LevelFilter::INFO.into())
@@ -91,7 +91,7 @@ impl Builder {
     ///
     /// ```rust
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-    /// use better_subscriber::filter::{EnvFilter, LevelFilter};
+    /// use better_tracing::filter::{EnvFilter, LevelFilter};
     ///
     /// let default = "myapp=debug".parse()
     ///     .expect("hard-coded default directive should be valid");

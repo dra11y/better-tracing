@@ -2,7 +2,7 @@
 
 [splash]: https://raw.githubusercontent.com/tokio-rs/tracing/main/assets/splash.svg
 
-# better-subscriber
+# better-tracing
 
 Utilities for implementing and composing [`tracing`][tracing] subscribers.
 
@@ -13,7 +13,7 @@ crate contains tools for composing subscribers out of smaller units of
 behaviour, and batteries-included implementations of common subscriber
 functionality.
 
-`better-subscriber` is intended for use by both `Subscriber` authors and
+`better-tracing` is intended for use by both `Subscriber` authors and
 application authors using `tracing` to instrument their applications.
 
 [![Crates.io][crates-badge]][crates-url]
@@ -27,13 +27,13 @@ application authors using `tracing` to instrument their applications.
 [Documentation][docs-url] | [Chat][discord-url]
 
 [tracing]: https://github.com/tokio-rs/tracing/tree/main/tracing
-[tracing-fmt]: https://github.com/tokio-rs/tracing/tree/main/better-subscriber
-[crates-badge]: https://img.shields.io/crates/v/better-subscriber.svg
-[crates-url]: https://crates.io/crates/better-subscriber
-[docs-badge]: https://docs.rs/better-subscriber/badge.svg
-[docs-url]: https://docs.rs/better-subscriber/latest
+[tracing-fmt]: https://github.com/tokio-rs/tracing/tree/main/better-tracing
+[crates-badge]: https://img.shields.io/crates/v/better-tracing.svg
+[crates-url]: https://crates.io/crates/better-tracing
+[docs-badge]: https://docs.rs/better-tracing/badge.svg
+[docs-url]: https://docs.rs/better-tracing/latest
 [docs-v0.2.x-badge]: https://img.shields.io/badge/docs-v0.2.x-blue
-[docs-v0.2.x-url]: https://tracing.rs/better_subscriber
+[docs-v0.2.x-url]: https://tracing.rs/better_tracing
 [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [mit-url]: LICENSE
 [actions-badge]: https://github.com/tokio-rs/tracing/workflows/CI/badge.svg

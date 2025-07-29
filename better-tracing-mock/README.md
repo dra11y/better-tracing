@@ -42,7 +42,7 @@ by code under test.
 
 ## Usage
 
-The `better-tracing-mock` crate provides a mock [`Subscriber`][better-subscriber] that
+The `better-tracing-mock` crate provides a mock [`Subscriber`][better-tracing] that
 allows asserting on the order and contents of [spans][tracing-spans] and
 [events][tracing-events].
 
@@ -62,7 +62,7 @@ better-tracing-mock = "= 0.1.0-beta.1"
 
 [tracing-spans]: https://docs.rs/tracing/0.1/tracing/#spans
 [tracing-events]: https://docs.rs/tracing/0.1/tracing/#events
-[better-subscriber]: https://docs.rs/tracing/0.1/tracing/trait.Subscriber.html
+[better-tracing]: https://docs.rs/tracing/0.1/tracing/trait.Subscriber.html
 [mock-subscriber-mod]: https://docs.rs/better-tracing-mock/0.1.0-beta.1/better_tracing_mock/subscriber/index.html
 [`MockSubscriber`]: https://docs.rs/better-tracing-mock/0.1.0-beta.1/better_tracing_mock/subscriber/struct.MockSubscriber.html
 

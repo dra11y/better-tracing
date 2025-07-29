@@ -1,7 +1,7 @@
 #![cfg(feature = "std")]
 
 use better_tracing_mock::*;
-use better_subscriber::prelude::*;
+use better_tracing::prelude::*;
 
 #[test]
 fn init_ext_works() {
@@ -22,8 +22,8 @@ fn init_ext_works() {
 #[test]
 #[cfg(feature = "fmt")]
 fn builders_are_init_ext() {
-    better_subscriber::fmt().set_default();
-    let _ = better_subscriber::fmt()
+    better_tracing::fmt().set_default();
+    let _ = better_tracing::fmt()
         .with_target(false)
         .compact()
         .try_init();
@@ -32,8 +32,8 @@ fn builders_are_init_ext() {
 #[test]
 #[cfg(all(feature = "fmt", feature = "env-filter"))]
 fn layered_is_init_ext() {
-    better_subscriber::registry()
-        .with(better_subscriber::fmt::layer())
-        .with(better_subscriber::EnvFilter::new("foo=info"))
+    better_tracing::registry()
+        .with(better_tracing::fmt::layer())
+        .with(better_tracing::EnvFilter::new("foo=info"))
         .set_default();
 }

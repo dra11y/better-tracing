@@ -57,7 +57,7 @@ use tracing_core::{Interest, Level, Metadata, Subscriber};
 /// levels to enable:
 ///
 /// ```
-/// use better_subscriber::{filter, prelude::*};
+/// use better_tracing::{filter, prelude::*};
 /// use tracing_core::Level;
 ///
 /// let filter = filter::Targets::new()
@@ -68,15 +68,15 @@ use tracing_core::{Interest, Level, Metadata, Subscriber};
 ///
 /// // Build a new subscriber with the `fmt` layer using the `Targets`
 /// // filter we constructed above.
-/// better_subscriber::registry()
-///     .with(better_subscriber::fmt::layer())
+/// better_tracing::registry()
+///     .with(better_tracing::fmt::layer())
 ///     .with(filter)
 ///     .init();
 /// ```
 ///
 /// [`LevelFilter::OFF`] can be used to disable a particular target:
 /// ```
-/// use better_subscriber::filter::{Targets, LevelFilter};
+/// use better_tracing::filter::{Targets, LevelFilter};
 /// use tracing_core::Level;
 ///
 /// let filter = Targets::new()
@@ -91,7 +91,7 @@ use tracing_core::{Interest, Level, Metadata, Subscriber};
 ///
 /// ```rust
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// use better_subscriber::filter;
+/// use better_tracing::filter;
 /// use tracing_core::Level;
 ///
 /// let filter = "my_crate=info,my_crate::interesting_module=trace,other_crate=debug"
@@ -115,7 +115,7 @@ use tracing_core::{Interest, Level, Metadata, Subscriber};
 /// [global filter][global]:
 ///
 /// ```rust
-/// use better_subscriber::{
+/// use better_tracing::{
 ///     fmt,
 ///     filter::{Targets, LevelFilter},
 ///     prelude::*,
@@ -134,7 +134,7 @@ use tracing_core::{Interest, Level, Metadata, Subscriber};
 ///     .with_writer(Arc::new(file))
 ///     .json();
 ///
-/// better_subscriber::registry()
+/// better_tracing::registry()
 ///     // Only log INFO and above to stdout, unless the span or event
 ///     // has the `my_crate::cool_module` target prefix.
 ///     .with(stdout_log
@@ -192,7 +192,7 @@ impl Targets {
     /// # Examples
     ///
     /// ```
-    /// use better_subscriber::filter;
+    /// use better_tracing::filter;
     /// use tracing_core::Level;
     ///
     /// let filter = filter::Targets::new()
@@ -205,7 +205,7 @@ impl Targets {
     ///
     /// [`LevelFilter::OFF`] can be used to disable a particular target:
     /// ```
-    /// use better_subscriber::filter::{Targets, LevelFilter};
+    /// use better_tracing::filter::{Targets, LevelFilter};
     /// use tracing_core::Level;
     ///
     /// let filter = Targets::new()
@@ -229,7 +229,7 @@ impl Targets {
     /// # Examples
     ///
     /// ```
-    /// use better_subscriber::filter;
+    /// use better_tracing::filter;
     /// use tracing_core::Level;
     ///
     /// let filter = filter::Targets::new()
@@ -244,7 +244,7 @@ impl Targets {
     ///
     /// [`LevelFilter::OFF`] can be used to disable a particular target:
     /// ```
-    /// use better_subscriber::filter::{Targets, LevelFilter};
+    /// use better_tracing::filter::{Targets, LevelFilter};
     /// use tracing_core::Level;
     ///
     /// let filter = Targets::new()
@@ -290,7 +290,7 @@ impl Targets {
     /// # Examples
     ///
     /// ```
-    /// use better_subscriber::filter::{LevelFilter, Targets};
+    /// use better_tracing::filter::{LevelFilter, Targets};
     ///
     /// let filter = Targets::new().with_default(LevelFilter::INFO);
     /// assert_eq!(filter.default_level(), Some(LevelFilter::INFO));
@@ -302,7 +302,7 @@ impl Targets {
     /// The default level is `None` if no default is set:
     ///
     /// ```
-    /// use better_subscriber::filter::Targets;
+    /// use better_tracing::filter::Targets;
     ///
     /// let filter = Targets::new();
     /// assert_eq!(filter.default_level(), None);
@@ -316,7 +316,7 @@ impl Targets {
     /// merging multiple `Targets`).
     ///
     /// ```
-    /// use better_subscriber::filter::{LevelFilter, Targets};
+    /// use better_tracing::filter::{LevelFilter, Targets};
     ///
     /// let filter = Targets::new().with_default(LevelFilter::OFF);
     /// assert_eq!(filter.default_level(), Some(LevelFilter::OFF));
@@ -341,7 +341,7 @@ impl Targets {
     /// # Examples
     ///
     /// ```
-    /// use better_subscriber::filter::{Targets, LevelFilter};
+    /// use better_tracing::filter::{Targets, LevelFilter};
     /// use tracing_core::Level;
     ///
     /// let filter = Targets::new()
@@ -381,7 +381,7 @@ impl Targets {
     /// # Examples
     ///
     /// ```
-    /// use better_subscriber::filter::{Targets, LevelFilter};
+    /// use better_tracing::filter::{Targets, LevelFilter};
     /// use tracing_core::Level;
     ///
     /// let filter = Targets::new()
@@ -512,7 +512,7 @@ impl fmt::Display for Targets {
 /// Merge the targets from one `Targets` with another:
 ///
 /// ```
-/// use better_subscriber::filter::Targets;
+/// use better_tracing::filter::Targets;
 /// use tracing_core::Level;
 ///
 /// let mut filter = Targets::new().with_target("my_crate", Level::INFO);

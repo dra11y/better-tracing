@@ -30,14 +30,14 @@
 //! added to constrain what types implementing `Subscriber` a `Layer` can wrap.
 //!
 //! `Layer`s may be added to a `Subscriber` by using the [`SubscriberExt::with`]
-//! method, which is provided by `better-subscriber`'s [prelude]. This method
+//! method, which is provided by `better-tracing`'s [prelude]. This method
 //! returns a [`Layered`] struct that implements `Subscriber` by composing the
 //! `Layer` with the `Subscriber`.
 //!
 //! For example:
 //! ```rust
-//! use better_subscriber::Layer;
-//! use better_subscriber::prelude::*;
+//! use better_tracing::Layer;
+//! use better_tracing::prelude::*;
 //! use tracing::Subscriber;
 //!
 //! pub struct MyLayer {
@@ -78,7 +78,7 @@
 //!
 //! Multiple `Layer`s may be composed in the same manner:
 //! ```rust
-//! # use better_subscriber::{Layer, layer::SubscriberExt};
+//! # use better_tracing::{Layer, layer::SubscriberExt};
 //! # use tracing::Subscriber;
 //! pub struct MyOtherLayer {
 //!     // ...
@@ -153,16 +153,16 @@
 //! # }
 //! # let cfg = Config { is_prod: false, path: "debug.log" };
 //! use std::fs::File;
-//! use better_subscriber::{Registry, prelude::*};
+//! use better_tracing::{Registry, prelude::*};
 //!
-//! let stdout_log = better_subscriber::fmt::layer().pretty();
+//! let stdout_log = better_tracing::fmt::layer().pretty();
 //! let subscriber = Registry::default().with(stdout_log);
 //!
 //! // The compile error will occur here because the if and else
 //! // branches have different (and therefore incompatible) types.
 //! let subscriber = if cfg.is_prod {
 //!     let file = File::create(cfg.path)?;
-//!     let layer = better_subscriber::fmt::layer()
+//!     let layer = better_tracing::fmt::layer()
 //!         .json()
 //!         .with_writer(Arc::new(file));
 //!     layer.with(subscriber)
@@ -188,15 +188,15 @@
 //! # }
 //! # let cfg = Config { is_prod: false, path: "debug.log" };
 //! use std::fs::File;
-//! use better_subscriber::{Registry, prelude::*};
+//! use better_tracing::{Registry, prelude::*};
 //!
-//! let stdout_log = better_subscriber::fmt::layer().pretty();
+//! let stdout_log = better_tracing::fmt::layer().pretty();
 //! let subscriber = Registry::default().with(stdout_log);
 //!
 //! // if `cfg.is_prod` is true, also log JSON-formatted logs to a file.
 //! let json_log = if cfg.is_prod {
 //!     let file = File::create(cfg.path)?;
-//!     let json_log = better_subscriber::fmt::layer()
+//!     let json_log = better_tracing::fmt::layer()
 //!         .json()
 //!         .with_writer(file);
 //!     Some(json_log)
@@ -221,7 +221,7 @@
 //! For example, a function that configures a [`Layer`] to log to one of
 //! several outputs might return a `Box<dyn Layer<S> + Send + Sync + 'static>`:
 //! ```
-//! use better_subscriber::{
+//! use better_tracing::{
 //!     Layer,
 //!     registry::LookupSpan,
 //!     prelude::*,
@@ -242,7 +242,7 @@
 //!         for<'a> S: LookupSpan<'a>,
 //!     {
 //!         // Shared configuration regardless of where logs are output to.
-//!         let fmt = better_subscriber::fmt::layer()
+//!         let fmt = better_tracing::fmt::layer()
 //!             .with_target(true)
 //!             .with_thread_names(true);
 //!
@@ -259,7 +259,7 @@
 //! }
 //!
 //! let config = LogConfig::Stdout;
-//! better_subscriber::registry()
+//! better_tracing::registry()
 //!     .with(config.layer())
 //!     .init();
 //! ```
@@ -272,7 +272,7 @@
 //! can be used to add a variable number of `Layer`s to a `Subscriber`:
 //!
 //! ```
-//! use better_subscriber::{Layer, prelude::*};
+//! use better_tracing::{Layer, prelude::*};
 //! struct MyLayer {
 //!     // ...
 //! }
@@ -294,7 +294,7 @@
 //!     layers.push(MyLayer::new());
 //! }
 //!
-//! better_subscriber::registry()
+//! better_tracing::registry()
 //!     .with(layers)
 //!     .init();
 //! ```
@@ -304,7 +304,7 @@
 //! be used. For example:
 //!
 //! ```
-//! use better_subscriber::{filter::LevelFilter, Layer, prelude::*};
+//! use better_tracing::{filter::LevelFilter, Layer, prelude::*};
 //! use std::fs::File;
 //! # fn main() -> Result<(), Box<dyn std::error::Error>> {
 //! struct Config {
@@ -327,7 +327,7 @@
 //!
 //! if cfg.enable_log_file {
 //!     let file = File::create("myapp.log")?;
-//!     let layer = better_subscriber::fmt::layer()
+//!     let layer = better_tracing::fmt::layer()
 //!         .with_thread_names(true)
 //!         .with_target(true)
 //!         .json()
@@ -339,7 +339,7 @@
 //! }
 //!
 //! if cfg.enable_stdout {
-//!     let layer = better_subscriber::fmt::layer()
+//!     let layer = better_tracing::fmt::layer()
 //!         .pretty()
 //!         .with_filter(LevelFilter::INFO)
 //!         // Box the layer as a type-erased trait object, so that it can
@@ -349,7 +349,7 @@
 //! }
 //!
 //! if cfg.enable_stdout {
-//!     let layer = better_subscriber::fmt::layer()
+//!     let layer = better_tracing::fmt::layer()
 //!         .with_target(false)
 //!         .with_filter(LevelFilter::WARN)
 //!         // Box the layer as a type-erased trait object, so that it can
@@ -358,7 +358,7 @@
 //!     layers.push(layer);
 //! }
 //!
-//! better_subscriber::registry()
+//! better_tracing::registry()
 //!     .with(layers)
 //!     .init();
 //!# Ok(()) }
@@ -473,7 +473,7 @@
 //! example:
 //!
 //! ```rust
-//! # use better_subscriber::{filter::filter_fn, Layer};
+//! # use better_tracing::{filter::filter_fn, Layer};
 //! # use tracing_core::{Metadata, subscriber::Subscriber};
 //! # struct MyLayer<S>(std::marker::PhantomData<S>);
 //! # impl<S> MyLayer<S> { fn new() -> Self { Self(std::marker::PhantomData)} }
@@ -499,7 +499,7 @@
 //! standard out, a [`Filter`] can be added to the access log layer:
 //!
 //! ```
-//! use better_subscriber::{filter, prelude::*};
+//! use better_tracing::{filter, prelude::*};
 //!
 //! // Generates an HTTP access log.
 //! let access_log = // ...
@@ -514,11 +514,11 @@
 //! }));
 //!
 //! // A general-purpose logging layer.
-//! let fmt_layer = better_subscriber::fmt::layer();
+//! let fmt_layer = better_tracing::fmt::layer();
 //!
 //! // Build a subscriber that combines the access log and stdout log
 //! // layers.
-//! better_subscriber::registry()
+//! better_tracing::registry()
 //!     .with(fmt_layer)
 //!     .with(access_log)
 //!     .init();
@@ -530,13 +530,13 @@
 //! the previous example:
 //!
 //! ```
-//! use better_subscriber::{filter::{filter_fn, LevelFilter}, prelude::*};
+//! use better_tracing::{filter::{filter_fn, LevelFilter}, prelude::*};
 //!
 //! let access_log = // ...
 //!     # LevelFilter::INFO;
-//! let fmt_layer = better_subscriber::fmt::layer();
+//! let fmt_layer = better_tracing::fmt::layer();
 //!
-//! better_subscriber::registry()
+//! better_tracing::registry()
 //!     // Add the filter for the "http_access" target to the access
 //!     // log layer, like before.
 //!     .with(access_log.with_filter(filter_fn(|metadata| {
@@ -574,7 +574,7 @@
 //! The layers and filters would be composed thusly:
 //!
 //! ```
-//! use better_subscriber::{filter::LevelFilter, prelude::*};
+//! use better_tracing::{filter::LevelFilter, prelude::*};
 //!
 //! let layer_a = // ...
 //! # LevelFilter::INFO;
@@ -589,7 +589,7 @@
 //!     // ...and then add an `INFO` `LevelFilter` to that layer:
 //!     .with_filter(LevelFilter::INFO);
 //!
-//! better_subscriber::registry()
+//! better_tracing::registry()
 //!     // Add `layer_c` with a `DEBUG` filter.
 //!     .with(layer_c.with_filter(LevelFilter::DEBUG))
 //!     .with(info_layers)
@@ -619,23 +619,23 @@
 //! # // wrap this in a function so we don't actually create `debug.log` when
 //! # // running the doctests..
 //! # fn docs() -> Result<(), Box<dyn std::error::Error + 'static>> {
-//! use better_subscriber::{filter, prelude::*};
+//! use better_tracing::{filter, prelude::*};
 //! use std::{fs::File, sync::Arc};
 //!
 //! // A layer that logs events to stdout using the human-readable "pretty"
 //! // format.
-//! let stdout_log = better_subscriber::fmt::layer()
+//! let stdout_log = better_tracing::fmt::layer()
 //!     .pretty();
 //!
 //! // A layer that logs events to a file.
 //! let file = File::create("debug.log")?;
-//! let debug_log = better_subscriber::fmt::layer()
+//! let debug_log = better_tracing::fmt::layer()
 //!     .with_writer(Arc::new(file));
 //!
 //! // A layer that collects metrics using specific events.
 //! let metrics_layer = /* ... */ filter::LevelFilter::INFO;
 //!
-//! better_subscriber::registry()
+//! better_tracing::registry()
 //!     .with(
 //!         stdout_log
 //!             // Add an `INFO` filter to the stdout logging layer
@@ -948,7 +948,7 @@ where
     /// it wraps. For example:
     ///
     /// ```rust
-    /// # use better_subscriber::layer::Layer;
+    /// # use better_tracing::layer::Layer;
     /// # use tracing_core::Subscriber;
     /// pub struct FooLayer {
     ///     // ...
@@ -997,7 +997,7 @@ where
     /// Multiple layers may be composed in this manner:
     ///
     /// ```rust
-    /// # use better_subscriber::layer::Layer;
+    /// # use better_tracing::layer::Layer;
     /// # use tracing_core::Subscriber;
     /// # pub struct FooLayer {}
     /// # pub struct BarLayer {}
@@ -1054,7 +1054,7 @@ where
     ///
     /// For example:
     /// ```rust
-    /// # use better_subscriber::layer::Layer;
+    /// # use better_tracing::layer::Layer;
     /// # use tracing_core::Subscriber;
     /// pub struct FooLayer {
     ///     // ...
@@ -1130,7 +1130,7 @@ where
     ///
     /// ```compile_fail
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-    /// use better_subscriber::{Layer, filter::LevelFilter, prelude::*};
+    /// use better_tracing::{Layer, filter::LevelFilter, prelude::*};
     /// use std::{path::PathBuf, fs::File, io};
     ///
     /// /// Configures whether logs are emitted to a file, to stdout, or to stderr.
@@ -1148,7 +1148,7 @@ where
     ///     // If logging to a file, use a maximally-verbose configuration.
     ///     LogConfig::File(path) => {
     ///         let file = File::create(path)?;
-    ///         better_subscriber::fmt::layer()
+    ///         better_tracing::fmt::layer()
     ///             .with_thread_ids(true)
     ///             .with_thread_names(true)
     ///             // Selecting the JSON logging format changes the layer's
@@ -1161,17 +1161,17 @@ where
     ///     },
     ///
     ///     // If logging to stdout, use a pretty, human-readable configuration.
-    ///     LogConfig::Stdout => better_subscriber::fmt::layer()
+    ///     LogConfig::Stdout => better_tracing::fmt::layer()
     ///         // Selecting the "pretty" logging format changes the
     ///         // layer's type!
     ///         .pretty()
     ///         .with_writer(io::stdout)
     ///         // Add a filter based on the RUST_LOG environment variable;
     ///         // this changes the type too!
-    ///         .and_then(better_subscriber::EnvFilter::from_default_env()),
+    ///         .and_then(better_tracing::EnvFilter::from_default_env()),
     ///
     ///     // If logging to stdout, only log errors and warnings.
-    ///     LogConfig::Stderr => better_subscriber::fmt::layer()
+    ///     LogConfig::Stderr => better_tracing::fmt::layer()
     ///         // Changing the writer changes the layer's type
     ///         .with_writer(io::stderr)
     ///         // Only log the `WARN` and `ERROR` levels. Adding a filter
@@ -1179,7 +1179,7 @@ where
     ///         .with_filter(LevelFilter::WARN),
     /// };
     ///
-    /// better_subscriber::registry()
+    /// better_tracing::registry()
     ///     .with(log_layer)
     ///     .init();
     /// # Ok(()) }
@@ -1190,7 +1190,7 @@ where
     ///
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-    /// # use better_subscriber::{Layer, filter::LevelFilter, prelude::*};
+    /// # use better_tracing::{Layer, filter::LevelFilter, prelude::*};
     /// # use std::{path::PathBuf, fs::File, io};
     /// # pub enum LogConfig {
     /// #    File(PathBuf),
@@ -1201,7 +1201,7 @@ where
     /// let log_layer = match config {
     ///     LogConfig::File(path) => {
     ///         let file = File::create(path)?;
-    ///         better_subscriber::fmt::layer()
+    ///         better_tracing::fmt::layer()
     ///             .with_thread_ids(true)
     ///             .with_thread_names(true)
     ///             .json()
@@ -1211,21 +1211,21 @@ where
     ///             .boxed()
     ///     },
     ///
-    ///     LogConfig::Stdout => better_subscriber::fmt::layer()
+    ///     LogConfig::Stdout => better_tracing::fmt::layer()
     ///         .pretty()
     ///         .with_writer(io::stdout)
-    ///         .and_then(better_subscriber::EnvFilter::from_default_env())
+    ///         .and_then(better_tracing::EnvFilter::from_default_env())
     ///         // Erase the type by boxing the layer
     ///         .boxed(),
     ///
-    ///     LogConfig::Stderr => better_subscriber::fmt::layer()
+    ///     LogConfig::Stderr => better_tracing::fmt::layer()
     ///         .with_writer(io::stderr)
     ///         .with_filter(LevelFilter::WARN)
     ///         // Erase the type by boxing the layer
     ///         .boxed(),
     /// };
     ///
-    /// better_subscriber::registry()
+    /// better_tracing::registry()
     ///     .with(log_layer)
     ///     .init();
     /// # Ok(()) }
@@ -1341,7 +1341,7 @@ feature! {
         /// follows:
         ///
         /// ```
-        /// use better_subscriber::layer;
+        /// use better_tracing::layer;
         /// use tracing_core::{Metadata, subscriber::Interest};
         ///
         /// struct MyFilter {

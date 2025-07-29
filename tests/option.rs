@@ -1,11 +1,11 @@
 #![cfg(feature = "registry")]
 use tracing_core::{subscriber::Interest, LevelFilter, Metadata, Subscriber};
-use better_subscriber::{layer, prelude::*};
+use better_tracing::{layer, prelude::*};
 
 // A basic layer that returns its inner for `max_level_hint`
 #[derive(Debug)]
 struct BasicLayer(Option<LevelFilter>);
-impl<S: Subscriber> better_subscriber::Layer<S> for BasicLayer {
+impl<S: Subscriber> better_tracing::Layer<S> for BasicLayer {
     fn register_callsite(&self, _m: &Metadata<'_>) -> Interest {
         Interest::sometimes()
     }
@@ -22,13 +22,13 @@ impl<S: Subscriber> better_subscriber::Layer<S> for BasicLayer {
 // This test is just used to compare to the tests below
 #[test]
 fn just_layer() {
-    let subscriber = better_subscriber::registry().with(LevelFilter::INFO);
+    let subscriber = better_tracing::registry().with(LevelFilter::INFO);
     assert_eq!(subscriber.max_level_hint(), Some(LevelFilter::INFO));
 }
 
 #[test]
 fn subscriber_and_option_some_layer() {
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(LevelFilter::INFO)
         .with(Some(LevelFilter::DEBUG));
     assert_eq!(subscriber.max_level_hint(), Some(LevelFilter::DEBUG));
@@ -37,7 +37,7 @@ fn subscriber_and_option_some_layer() {
 #[test]
 fn subscriber_and_option_none_layer() {
     // None means the other layer takes control
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(LevelFilter::ERROR)
         .with(None::<LevelFilter>);
     assert_eq!(subscriber.max_level_hint(), Some(LevelFilter::ERROR));
@@ -46,14 +46,14 @@ fn subscriber_and_option_none_layer() {
 #[test]
 fn just_option_some_layer() {
     // Just a None means everything is off
-    let subscriber = better_subscriber::registry().with(None::<LevelFilter>);
+    let subscriber = better_tracing::registry().with(None::<LevelFilter>);
     assert_eq!(subscriber.max_level_hint(), Some(LevelFilter::OFF));
 }
 
 /// Tests that the logic tested in `doesnt_override_none` works through the reload subscriber
 #[test]
 fn just_option_none_layer() {
-    let subscriber = better_subscriber::registry().with(Some(LevelFilter::ERROR));
+    let subscriber = better_tracing::registry().with(Some(LevelFilter::ERROR));
     assert_eq!(subscriber.max_level_hint(), Some(LevelFilter::ERROR));
 }
 
@@ -61,7 +61,7 @@ fn just_option_none_layer() {
 #[test]
 fn none_outside_doesnt_override_max_level() {
     // None means the other layer takes control
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(BasicLayer(None))
         .with(None::<LevelFilter>);
     assert_eq!(
@@ -72,7 +72,7 @@ fn none_outside_doesnt_override_max_level() {
     );
 
     // The `None`-returning layer still wins
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(BasicLayer(None))
         .with(Some(LevelFilter::ERROR));
     assert_eq!(
@@ -83,7 +83,7 @@ fn none_outside_doesnt_override_max_level() {
     );
 
     // Check that we aren't doing anything truly wrong
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(BasicLayer(Some(LevelFilter::DEBUG)))
         .with(None::<LevelFilter>);
     assert_eq!(
@@ -96,7 +96,7 @@ fn none_outside_doesnt_override_max_level() {
     // Test that per-subscriber filters aren't affected
 
     // One layer is None so it "wins"
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(BasicLayer(None))
         .with(None::<LevelFilter>.with_filter(LevelFilter::DEBUG));
     assert_eq!(
@@ -107,7 +107,7 @@ fn none_outside_doesnt_override_max_level() {
     );
 
     // The max-levels wins
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(BasicLayer(Some(LevelFilter::INFO)))
         .with(None::<LevelFilter>.with_filter(LevelFilter::DEBUG));
     assert_eq!(
@@ -118,7 +118,7 @@ fn none_outside_doesnt_override_max_level() {
     );
 
     // Test filter on the other layer
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(BasicLayer(Some(LevelFilter::INFO)).with_filter(LevelFilter::DEBUG))
         .with(None::<LevelFilter>);
     assert_eq!(
@@ -127,7 +127,7 @@ fn none_outside_doesnt_override_max_level() {
         "\n stack: {:#?}",
         subscriber
     );
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(BasicLayer(None).with_filter(LevelFilter::DEBUG))
         .with(None::<LevelFilter>);
     assert_eq!(
@@ -138,7 +138,7 @@ fn none_outside_doesnt_override_max_level() {
     );
 
     // The `OFF` from `None` over overridden.
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(BasicLayer(Some(LevelFilter::INFO)))
         .with(None::<LevelFilter>);
     assert_eq!(
@@ -153,7 +153,7 @@ fn none_outside_doesnt_override_max_level() {
 #[test]
 fn none_inside_doesnt_override_max_level() {
     // None means the other layer takes control
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(None::<LevelFilter>)
         .with(BasicLayer(None));
     assert_eq!(
@@ -164,7 +164,7 @@ fn none_inside_doesnt_override_max_level() {
     );
 
     // The `None`-returning layer still wins
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(Some(LevelFilter::ERROR))
         .with(BasicLayer(None));
     assert_eq!(
@@ -175,7 +175,7 @@ fn none_inside_doesnt_override_max_level() {
     );
 
     // Check that we aren't doing anything truly wrong
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(None::<LevelFilter>)
         .with(BasicLayer(Some(LevelFilter::DEBUG)));
     assert_eq!(
@@ -188,7 +188,7 @@ fn none_inside_doesnt_override_max_level() {
     // Test that per-subscriber filters aren't affected
 
     // One layer is None so it "wins"
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(None::<LevelFilter>.with_filter(LevelFilter::DEBUG))
         .with(BasicLayer(None));
     assert_eq!(
@@ -199,7 +199,7 @@ fn none_inside_doesnt_override_max_level() {
     );
 
     // The max-levels wins
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(None::<LevelFilter>.with_filter(LevelFilter::DEBUG))
         .with(BasicLayer(Some(LevelFilter::INFO)));
     assert_eq!(
@@ -210,7 +210,7 @@ fn none_inside_doesnt_override_max_level() {
     );
 
     // Test filter on the other layer
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(None::<LevelFilter>)
         .with(BasicLayer(Some(LevelFilter::INFO)).with_filter(LevelFilter::DEBUG));
     assert_eq!(
@@ -219,7 +219,7 @@ fn none_inside_doesnt_override_max_level() {
         "\n stack: {:#?}",
         subscriber
     );
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(None::<LevelFilter>)
         .with(BasicLayer(None).with_filter(LevelFilter::DEBUG));
     assert_eq!(
@@ -230,7 +230,7 @@ fn none_inside_doesnt_override_max_level() {
     );
 
     // The `OFF` from `None` over overridden.
-    let subscriber = better_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(None::<LevelFilter>)
         .with(BasicLayer(Some(LevelFilter::INFO)));
     assert_eq!(
@@ -244,10 +244,10 @@ fn none_inside_doesnt_override_max_level() {
 /// Tests that the logic tested in `doesnt_override_none` works through the reload layer
 #[test]
 fn reload_works_with_none() {
-    let (layer1, handle1) = better_subscriber::reload::Layer::new(None::<BasicLayer>);
-    let (layer2, _handle2) = better_subscriber::reload::Layer::new(None::<BasicLayer>);
+    let (layer1, handle1) = better_tracing::reload::Layer::new(None::<BasicLayer>);
+    let (layer2, _handle2) = better_tracing::reload::Layer::new(None::<BasicLayer>);
 
-    let subscriber = better_subscriber::registry().with(layer1).with(layer2);
+    let subscriber = better_tracing::registry().with(layer1).with(layer2);
     assert_eq!(subscriber.max_level_hint(), Some(LevelFilter::OFF));
 
     // reloading one should pass through correctly.

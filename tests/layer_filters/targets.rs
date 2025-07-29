@@ -1,5 +1,5 @@
 use super::*;
-use better_subscriber::{
+use better_tracing::{
     filter::{filter_fn, Targets},
     prelude::*,
 };
@@ -22,9 +22,9 @@ fn log_events() {
         .with_target(inner::MODULE_PATH, LevelFilter::WARN);
 
     let layer =
-        better_subscriber::layer::Identity::new().with_filter(filter_fn(move |_meta| true));
+        better_tracing::layer::Identity::new().with_filter(filter_fn(move |_meta| true));
 
-    let _guard = better_subscriber::registry()
+    let _guard = better_tracing::registry()
         .with(filter)
         .with(layer)
         .set_default();
@@ -44,7 +44,7 @@ fn inner_layer_short_circuits() {
 
     let filter = Targets::new().with_target("magic_target", LevelFilter::DEBUG);
 
-    let _guard = better_subscriber::registry()
+    let _guard = better_tracing::registry()
         // Note: we don't just use a `LevelFilter` for the global filter here,
         // because it will just return a max level filter, and the chain of
         // `register_callsite` calls that would trigger the bug never happens...

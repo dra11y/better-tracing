@@ -1,5 +1,6 @@
-
 # Created by https://www.gitignore.io/api/rust,macos,visualstudiocode
+
+.github/*.md
 
 ### macOS ###
 # General

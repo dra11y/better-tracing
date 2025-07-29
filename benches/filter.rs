@@ -1,4 +1,4 @@
-use better_subscriber::{prelude::*, EnvFilter};
+use better_tracing::{prelude::*, EnvFilter};
 use criterion::{criterion_group, criterion_main, Criterion};
 use std::time::Duration;
 use tracing::{dispatcher::Dispatch, span, Event, Id, Metadata};

@@ -1051,7 +1051,7 @@ where
         match self.expected.lock().unwrap().pop_front() {
             None => {}
             Some(Expect::Event(mut expected)) => {
-                #[cfg(feature = "better-subscriber")]
+                #[cfg(feature = "better-tracing")]
                 {
                     if expected.scope_mut().is_some() {
                         unimplemented!(
@@ -1311,7 +1311,7 @@ where
 }
 
 impl MockHandle {
-    #[cfg(feature = "better-subscriber")]
+    #[cfg(feature = "better-tracing")]
     pub(crate) fn new(expected: Arc<Mutex<VecDeque<Expect>>>, name: String) -> Self {
         Self(expected, name)
     }

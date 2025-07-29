@@ -435,7 +435,7 @@ impl ExpectedEvent {
     ///
     /// ```
     /// use better_tracing_mock::{expect, layer};
-    /// use better_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let event = expect::event().in_scope([
     ///     expect::span().named("parent_span"),
@@ -448,8 +448,8 @@ impl ExpectedEvent {
     ///     .event(event)
     ///     .run_with_handle();
     ///
-    /// let _subscriber = better_subscriber::registry()
-    ///     .with(layer.with_filter(better_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber = better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// let grandparent = tracing::info_span!("grandparent_span");
@@ -465,7 +465,7 @@ impl ExpectedEvent {
     ///
     /// ```should_panic
     /// use better_tracing_mock::{expect, layer};
-    /// use better_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let event = expect::event().in_scope([
     ///     expect::span().named("parent_span"),
@@ -477,8 +477,8 @@ impl ExpectedEvent {
     ///     .event(event)
     ///     .run_with_handle();
     ///
-    /// let _subscriber = better_subscriber::registry()
-    ///     .with(layer.with_filter(better_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber = better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// let parent = tracing::info_span!("parent_span");
@@ -494,7 +494,7 @@ impl ExpectedEvent {
     ///
     /// ```should_panic
     /// use better_tracing_mock::{expect, layer};
-    /// use better_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let event = expect::event().in_scope(None);
     ///
@@ -503,8 +503,8 @@ impl ExpectedEvent {
     ///     .event(event)
     ///     .run_with_handle();
     ///
-    /// let _subscriber = better_subscriber::registry()
-    ///     .with(layer.with_filter(better_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber = better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// let parent = tracing::info_span!("parent_span");
@@ -516,7 +516,7 @@ impl ExpectedEvent {
     ///
     /// [`MockLayer`]: struct@crate::layer::MockLayer
     /// [`MockSubscriber`]: struct@crate::subscriber::MockSubscriber
-    #[cfg(feature = "better-subscriber")]
+    #[cfg(feature = "better-tracing")]
     pub fn in_scope(self, spans: impl IntoIterator<Item = span::ExpectedSpan>) -> Self {
         Self {
             in_spans: Some(spans.into_iter().collect()),
@@ -526,7 +526,7 @@ impl ExpectedEvent {
 
     /// Provides access to the expected scope (spans) for this expected
     /// event.
-    #[cfg(feature = "better-subscriber")]
+    #[cfg(feature = "better-tracing")]
     pub(crate) fn scope_mut(&mut self) -> Option<&mut [span::ExpectedSpan]> {
         self.in_spans.as_mut().map(|s| &mut s[..])
     }

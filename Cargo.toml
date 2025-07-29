@@ -3,7 +3,7 @@ resolver = "2"
 members = [".", "better-tracing-mock"]
 
 [package]
-name = "better-subscriber"
+name = "better-tracing"
 version = "0.4.0"
 authors = ["Tom Grushka <tom@dra11y.com>", "Eliza Weisman <eliza@buoyant.io>", "David Barsky <me@davidbarsky.com>", "Tokio Contributors <team@tokio.rs>"]
 edition = "2018"
@@ -12,7 +12,7 @@ readme = "README.md"
 repository = "https://github.com/tokio-rs/tracing"
 homepage = "https://tokio.rs"
 description = """
-Drop-in fork of tracing-subscriber with the customization you need!
+Drop-in fork of tracing-subscriber with the usability, accessibility, customization, and features you need!
 """
 categories = ["development-tools::debugging", "development-tools::profiling", "asynchronous"]
 keywords = ["tracing-subscriber", "logging", "tracing", "metrics", "subscriber"]
@@ -39,7 +39,7 @@ regex = []
 [workspace.dependencies]
 tracing-core = { version = "0.1.33", default-features = false }
 tracing = { version = "0.1.41", default-features = false }
-better-subscriber = { path = "." }
+better-tracing = { path = "." }
 
 [dependencies]
 tracing-core.workspace = true
@@ -76,7 +76,7 @@ valuable-serde = { version = "0.1.0", optional = true, default-features = false 
 
 [dev-dependencies]
 tracing = { version = "0.1.41" }
-better-tracing-mock = { path = "./better-tracing-mock", features = ["better-subscriber"] }
+better-tracing-mock = { path = "./better-tracing-mock", features = ["better-tracing"] }
 log = "0.4.17"
 tracing-log = { version = "0.2.0" }
 criterion = { version = "0.3.6", default-features = false }

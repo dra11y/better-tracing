@@ -21,7 +21,7 @@ rust-version = "1.65.0"
 [dependencies]
 tracing = { workspace = true, features = ["std", "attributes"] }
 tracing-core = { workspace = true }
-better-subscriber = { workspace = true, features = ["registry"], optional = true }
+better-tracing = { workspace = true, features = ["registry"], optional = true }
 
 # Fix minimal-versions; tokio-test fails with otherwise acceptable 0.1.0
 tokio-stream = { version = "0.1.9", optional = true }

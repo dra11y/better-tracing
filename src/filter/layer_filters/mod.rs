@@ -14,7 +14,7 @@
 //!
 //! As described in the API documentation, the [`Filter`] trait defines a
 //! filtering strategy for a per-layer filter. We expect there will be a variety
-//! of implementations of [`Filter`], both in `better-subscriber` and in user
+//! of implementations of [`Filter`], both in `better-tracing` and in user
 //! code.
 //!
 //! To actually *use* a [`Filter`] implementation, it is combined with a
@@ -76,7 +76,7 @@ pub struct Filtered<L, F, S> {
 /// **Note**: Currently, the [`Registry`] type provided by this crate is the
 /// **only** [`Subscriber`] implementation capable of participating in per-layer
 /// filtering. Therefore, the `FilterId` type cannot currently be constructed by
-/// code outside of `better-subscriber`. In the future, new APIs will be added to `better-subscriber` to
+/// code outside of `better-tracing`. In the future, new APIs will be added to `better-tracing` to
 /// allow non-Registry [`Subscriber`]s to also participate in per-layer
 /// filtering. When those APIs are added, subscribers will be responsible
 /// for generating and assigning `FilterId`s.
@@ -190,7 +190,7 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// above a certain level:
     ///
     /// ```
-    /// use better_subscriber::{
+    /// use better_tracing::{
     ///     filter::{filter_fn, LevelFilter, FilterExt},
     ///     prelude::*,
     /// };
@@ -207,8 +207,8 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// // spans and events that *both* filters will enable:
     /// let filter = target_filter.and(level_filter);
     ///
-    /// better_subscriber::registry()
-    ///     .with(better_subscriber::fmt::layer().with_filter(filter))
+    /// better_tracing::registry()
+    ///     .with(better_tracing::fmt::layer().with_filter(filter))
     ///     .init();
     ///
     /// // This event will *not* be enabled:
@@ -238,7 +238,7 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// Enabling spans and events at the `INFO` level and above, and all spans
     /// and events with a particular target:
     /// ```
-    /// use better_subscriber::{
+    /// use better_tracing::{
     ///     filter::{filter_fn, LevelFilter, FilterExt},
     ///     prelude::*,
     /// };
@@ -256,8 +256,8 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// // `interesting_target`.
     /// let filter = level_filter.or(target_filter);
     ///
-    /// better_subscriber::registry()
-    ///     .with(better_subscriber::fmt::layer().with_filter(filter))
+    /// better_tracing::registry()
+    ///     .with(better_tracing::fmt::layer().with_filter(filter))
     ///     .init();
     ///
     /// // This event will *not* be enabled:
@@ -277,7 +277,7 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// conjunction with the [`and`] combinator:
     ///
     /// ```
-    /// use better_subscriber::{
+    /// use better_tracing::{
     ///     filter::{filter_fn, LevelFilter, FilterExt},
     ///     prelude::*,
     /// };
@@ -297,8 +297,8 @@ pub trait FilterExt<S>: layer::Filter<S> {
     ///     // `my_crate`, enable it if it has the `WARN` level or lower:
     ///     .or(LevelFilter::WARN);
     ///
-    /// better_subscriber::registry()
-    ///     .with(better_subscriber::fmt::layer().with_filter(filter))
+    /// better_tracing::registry()
+    ///     .with(better_tracing::fmt::layer().with_filter(filter))
     ///     .init();
     /// ```
     ///
@@ -390,7 +390,7 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// since the `if` and `else` clause produce filters of different types:
     ///
     /// ```compile_fail
-    /// use better_subscriber::{
+    /// use better_tracing::{
     ///     filter::{filter_fn, LevelFilter, FilterExt},
     ///     prelude::*,
     /// };
@@ -409,8 +409,8 @@ pub trait FilterExt<S>: layer::Filter<S> {
     ///         .and(LevelFilter::INFO)
     /// };
     ///
-    /// better_subscriber::registry()
-    ///     .with(better_subscriber::fmt::layer().with_filter(filter))
+    /// better_tracing::registry()
+    ///     .with(better_tracing::fmt::layer().with_filter(filter))
     ///     .init();
     /// ```
     ///
@@ -420,7 +420,7 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// following code *does* compile:
     ///
     /// ```
-    /// use better_subscriber::{
+    /// use better_tracing::{
     ///     filter::{filter_fn, LevelFilter, FilterExt},
     ///     prelude::*,
     /// };
@@ -441,8 +441,8 @@ pub trait FilterExt<S>: layer::Filter<S> {
     ///         .boxed()
     /// };
     ///
-    /// better_subscriber::registry()
-    ///     .with(better_subscriber::fmt::layer().with_filter(filter))
+    /// better_tracing::registry()
+    ///     .with(better_tracing::fmt::layer().with_filter(filter))
     ///     .init();
     /// ```
     ///
@@ -658,7 +658,7 @@ impl<L, F, S> Filtered<L, F, S> {
     ///
     /// ```
     /// # use tracing::info;
-    /// # use better_subscriber::{filter,fmt,reload,Registry,prelude::*};
+    /// # use better_tracing::{filter,fmt,reload,Registry,prelude::*};
     /// # fn main() {
     /// let filtered_layer = fmt::Layer::default().with_filter(filter::LevelFilter::WARN);
     /// let (filtered_layer, reload_handle) = reload::Layer::new(filtered_layer);
@@ -691,7 +691,7 @@ impl<L, F, S> Filtered<L, F, S> {
     ///
     /// ```
     /// # use tracing::info;
-    /// # use better_subscriber::{filter,fmt,reload,Registry,prelude::*};
+    /// # use better_tracing::{filter,fmt,reload,Registry,prelude::*};
     /// # fn non_blocking<T: std::io::Write>(writer: T) -> (fn() -> std::io::Stdout) {
     /// #   std::io::stdout
     /// # }
@@ -1257,7 +1257,7 @@ impl FilterState {
 }
 /// This is a horrible and bad abuse of the downcasting system to expose
 /// *internally* whether a layer has per-layer filtering, within
-/// `better-subscriber`, without exposing a public API for it.
+/// `better-tracing`, without exposing a public API for it.
 ///
 /// If a `Layer` has per-layer filtering, it will downcast to a
 /// `MagicPlfDowncastMarker`. Since layers which contain other layers permit

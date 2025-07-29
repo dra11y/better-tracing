@@ -21,8 +21,8 @@ use tracing_core::{
 /// Constructing a layer with the default configuration:
 ///
 /// ```rust
-/// use better_subscriber::{fmt, Registry};
-/// use better_subscriber::prelude::*;
+/// use better_tracing::{fmt, Registry};
+/// use better_tracing::prelude::*;
 ///
 /// let subscriber = Registry::default()
 ///     .with(fmt::Layer::default());
@@ -33,8 +33,8 @@ use tracing_core::{
 /// Overriding the layer's behavior:
 ///
 /// ```rust
-/// use better_subscriber::{fmt, Registry};
-/// use better_subscriber::prelude::*;
+/// use better_tracing::{fmt, Registry};
+/// use better_tracing::prelude::*;
 ///
 /// let fmt_layer = fmt::layer()
 ///    .with_target(false) // don't include event targets when logging
@@ -47,14 +47,14 @@ use tracing_core::{
 /// Setting a custom event formatter:
 ///
 /// ```rust
-/// use better_subscriber::fmt::{self, format, time};
-/// use better_subscriber::prelude::*;
+/// use better_tracing::fmt::{self, format, time};
+/// use better_tracing::prelude::*;
 ///
 /// let fmt = format().with_timer(time::Uptime::default());
 /// let fmt_layer = fmt::layer()
 ///     .event_format(fmt)
 ///     .with_target(false);
-/// # let subscriber = fmt_layer.with_subscriber(better_subscriber::registry::Registry::default());
+/// # let subscriber = fmt_layer.with_subscriber(better_tracing::registry::Registry::default());
 /// # tracing::subscriber::set_global_default(subscriber).unwrap();
 /// ```
 ///
@@ -101,13 +101,13 @@ where
     ///
     /// Setting a type implementing [`FormatEvent`] as the formatter:
     /// ```rust
-    /// use better_subscriber::fmt::{self, format};
+    /// use better_tracing::fmt::{self, format};
     ///
     /// let layer = fmt::layer()
     ///     .event_format(format().compact());
     /// # // this is necessary for type inference.
-    /// # use better_subscriber::Layer as _;
-    /// # let _ = layer.with_subscriber(better_subscriber::registry::Registry::default());
+    /// # use better_tracing::Layer as _;
+    /// # let _ = layer.with_subscriber(better_tracing::registry::Registry::default());
     /// ```
     /// [`FormatEvent`]: format::FormatEvent
     /// [`Event`]: tracing::Event
@@ -136,11 +136,11 @@ where
     /// Updating an event formatter:
     ///
     /// ```rust
-    /// let layer = better_subscriber::fmt::layer()
+    /// let layer = better_tracing::fmt::layer()
     ///     .map_event_format(|e| e.compact());
     /// # // this is necessary for type inference.
-    /// # use better_subscriber::Layer as _;
-    /// # let _ = layer.with_subscriber(better_subscriber::registry::Registry::default());
+    /// # use better_tracing::Layer as _;
+    /// # let _ = layer.with_subscriber(better_tracing::registry::Registry::default());
     /// ```
     pub fn map_event_format<E2>(self, f: impl FnOnce(E) -> E2) -> Layer<S, N, E2, W>
     where
@@ -168,13 +168,13 @@ impl<S, N, E, W> Layer<S, N, E, W> {
     ///
     /// ```rust
     /// use std::io;
-    /// use better_subscriber::fmt;
+    /// use better_tracing::fmt;
     ///
     /// let layer = fmt::layer()
     ///     .with_writer(io::stderr);
     /// # // this is necessary for type inference.
-    /// # use better_subscriber::Layer as _;
-    /// # let _ = layer.with_subscriber(better_subscriber::registry::Registry::default());
+    /// # use better_tracing::Layer as _;
+    /// # let _ = layer.with_subscriber(better_tracing::registry::Registry::default());
     /// ```
     pub fn with_writer<W2>(self, make_writer: W2) -> Layer<S, N, E, W2>
     where
@@ -207,7 +207,7 @@ impl<S, N, E, W> Layer<S, N, E, W> {
     ///
     /// ```
     /// # use tracing::info;
-    /// # use better_subscriber::{fmt,reload,Registry,prelude::*};
+    /// # use better_tracing::{fmt,reload,Registry,prelude::*};
     /// # fn non_blocking<T: std::io::Write>(writer: T) -> (fn() -> std::io::Stdout) {
     /// #   std::io::stdout
     /// # }
@@ -273,13 +273,13 @@ impl<S, N, E, W> Layer<S, N, E, W> {
     ///
     /// ```rust
     /// use std::io;
-    /// use better_subscriber::fmt;
+    /// use better_tracing::fmt;
     ///
     /// let layer = fmt::layer()
     ///     .with_test_writer();
     /// # // this is necessary for type inference.
-    /// # use better_subscriber::Layer as _;
-    /// # let _ = layer.with_subscriber(better_subscriber::registry::Registry::default());
+    /// # use better_tracing::Layer as _;
+    /// # let _ = layer.with_subscriber(better_tracing::registry::Registry::default());
     /// ```
     /// [capturing]:
     /// https://doc.rust-lang.org/book/ch11-02-running-tests.html#showing-function-output
@@ -327,7 +327,7 @@ impl<S, N, E, W> Layer<S, N, E, W> {
         #[cfg(not(feature = "ansi"))]
         if ansi {
             const ERROR: &str =
-                "better-subscriber: the `ansi` crate feature is required to enable ANSI terminal colors";
+                "better-tracing: the `ansi` crate feature is required to enable ANSI terminal colors";
             #[cfg(debug_assertions)]
             panic!("{}", ERROR);
             #[cfg(not(debug_assertions))]
@@ -368,14 +368,14 @@ impl<S, N, E, W> Layer<S, N, E, W> {
     ///
     /// ```rust
     /// use tracing::Level;
-    /// use better_subscriber::fmt::{self, writer::MakeWriterExt};
+    /// use better_tracing::fmt::{self, writer::MakeWriterExt};
     ///
     /// let stderr = std::io::stderr.with_max_level(Level::WARN);
     /// let layer = fmt::layer()
     ///     .map_writer(move |w| stderr.or_else(w));
     /// # // this is necessary for type inference.
-    /// # use better_subscriber::Layer as _;
-    /// # let _ = layer.with_subscriber(better_subscriber::registry::Registry::default());
+    /// # use better_tracing::Layer as _;
+    /// # let _ = layer.with_subscriber(better_tracing::registry::Registry::default());
     /// ```
     pub fn map_writer<W2>(self, f: impl FnOnce(W) -> W2) -> Layer<S, N, E, W2>
     where
@@ -463,8 +463,8 @@ where
     /// will synthesize events whenever spans are created and closed:
     ///
     /// ```rust
-    /// use better_subscriber::fmt;
-    /// use better_subscriber::fmt::format::FmtSpan;
+    /// use better_tracing::fmt;
+    /// use better_tracing::fmt::format::FmtSpan;
     ///
     /// let subscriber = fmt()
     ///     .with_span_events(FmtSpan::NEW | FmtSpan::CLOSE)
@@ -687,12 +687,12 @@ impl<S, N, E, W> Layer<S, N, E, W> {
     /// Updating a field formatter:
     ///
     /// ```rust
-    /// use better_subscriber::field::MakeExt;
-    /// let layer = better_subscriber::fmt::layer()
+    /// use better_tracing::field::MakeExt;
+    /// let layer = better_tracing::fmt::layer()
     ///     .map_fmt_fields(|f| f.debug_alt());
     /// # // this is necessary for type inference.
-    /// # use better_subscriber::Layer as _;
-    /// # let _ = layer.with_subscriber(better_subscriber::registry::Registry::default());
+    /// # use better_tracing::Layer as _;
+    /// # let _ = layer.with_subscriber(better_tracing::registry::Registry::default());
     /// ```
     pub fn map_fmt_fields<N2>(self, f: impl FnOnce(N) -> N2) -> Layer<S, N2, E, W>
     where
@@ -844,7 +844,7 @@ where
                 extensions.insert(fields);
             } else {
                 eprintln!(
-                    "[better-subscriber] Unable to format the following event, ignoring: {:?}",
+                    "[better-tracing] Unable to format the following event, ignoring: {:?}",
                     attrs
                 );
             }
@@ -1004,7 +1004,7 @@ where
                 let res = io::Write::write_all(&mut writer, buf.as_bytes());
                 if self.log_internal_errors {
                     if let Err(e) = res {
-                        eprintln!("[better-subscriber] Unable to write an event to the Writer for this Subscriber! Error: {}\n", e);
+                        eprintln!("[better-tracing] Unable to write an event to the Writer for this Subscriber! Error: {}\n", e);
                     }
                 }
             } else if self.log_internal_errors {
@@ -1013,7 +1013,7 @@ where
                 let mut writer = self.make_writer.make_writer_for(event.metadata());
                 let res = io::Write::write_all(&mut writer, err_msg.as_bytes());
                 if let Err(e) = res {
-                    eprintln!("[better-subscriber] Unable to write an \"event formatting error\" to the Writer for this Subscriber! Error: {}\n", e);
+                    eprintln!("[better-tracing] Unable to write an \"event formatting error\" to the Writer for this Subscriber! Error: {}\n", e);
                 }
             }
 
@@ -1412,8 +1412,8 @@ mod test {
         });
         let actual = sanitize_timings(make_writer.get_string());
         assert_eq!(
-            "fake time span1{x=42}: better_subscriber::fmt::fmt_layer::test: enter\n\
-             fake time span1{x=42}: better_subscriber::fmt::fmt_layer::test: exit\n",
+            "fake time span1{x=42}: better_tracing::fmt::fmt_layer::test: enter\n\
+             fake time span1{x=42}: better_tracing::fmt::fmt_layer::test: exit\n",
             actual.as_str()
         );
     }
@@ -1435,7 +1435,7 @@ mod test {
         });
         let actual = sanitize_timings(make_writer.get_string());
         assert_eq!(
-            "fake time span1{x=42}: better_subscriber::fmt::fmt_layer::test: close timing timing\n",
+            "fake time span1{x=42}: better_tracing::fmt::fmt_layer::test: close timing timing\n",
             actual.as_str()
         );
     }
@@ -1458,7 +1458,7 @@ mod test {
         });
         let actual = sanitize_timings(make_writer.get_string());
         assert_eq!(
-            "span1{x=42}: better_subscriber::fmt::fmt_layer::test: close\n",
+            "span1{x=42}: better_tracing::fmt::fmt_layer::test: close\n",
             actual.as_str()
         );
     }
@@ -1480,10 +1480,10 @@ mod test {
         });
         let actual = sanitize_timings(make_writer.get_string());
         assert_eq!(
-            "fake time span1{x=42}: better_subscriber::fmt::fmt_layer::test: new\n\
-             fake time span1{x=42}: better_subscriber::fmt::fmt_layer::test: enter\n\
-             fake time span1{x=42}: better_subscriber::fmt::fmt_layer::test: exit\n\
-             fake time span1{x=42}: better_subscriber::fmt::fmt_layer::test: close timing timing\n",
+            "fake time span1{x=42}: better_tracing::fmt::fmt_layer::test: new\n\
+             fake time span1{x=42}: better_tracing::fmt::fmt_layer::test: enter\n\
+             fake time span1{x=42}: better_tracing::fmt::fmt_layer::test: exit\n\
+             fake time span1{x=42}: better_tracing::fmt::fmt_layer::test: close timing timing\n",
             actual.as_str()
         );
     }
@@ -1659,9 +1659,9 @@ mod test {
         });
         let actual = sanitize_timings(make_writer.get_string());
         assert_eq!(
-            "fake time span1{x=42}: better_subscriber::fmt::fmt_layer::test: enter\n\
-             fake time span1{x=42}: better_subscriber::fmt::fmt_layer::test: exit\n\
-             fake time span3{x=42}: better_subscriber::fmt::fmt_layer::test: exit\n",
+            "fake time span1{x=42}: better_tracing::fmt::fmt_layer::test: enter\n\
+             fake time span1{x=42}: better_tracing::fmt::fmt_layer::test: exit\n\
+             fake time span3{x=42}: better_tracing::fmt::fmt_layer::test: exit\n",
             actual.as_str()
         );
     }

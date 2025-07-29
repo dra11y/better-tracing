@@ -7,7 +7,7 @@
 //! behaviour, and batteries-included implementations of common subscriber
 //! functionality.
 //!
-//! `better-subscriber` is intended for use by both `Subscriber` authors and
+//! `better-tracing` is intended for use by both `Subscriber` authors and
 //! application authors using `tracing` to instrument their applications.
 //!
 //! *Compiler support: [requires `rustc` 1.65+][msrv]*
@@ -16,7 +16,7 @@
 //!
 //! ## `Layer`s and `Filter`s
 //!
-//! The most important component of the `better-subscriber` API is the
+//! The most important component of the `better-tracing` API is the
 //! [`Layer`] trait, which provides a composable abstraction for building
 //! [`Subscriber`]s. Like the [`Subscriber`] trait, a [`Layer`] defines a
 //! particular behavior for collecting trace data. Unlike [`Subscriber`]s,
@@ -80,7 +80,7 @@
 //!
 //! In embedded systems and other bare-metal applications, `tracing` can be
 //! used without requiring the Rust standard library, although some features are
-//! disabled. Although most of the APIs provided by `better-subscriber`, such
+//! disabled. Although most of the APIs provided by `better-tracing`, such
 //! as [`fmt`] and [`EnvFilter`], require the standard library, some
 //! functionality, such as the [`Layer`] trait, can still be used in
 //! `no_std` environments.
@@ -93,7 +93,7 @@
 //!
 //! ```toml
 //! # Cargo.toml
-//! better-subscriber = { version = "0.3", default-features = false }
+//! better-tracing = { version = "0.3", default-features = false }
 //! ```
 //!
 //! Additional APIs are available when [`liballoc`] is available. To enable
@@ -101,7 +101,7 @@
 //!
 //! ```toml
 //! # Cargo.toml
-//! better-subscriber = { version = "0.3", default-features = false, features = ["alloc"] }
+//! better-tracing = { version = "0.3", default-features = false, features = ["alloc"] }
 //! ```
 //!
 //! ### Unstable Features

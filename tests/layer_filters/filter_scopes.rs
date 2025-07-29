@@ -58,7 +58,7 @@ fn filters_span_scopes() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_subscriber::registry()
+    let _subscriber = better_tracing::registry()
         .with(debug_layer.with_filter(LevelFilter::DEBUG))
         .with(info_layer.with_filter(LevelFilter::INFO))
         .with(warn_layer.with_filter(LevelFilter::WARN))
@@ -125,7 +125,7 @@ fn filters_interleaved_span_scopes() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_subscriber::registry()
+    let _subscriber = better_tracing::registry()
         .with(all_layer.with_filter(LevelFilter::INFO))
         .with(a_layer.with_filter(filter::filter_fn(|meta| {
             let target = meta.target();

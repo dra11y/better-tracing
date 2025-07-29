@@ -78,7 +78,7 @@ pub struct DynFilterFn<
 /// # Examples
 ///
 /// ```
-/// use better_subscriber::{
+/// use better_tracing::{
 ///     layer::{Layer, SubscriberExt},
 ///     filter,
 ///     util::SubscriberInitExt,
@@ -89,9 +89,9 @@ pub struct DynFilterFn<
 ///     metadata.target() == "interesting_things"
 /// });
 ///
-/// let my_layer = better_subscriber::fmt::layer();
+/// let my_layer = better_tracing::fmt::layer();
 ///
-/// better_subscriber::registry()
+/// better_tracing::registry()
 ///     .with(my_layer.with_filter(my_filter))
 ///     .init();
 ///
@@ -129,7 +129,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use better_subscriber::{
+/// use better_tracing::{
 ///     layer::{Layer, SubscriberExt},
 ///     filter,
 ///     util::SubscriberInitExt,
@@ -150,9 +150,9 @@ where
 ///     false
 /// });
 ///
-/// let my_layer = better_subscriber::fmt::layer();
+/// let my_layer = better_tracing::fmt::layer();
 ///
-/// better_subscriber::registry()
+/// better_tracing::registry()
 ///     .with(my_layer.with_filter(my_filter))
 ///     .init();
 ///
@@ -199,7 +199,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use better_subscriber::{
+    /// use better_tracing::{
     ///     layer::{Layer, SubscriberExt},
     ///     filter::FilterFn,
     ///     util::SubscriberInitExt,
@@ -210,9 +210,9 @@ where
     ///     metadata.target() == "interesting_things"
     /// });
     ///
-    /// let my_layer = better_subscriber::fmt::layer();
+    /// let my_layer = better_tracing::fmt::layer();
     ///
-    /// better_subscriber::registry()
+    /// better_tracing::registry()
     ///     .with(my_layer.with_filter(my_filter))
     ///     .init();
     ///
@@ -241,7 +241,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use better_subscriber::{
+    /// use better_tracing::{
     ///     layer::{Layer, SubscriberExt},
     ///     filter::{filter_fn, LevelFilter},
     ///     util::SubscriberInitExt,
@@ -257,9 +257,9 @@ where
     ///     // below, set the max level hint
     ///     .with_max_level_hint(LevelFilter::INFO);
     ///
-    /// let my_layer = better_subscriber::fmt::layer();
+    /// let my_layer = better_tracing::fmt::layer();
     ///
-    /// better_subscriber::registry()
+    /// better_tracing::registry()
     ///     .with(my_layer.with_filter(my_filter))
     ///     .init();
     /// ```
@@ -386,7 +386,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use better_subscriber::{
+    /// use better_tracing::{
     ///     layer::{Layer, SubscriberExt},
     ///     filter::DynFilterFn,
     ///     util::SubscriberInitExt,
@@ -407,9 +407,9 @@ where
     ///     false
     /// });
     ///
-    /// let my_layer = better_subscriber::fmt::layer();
+    /// let my_layer = better_tracing::fmt::layer();
     ///
-    /// better_subscriber::registry()
+    /// better_tracing::registry()
     ///     .with(my_layer.with_filter(my_filter))
     ///     .init();
     ///
@@ -447,7 +447,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use better_subscriber::{
+    /// use better_tracing::{
     ///     layer::{Layer, SubscriberExt},
     ///     filter::{DynFilterFn, LevelFilter},
     ///     util::SubscriberInitExt,
@@ -477,9 +477,9 @@ where
     ///     // below, set the max level hint
     ///     .with_max_level_hint(LevelFilter::INFO);
     ///
-    /// let my_layer = better_subscriber::fmt::layer();
+    /// let my_layer = better_tracing::fmt::layer();
     ///
-    /// better_subscriber::registry()
+    /// better_tracing::registry()
     ///     .with(my_layer.with_filter(my_filter))
     ///     .init();
     /// ```
@@ -512,7 +512,7 @@ where
     /// [`callsite_enabled`][cse]:
     ///
     /// ```
-    /// use better_subscriber::{
+    /// use better_tracing::{
     ///     layer::{Layer, SubscriberExt},
     ///     filter::DynFilterFn,
     ///     util::SubscriberInitExt,
@@ -544,9 +544,9 @@ where
     ///     Interest::sometimes()
     /// });
     ///
-    /// let my_layer = better_subscriber::fmt::layer();
+    /// let my_layer = better_tracing::fmt::layer();
     ///
-    /// better_subscriber::registry()
+    /// better_tracing::registry()
     ///     .with(my_layer.with_filter(my_filter))
     ///     .init();
     /// ```

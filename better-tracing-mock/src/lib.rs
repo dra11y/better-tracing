@@ -42,5 +42,5 @@ mod metadata;
 pub mod span;
 pub mod subscriber;
 
-#[cfg(feature = "better-subscriber")]
+#[cfg(feature = "better-tracing")]
 pub mod layer;

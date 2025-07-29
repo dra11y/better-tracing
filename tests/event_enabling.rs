@@ -2,7 +2,7 @@
 
 use std::sync::{Arc, Mutex};
 use tracing::{subscriber::with_default, Event, Metadata, Subscriber};
-use better_subscriber::{layer::Context, prelude::*, registry, Layer};
+use better_tracing::{layer::Context, prelude::*, registry, Layer};
 
 struct TrackingLayer {
     enabled: bool,
