@@ -1,33 +1,29 @@
-![Tracing — Structured, application-level diagnostics][splash]
-
-[splash]: https://raw.githubusercontent.com/tokio-rs/tracing/main/assets/splash.svg
-
 # better-tracing
 
-Utilities for implementing and composing [`tracing`][tracing] subscribers.
+### Community fork 🍴 of `tracing-subscriber` focused on usability and accessibility.
 
-[`tracing`] is a framework for instrumenting Rust programs to collect
-scoped, structured, and async-aware diagnostics. The `Subscriber` trait
-represents the functionality necessary to collect this trace data. This
-crate contains tools for composing subscribers out of smaller units of
-behaviour, and batteries-included implementations of common subscriber
-functionality.
+**better-tracing** = **tracing-subscriber** + **smart defaults and features that just work**
 
-`better-tracing` is intended for use by both `Subscriber` authors and
-application authors using `tracing` to instrument their applications.
+Utilities for implementing and composing [`tracing`][tracing] subscribers. This fork provides sensible defaults, accessible formatting, and resolves architectural limitations while maintaining full drop-in compatibility.
+
+| Feature | better-tracing | tracing-subscriber |
+|---------|----------------|-------------------|
+| **Drop-in compatibility** | ✅ | ✅ |
+| **External formatters access span hierarchy** | ✅ | ❌ |
+| **Sane defaults with zero configuration** | ⏳ | ❌ |
+| **Better builders** you don't have to fight with | ⏳ | ❌ |
+
+See the [CHANGELOG](https://github.com/dra11y/better-tracing/blob/main/CHANGELOG.md) for implemented features and fixes.
 
 [![Crates.io][crates-badge]][crates-url]
 [![Documentation][docs-badge]][docs-url]
 [![Documentation (v0.2.x)][docs-v0.2.x-badge]][docs-v0.2.x-url]
 [![MIT licensed][mit-badge]][mit-url]
-[![Build Status][actions-badge]][actions-url]
-[![Discord chat][discord-badge]][discord-url]
 ![maintenance status][maint-badge]
 
-[Documentation][docs-url] | [Chat][discord-url]
+[Documentation][docs-url]
 
 [tracing]: https://github.com/tokio-rs/tracing/tree/main/tracing
-[tracing-fmt]: https://github.com/tokio-rs/tracing/tree/main/better-tracing
 [crates-badge]: https://img.shields.io/crates/v/better-tracing.svg
 [crates-url]: https://crates.io/crates/better-tracing
 [docs-badge]: https://docs.rs/better-tracing/badge.svg
@@ -36,10 +32,6 @@ application authors using `tracing` to instrument their applications.
 [docs-v0.2.x-url]: https://tracing.rs/better_tracing
 [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [mit-url]: LICENSE
-[actions-badge]: https://github.com/tokio-rs/tracing/workflows/CI/badge.svg
-[actions-url]:https://github.com/tokio-rs/tracing/actions?query=workflow%3ACI
-[discord-badge]: https://img.shields.io/discord/500028886025895936?logo=discord&label=discord&logoColor=white
-[discord-url]: https://discord.gg/EeF3cQw
 [maint-badge]: https://img.shields.io/badge/maintenance-experimental-blue.svg
 
 *Compiler support: [requires `rustc` 1.65+][msrv]*
@@ -48,24 +40,24 @@ application authors using `tracing` to instrument their applications.
 
 ## Supported Rust Versions
 
-Tracing is built against the latest stable release. The minimum supported
-version is 1.65. The current Tracing version is not guaranteed to build on Rust
+This fork follows the same minimum supported Rust version as the upstream `tracing-subscriber`.
+The minimum supported version is 1.65. The current version is not guaranteed to build on Rust
 versions earlier than the minimum supported version.
 
-Tracing follows the same compiler support policies as the rest of the Tokio
-project. The current stable Rust compiler and the three most recent minor
-versions before it will always be supported. For example, if the current stable
-compiler version is 1.69, the minimum supported version will not be increased
-past 1.66, three minor versions prior. Increasing the minimum supported compiler
-version is not considered a semver breaking change as long as doing so complies
-with this policy.
+better-tracing follows a similar compiler support policy to the upstream project. The current stable Rust compiler and the three most recent minor versions before it will always be supported. For example, if the current stable compiler version is 1.69, the minimum supported version will not be increased past 1.66, three minor versions prior. Increasing the minimum supported compiler version is not considered a semver breaking change as long as doing so complies with this policy.
 
 ## License
 
 This project is licensed under the [MIT license](LICENSE).
 
+## Disclaimer
+
+This is an independent community fork of `tracing-subscriber`. This project is not affiliated with, endorsed by, sponsored by, or supported by the Tokio team, the Tokio project, or any of the original `tracing-subscriber` maintainers. All trademarks are the property of their respective owners.
+
+The name "tracing" and related trademarks belong to their respective owners. This fork exists to provide enhanced functionality while maintaining compatibility with the upstream project.
+
 ### Contribution
 
 Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in Tracing by you, shall be licensed as MIT, without any additional
+for inclusion in better-tracing by you, shall be licensed as MIT, without any additional
 terms or conditions.

@@ -1,3 +1,16 @@
+# 0.4.0 (Unreleased)
+
+### Fixed
+
+- **fmt**: Fixed external formatters unable to access exiting span hierarchy
+  during `FmtSpan::EXIT` and `FmtSpan::CLOSE` events
+
+### Added
+
+- **fmt**: Added `FmtContext::scope()` method for accessing span hierarchy
+  during exit/close events ([#4])
+- **fmt**: Added `FmtContext::lookup_exiting_span()` method
+
 # 0.3.19 (November 29, 2024)
 
 [ [crates.io][crate-0.3.19] ] | [ [docs.rs][docs-0.3.19] ]
@@ -471,7 +484,7 @@ Thanks to @marienz and @ishitatsuyuki for contributing to this release!
 [#1772]: https://github.com/tokio-rs/tracing/pull/1772
 [#1781]: https://github.com/tokio-rs/tracing/pull/1781
 
-# 0.3.4 (Dec 23, 2021) 
+# 0.3.4 (Dec 23, 2021)
 
 This release contains bugfixes for the `fmt` module, as well as documentation
 improvements.
@@ -879,7 +892,7 @@ Thanks to new contributors @cratelyn, @dignati, and @zicklag, as well as @Folyd,
 - **fmt**: Fixed `fmt::Subscriber` not providing a max-level hint ([#1251])
 - `tracing-subscriber` no longer enables `tracing` and `tracing-core`'s default
   features ([#1144])
-  
+
 ### Changed
 
 - **chrono**: Updated `chrono` dependency to 0.4.16 ([#1189])
@@ -1044,14 +1057,14 @@ Thanks to @bdonlan and @jeromegn for contributing to this release!
 
 - **json**: `with_span_list` method to configure the JSON formatter to include a
   list of all spans in the current trace in formatting events (similarly to the
-  text formatter) (#741) 
+  text formatter) (#741)
 - **json**: `with_current_span` method to configure the JSON formatter to include
   a field for the _current_ span (the leaf of the trace) in formatted events
   (#741)
 - **fmt**: `with_thread_names` and `with_thread_ids` methods to configure
   `fmt::Subscriber`s and `fmt::Layer`s to include the thread name and/or thread ID
   of the current thread when formatting events (#818)
-  
+
 Thanks to new contributors @mockersf, @keetonian, and @Pothulapati for
 contributing to this release!
 
@@ -1108,7 +1121,7 @@ using method-chaining style. Additionally, several bugs in less commonly used
   construct a new registry (#660)
 - Added `SubscriberInitExt` extension trait for more ergonomic subscriber
   initialization (#660)
-  
+
 ### Changed
 
 - **fmt**: Moved `LayerBuilder` methods to `Layer` (#655)
@@ -1116,7 +1129,7 @@ using method-chaining style. Additionally, several bugs in less commonly used
 ### Deprecated
 
 - **fmt**: `LayerBuilder`, as `Layer` now implements all builder methods (#655)
-  
+
 ### Fixed
 
 - **fmt**: Fixed `Compact` formatter not omitting levels with
