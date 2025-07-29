@@ -39,6 +39,6 @@ Built-in formatters have privileged access to internal mechanisms. External form
 
 ## Implementation
 
-**Span Context Architecture**: Extend `FmtContext` with `lookup_exiting_span()` method and modify `FormatEvent` trait for span lifecycle context.
+**Span Context Architecture**: Fix `FmtContext::lookup_current()` method to return exiting / closing span context.
 
 **API Parity**: Audit `pub(crate)`/internal items, create public accessor functions, ensure external formatters have full span information access.

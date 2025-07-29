@@ -1,3 +1,13 @@
+# 0.5.0 (July 29, 2025)
+
+### Breaking Changes
+
+- **fmt**: Removed `FmtContext::lookup_exiting_span()` method (added in 0.4.0 - design mistake - should have been part of FmtContext::lookup_current() logic)
+
+### Fixed
+
+- **fmt**: Fixed `FmtContext::lookup_current()` to return exiting span during exit/close events instead of parent span
+
 # 0.4.1 (July 29, 2025)
 
 ### Documented

@@ -1302,6 +1302,9 @@ where
     /// Returns [stored data] for the span that the wrapped subscriber considers
     /// to be the current.
     ///
+    /// For exit/close events, this returns the span being exited/closed rather
+    /// than the parent span, which was an upstream bug.
+    ///
     /// If this returns `None`, then we are not currently within a span.
     ///
     /// [stored data]: crate::registry::SpanRef
@@ -1310,29 +1313,18 @@ where
     where
         S: for<'lookup> LookupSpan<'lookup>,
     {
-        self.ctx.lookup_current()
-    }
-
-    /// Returns [stored data] for the span being exited during exit/close events.
-    ///
-    /// This method provides access to the span that is being closed or exited,
-    /// which is not available through `lookup_current()` because the span has
-    /// already been removed from the current context.
-    ///
-    /// Returns `Some(span)` if this is an exit/close event, `None` otherwise.
-    ///
-    /// [stored data]: crate::registry::SpanRef
-    #[inline]
-    pub fn lookup_exiting_span(&self) -> Option<SpanRef<'_, S>>
-    where
-        S: for<'lookup> LookupSpan<'lookup>,
-    {
-        self.exiting_span.as_ref().and_then(|id| self.ctx.span(id))
+        // For exit/close events, return the span being exited
+        if let Some(exiting_span_id) = &self.exiting_span {
+            self.ctx.span(exiting_span_id)
+        } else {
+            // For regular events, use the normal current span
+            self.ctx.lookup_current()
+        }
     }
 
     /// Returns an iterator over the spans in the current context.
     ///
-    /// For exit/close events, this will use the exiting span as the starting point,
+    /// For exit/close events, this uses the exiting span as the starting point,
     /// providing access to the full hierarchy of the span being closed.
     /// For regular events, this returns the event's span context.
     ///

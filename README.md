@@ -13,6 +13,50 @@ Utilities for implementing and composing [`tracing`][tracing] subscribers. This 
 | **Sane defaults with zero configuration** | ⏳ | ❌ |
 | **Better builders** you don't have to fight with | ⏳ | ❌ |
 
+## Fork Improvements
+
+### Fixed Span Context for EXIT/CLOSE Events
+
+In `tracing-subscriber`, `lookup_current()` returned the parent span instead of the exiting span during `FmtSpan::EXIT` and `FmtSpan::CLOSE` events. `better-tracing` fixes this.
+
+```rust
+use better_tracing::fmt::format::FmtSpan;
+
+// Set up formatter with EXIT events
+let subscriber = better_tracing::fmt()
+    .with_span_events(FmtSpan::EXIT)
+    .finish();
+
+// Custom formatter that can now access the exiting span
+use better_tracing::{
+    fmt::{FmtContext, FormatEvent, FormatFields, format::Writer},
+    registry::LookupSpan,
+};
+use tracing::{Event, Subscriber};
+use std::fmt;
+
+struct MyFormatter;
+
+impl<S, N> FormatEvent<S, N> for MyFormatter
+where
+    S: Subscriber + for<'a> LookupSpan<'a>,
+    N: for<'a> FormatFields<'a> + 'static,
+{
+    fn format_event(
+        &self,
+        ctx: &FmtContext<'_, S, N>,
+        mut writer: Writer<'_>,
+        event: &Event<'_>,
+    ) -> fmt::Result {
+        // Now returns the correct exiting span during EXIT/CLOSE events
+        if let Some(span) = ctx.lookup_current() {
+            write!(writer, "{}:", span.name())?;
+        }
+        Ok(())
+    }
+}
+```
+
 See the [CHANGELOG](https://github.com/dra11y/better-tracing/blob/main/CHANGELOG.md) for implemented features and fixes.
 
 [![Crates.io][crates-badge]][crates-url]
