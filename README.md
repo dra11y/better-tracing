@@ -17,7 +17,7 @@
 [docs-badge]: https://docs.rs/better-tracing/badge.svg
 [docs-url]: https://docs.rs/better-tracing/latest
 [docs-v0.2.x-badge]: https://img.shields.io/badge/docs-v0.2.x-blue
-[docs-v0.2.x-url]: https://tracing.rs/better_tracing
+[docs-v0.2.x-url]: https://docs.rs/better-tracing
 [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [mit-url]: LICENSE
 [changelog-badge]: https://img.shields.io/badge/changelog-Keep%20a%20Changelog-E05735?labelColor=555555&logo=keepachangelog

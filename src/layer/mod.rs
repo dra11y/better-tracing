@@ -1190,7 +1190,7 @@ where
     ///
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-    /// # use better_tracing::{Layer, filter::LevelFilter, prelude::*};
+    /// # use better_tracing::{Layer, EnvFilter, filter::LevelFilter, prelude::*};
     /// # use std::{path::PathBuf, fs::File, io};
     /// # pub enum LogConfig {
     /// #    File(PathBuf),

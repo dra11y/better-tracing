@@ -16,9 +16,9 @@ Utilities for testing [`tracing`] and crates that uses it.
 [Documentation][docs-v0.2.x-url] | [Chat][discord-url]
 
 [crates-badge]: https://img.shields.io/crates/v/better-tracing-mock.svg
-[crates-url]: https://crates.io/crates/better-tracing-mock
-[docs-badge]: https://docs.rs/better-tracing-mock/badge.svg
-[docs-url]: https://docs.rs/better-tracing-mock/latest
+[crates-url]: https://crates.io/crates/tracing-mock
+[docs-badge]: https://docs.rs/tracing-mock/badge.svg
+[docs-url]: https://docs.rs/tracing-mock/latest
 [docs-v0.2.x-badge]: https://img.shields.io/badge/docs-v0.2.x-blue
 [docs-v0.2.x-url]: https://tracing.rs/better_tracing_mock
 [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg

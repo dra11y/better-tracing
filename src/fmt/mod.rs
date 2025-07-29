@@ -1229,7 +1229,7 @@ pub fn try_init() -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
 /// If the `env-filter` feature is enabled, this is shorthand for
 ///
 /// ```rust
-/// # use better_tracing::EnvFilter;
+/// use better_tracing::EnvFilter;
 /// better_tracing::fmt()
 ///     .with_env_filter(EnvFilter::from_default_env())
 ///     .init();
