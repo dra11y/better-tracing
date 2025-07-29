@@ -1,4 +1,10 @@
-# 0.4.0 (July 29, 2025)
+# 0.4.1 (July 29, 2025)
+
+### Documented
+
+- nit: update repository url in Cargo.toml, docs/branding in lib.rs
+
+# 0.4.0 (July 29, 2025) **better-tracing fork**
 
 ### Fixed
 

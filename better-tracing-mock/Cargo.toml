@@ -5,10 +5,10 @@
 [package]
 name = "better-tracing-mock"
 version = "0.1.0-beta.1"
-authors = ["Eliza Weisman <eliza@buoyant.io>", "Hayden Stainsby <hds@caffeineconcepts.com>", "Tokio Contributors <team@tokio.rs>"]
+authors = ["Tom Grushka <tom@dra11y.com>", "Eliza Weisman <eliza@buoyant.io>", "Hayden Stainsby <hds@caffeineconcepts.com>", "Tokio Contributors <team@tokio.rs>"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/tokio-rs/tracing"
+repository = "https://github.com/dra11y/better-tracing"
 homepage = "https://tokio.rs"
 description = """
 Utilities for testing `tracing` and crates that uses it.

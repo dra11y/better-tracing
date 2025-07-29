@@ -4,12 +4,12 @@ members = [".", "better-tracing-mock"]
 
 [package]
 name = "better-tracing"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["Tom Grushka <tom@dra11y.com>", "Eliza Weisman <eliza@buoyant.io>", "David Barsky <me@davidbarsky.com>", "Tokio Contributors <team@tokio.rs>"]
 edition = "2018"
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/tokio-rs/tracing"
+repository = "https://github.com/dra11y/better-tracing"
 homepage = "https://tokio.rs"
 description = """
 Drop-in fork of tracing-subscriber with the usability, accessibility, customization, and features you need!

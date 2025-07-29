@@ -1,4 +1,11 @@
-//! Utilities for implementing and composing [`tracing`] subscribers.
+//! # better-tracing
+//! ### Community fork 🍴 of `tracing-subscriber` focused on usability and accessibility.
+//!
+//! **better-tracing** = **tracing-subscriber** + **smart defaults and features that just work**
+//! Utilities for implementing and composing [`tracing`][tracing] subscribers.
+//! This fork provides sensible defaults, accessible formatting, and resolves architectural limitations while maintaining full drop-in compatibility.
+//!
+//! See the [CHANGELOG](https://github.com/dra11y/better-tracing/blob/main/CHANGELOG.md) for implemented features and fixes.
 //!
 //! [`tracing`] is a framework for instrumenting Rust programs to collect
 //! scoped, structured, and async-aware diagnostics. The [`Subscriber`] trait
@@ -161,10 +168,6 @@
 //! [`time` crate]: https://crates.io/crates/time
 //! [`liballoc`]: https://doc.rust-lang.org/alloc/index.html
 //! [`libstd`]: https://doc.rust-lang.org/std/index.html
-#![doc(
-    html_logo_url = "https://raw.githubusercontent.com/tokio-rs/tracing/main/assets/logo-type.png",
-    issue_tracker_base_url = "https://github.com/tokio-rs/tracing/issues/"
-)]
 #![cfg_attr(
     docsrs,
     // Allows displaying cfgs/feature flags in the documentation.
