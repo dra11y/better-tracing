@@ -46,11 +46,6 @@ In `tracing-subscriber`, `lookup_current()` returned the parent span instead of 
 ```rust
 use better_tracing::fmt::format::FmtSpan;
 
-// Set up formatter with EXIT events
-let subscriber = better_tracing::fmt()
-    .with_span_events(FmtSpan::EXIT)
-    .finish();
-
 // Custom formatter that can now access the exiting span
 use better_tracing::{
     fmt::{FmtContext, FormatEvent, FormatFields, format::Writer},
@@ -79,6 +74,12 @@ where
         Ok(())
     }
 }
+
+// Set up subscriber with the custom formatter and EXIT events
+let subscriber = better_tracing::fmt()
+    .event_format(MyFormatter)
+    .with_span_events(FmtSpan::EXIT)
+    .finish();
 ```
 
 *Compiler support: [requires `rustc` 1.65+][msrv]*
