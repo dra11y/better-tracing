@@ -48,27 +48,6 @@ mod tests {
     // External user's custom formatter - like init_tracing.rs
     struct ExternalCustomFormatter;
 
-    impl ExternalCustomFormatter {
-        fn build_hierarchy<S, N>(ctx: &crate::fmt::FmtContext<'_, S, N>) -> String
-        where
-            S: tracing::Subscriber + for<'a> crate::registry::LookupSpan<'a>,
-            N: for<'a> FormatFields<'a> + 'static,
-        {
-            if let Some(current_span) = ctx.lookup_current() {
-                let mut hierarchy = Vec::new();
-                let mut span_ref = Some(current_span);
-                while let Some(span) = span_ref {
-                    hierarchy.push(span.name());
-                    span_ref = span.parent();
-                }
-                hierarchy.reverse();
-                hierarchy.join(":")
-            } else {
-                "NO_CURRENT_SPAN".to_string()
-            }
-        }
-    }
-
     impl<S, N> FormatEvent<S, N> for ExternalCustomFormatter
     where
         S: tracing::Subscriber + for<'a> crate::registry::LookupSpan<'a>,
@@ -81,12 +60,22 @@ mod tests {
             event: &tracing::Event<'_>,
         ) -> fmt::Result {
             let is_exit_event = event.metadata().target().contains("exit");
-            let hierarchy = Self::build_hierarchy(ctx);
+            let hierarchy = ctx
+                .scope()
+                .map(|scope| {
+                    // Collect spans and reverse for root-to-leaf order
+                    let spans: Vec<_> = scope.collect();
+                    spans.iter().rev().map(|span| span.name()).collect::<Vec<_>>().join(":")
+                })
+                .unwrap_or_else(|| "NO_CURRENT_SPAN".to_string());
 
             if is_exit_event {
-                writeln!(writer, "EXIT_EVENT: current_span={} hierarchy={} [BUG: Cannot access exiting span context!]",
+                writeln!(
+                    writer,
+                    "EXIT_EVENT: current_span={} hierarchy={}",
                     ctx.lookup_current().map(|s| s.name()).unwrap_or("NONE"),
-                    hierarchy)?;
+                    hierarchy
+                )?;
             } else {
                 write!(writer, "REGULAR_EVENT: hierarchy={} ", hierarchy)?;
                 ctx.format_fields(writer.by_ref(), event)?;
@@ -126,13 +115,27 @@ mod tests {
             .cloned()
             .collect::<Vec<_>>();
 
-        // Exit events should show full hierarchy
+        // Should have exactly 2 exit events
+        assert_eq!(
+            exit_lines.len(),
+            2,
+            "Expected 2 exit events, got: {:#?}",
+            exit_lines
+        );
+
+        // First exit event: child_operation should show full hierarchy
         assert!(
-            exit_lines
-                .iter()
-                .all(|line| line.contains("hierarchy=parent_function:child_operation")),
-            "External formatter should show full hierarchy in exit events, got: {:#?}",
-            exit_lines
+            exit_lines[0].contains("hierarchy=parent_function:child_operation"),
+            "Child exit should show full hierarchy, got: {}",
+            exit_lines[0]
+        );
+
+        // Second exit event: parent_function should show only itself
+        assert!(
+            exit_lines[1].contains("hierarchy=parent_function")
+                && !exit_lines[1].contains("child_operation"),
+            "Parent exit should show only parent span, got: {}",
+            exit_lines[1]
         );
     }
 
@@ -164,6 +167,60 @@ mod tests {
                 .all(|line| line.contains("parent_function") && line.contains("child_operation")),
             "External formatter should show full hierarchy in exit events, got: {:#?}",
             exit_lines
+        );
+    }
+
+    #[test]
+    fn test_custom_formatter_close_full_hierarchy() {
+        let writer = TestWriter::new();
+
+        let subscriber = Registry::default().with(
+            Layer::default()
+                .with_writer(writer.clone())
+                .with_span_events(FmtSpan::CLOSE)
+                .event_format(ExternalCustomFormatter),
+        );
+
+        simulate_hierarchy(subscriber);
+
+        let output_lines = writer.get_output();
+
+        // Regular events should show full hierarchy
+        assert!(
+            output_lines.iter().any(|line| line.contains(
+                "REGULAR_EVENT: hierarchy=parent_function:child_operation Inside child operation"
+            )),
+            "Regular events should show full hierarchy, got: {:#?}",
+            output_lines
+        );
+
+        let close_lines = output_lines
+            .iter()
+            .filter(|line| line.contains("REGULAR_EVENT") && line.contains("close"))
+            .cloned()
+            .collect::<Vec<_>>();
+
+        // Should have exactly 2 close events
+        assert_eq!(
+            close_lines.len(),
+            2,
+            "Expected 2 close events, got: {:#?}",
+            close_lines
+        );
+
+        // First close event: child_operation should show full hierarchy
+        assert!(
+            close_lines[0].contains("hierarchy=parent_function:child_operation"),
+            "Child close should show full hierarchy, got: {}",
+            close_lines[0]
+        );
+
+        // Second close event: parent_function should show only itself
+        assert!(
+            close_lines[1].contains("hierarchy=parent_function")
+                && !close_lines[1].contains("child_operation"),
+            "Parent close should show only parent span, got: {}",
+            close_lines[1]
         );
     }
 

@@ -589,8 +589,7 @@ mod test {
 
     #[test]
     fn json_filename() {
-        let current_path = Path::new("better-tracing")
-            .join("src")
+        let current_path = Path::new("src")
             .join("fmt")
             .join("format")
             .join("json.rs")

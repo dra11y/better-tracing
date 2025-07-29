@@ -1333,7 +1333,10 @@ impl Display for ErrorSourceList<'_> {
     }
 }
 
-struct FmtCtx<'a, S, N> {
+struct FmtCtx<'a, S, N>
+where
+    S: Subscriber + for<'lookup> LookupSpan<'lookup>,
+{
     ctx: &'a FmtContext<'a, S, N>,
     span: Option<&'a span::Id>,
     #[cfg(feature = "ansi")]
@@ -1858,8 +1861,7 @@ pub(super) mod test {
             .with_timer(MockTime);
 
         let expected =
-            Regex::new("^fake time better_tracing::fmt::format::test: [0-9]+: hello\n$")
-                .unwrap();
+            Regex::new("^fake time better_tracing::fmt::format::test: [0-9]+: hello\n$").unwrap();
         let _default = set_default(&subscriber.into());
         tracing::info!("hello");
         let res = make_writer.get_string();
@@ -2045,7 +2047,8 @@ pub(super) mod test {
 
         #[test]
         fn overridden_parents() {
-            let expected = "fake time span1{span=1}:span2{span=2}: better_tracing::fmt::format::test: hello\n";
+            let expected =
+                "fake time span1{span=1}:span2{span=2}: better_tracing::fmt::format::test: hello\n";
             test_overridden_parents(expected, crate::fmt::Subscriber::builder())
         }
 
@@ -2091,7 +2094,8 @@ pub(super) mod test {
 
         #[test]
         fn overridden_parents() {
-            let expected = "fake time span1:span2: better_tracing::fmt::format::test: hello span=1 span=2\n";
+            let expected =
+                "fake time span1:span2: better_tracing::fmt::format::test: hello span=1 span=2\n";
             test_overridden_parents(expected, crate::fmt::Subscriber::builder().compact())
         }
 
@@ -2175,8 +2179,7 @@ pub(super) mod test {
 
     /// Returns the test's module path.
     fn current_path() -> String {
-        Path::new("better-tracing")
-            .join("src")
+        Path::new("src")
             .join("fmt")
             .join("format")
             .join("mod.rs")

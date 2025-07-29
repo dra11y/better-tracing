@@ -741,6 +741,7 @@ where
             ctx,
             fmt_fields: &self.fmt_fields,
             event,
+            exiting_span: None,
         }
     }
 }
@@ -922,10 +923,67 @@ where
             }
 
             if self.fmt_span.trace_exit() {
+                let span_id = id.clone(); // Store the span ID for the exit context
                 with_event_from_span!(id, span, "message" = "exit", |event| {
                     drop(extensions);
-                    drop(span);
-                    self.on_event(&event, ctx);
+
+                    // Create FmtContext with exiting span information for external formatters
+                    // Clone context to avoid borrowing conflicts with span
+                    let fmt_ctx = FmtContext {
+                        ctx: ctx.clone(),
+                        fmt_fields: &self.fmt_fields,
+                        event: &event,
+                        exiting_span: Some(span_id), // Use the cloned span ID
+                    };
+
+                    thread_local! {
+                        static BUF: RefCell<String> = const { RefCell::new(String::new()) };
+                    }
+
+                    BUF.with(|buf| {
+                        let borrow = buf.try_borrow_mut();
+                        let mut a;
+                        let mut b;
+                        let mut buf = match borrow {
+                            Ok(buf) => {
+                                a = buf;
+                                &mut *a
+                            }
+                            _ => {
+                                b = String::new();
+                                &mut b
+                            }
+                        };
+
+                        if self
+                            .fmt_event
+                            .format_event(
+                                &fmt_ctx,
+                                format::Writer::new(&mut buf).with_ansi(self.is_ansi),
+                                &event,
+                            )
+                            .is_ok()
+                        {
+                            let mut writer = self.make_writer.make_writer_for(&event.metadata());
+                            let res = io::Write::write_all(&mut writer, buf.as_bytes());
+                            if self.log_internal_errors {
+                                if let Err(e) = res {
+                                    eprintln!("[better-tracing] Unable to write an event to the Writer for this Subscriber! Error: {}\n", e);
+                                }
+                            }
+                        } else if self.log_internal_errors {
+                            let err_msg = format!("Unable to format the following event. Name: {}; Fields: {:?}\n",
+                                event.metadata().name(), event.fields());
+                            let mut writer = self.make_writer.make_writer_for(&event.metadata());
+                            let res = io::Write::write_all(&mut writer, err_msg.as_bytes());
+                            if let Err(e) = res {
+                                eprintln!("[better-tracing] Unable to write an \"event formatting error\" to the Writer for this Subscriber! Error: {}\n", e);
+                            }
+                        }
+
+                        buf.clear();
+                    });
+                    drop(span); // Drop span at the end as originally intended
                 });
             }
         }
@@ -948,6 +1006,7 @@ where
                 let t_idle = field::display(TimingDisplay(idle));
                 let t_busy = field::display(TimingDisplay(busy));
 
+                let span_id = id.clone(); // Store the span ID for the close context
                 with_event_from_span!(
                     id,
                     span,
@@ -956,15 +1015,126 @@ where
                     "time.idle" = t_idle,
                     |event| {
                         drop(extensions);
-                        drop(span);
-                        self.on_event(&event, ctx);
+
+                        // Create FmtContext with exiting span information for external formatters
+                        let fmt_ctx = FmtContext {
+                            ctx: ctx.clone(),
+                            fmt_fields: &self.fmt_fields,
+                            event: &event,
+                            exiting_span: Some(span_id), // Use the cloned span ID
+                        };
+
+                        thread_local! {
+                            static BUF: RefCell<String> = const { RefCell::new(String::new()) };
+                        }
+
+                        BUF.with(|buf| {
+                            let borrow = buf.try_borrow_mut();
+                            let mut a;
+                            let mut b;
+                            let mut buf = match borrow {
+                                Ok(buf) => {
+                                    a = buf;
+                                    &mut *a
+                                }
+                                _ => {
+                                    b = String::new();
+                                    &mut b
+                                }
+                            };
+
+                            if self
+                                .fmt_event
+                                .format_event(
+                                    &fmt_ctx,
+                                    format::Writer::new(&mut buf).with_ansi(self.is_ansi),
+                                    &event,
+                                )
+                                .is_ok()
+                            {
+                                let mut writer = self.make_writer.make_writer_for(&event.metadata());
+                                let res = io::Write::write_all(&mut writer, buf.as_bytes());
+                                if self.log_internal_errors {
+                                    if let Err(e) = res {
+                                        eprintln!("[better-tracing] Unable to write an event to the Writer for this Subscriber! Error: {}\n", e);
+                                    }
+                                }
+                            } else if self.log_internal_errors {
+                                let err_msg = format!("Unable to format the following event. Name: {}; Fields: {:?}\n",
+                                    event.metadata().name(), event.fields());
+                                let mut writer = self.make_writer.make_writer_for(&event.metadata());
+                                let res = io::Write::write_all(&mut writer, err_msg.as_bytes());
+                                if let Err(e) = res {
+                                    eprintln!("[better-tracing] Unable to write an \"event formatting error\" to the Writer for this Subscriber! Error: {}\n", e);
+                                }
+                            }
+
+                            buf.clear();
+                        });
+                        drop(span); // Drop span at the end as originally intended
                     }
                 );
             } else {
+                let span_id = id.clone(); // Store the span ID for the close context
                 with_event_from_span!(id, span, "message" = "close", |event| {
                     drop(extensions);
-                    drop(span);
-                    self.on_event(&event, ctx);
+
+                    // Create FmtContext with exiting span information for external formatters
+                    let fmt_ctx = FmtContext {
+                        ctx: ctx.clone(),
+                        fmt_fields: &self.fmt_fields,
+                        event: &event,
+                        exiting_span: Some(span_id), // Use the cloned span ID
+                    };
+
+                    thread_local! {
+                        static BUF: RefCell<String> = const { RefCell::new(String::new()) };
+                    }
+
+                    BUF.with(|buf| {
+                        let borrow = buf.try_borrow_mut();
+                        let mut a;
+                        let mut b;
+                        let mut buf = match borrow {
+                            Ok(buf) => {
+                                a = buf;
+                                &mut *a
+                            }
+                            _ => {
+                                b = String::new();
+                                &mut b
+                            }
+                        };
+
+                        if self
+                            .fmt_event
+                            .format_event(
+                                &fmt_ctx,
+                                format::Writer::new(&mut buf).with_ansi(self.is_ansi),
+                                &event,
+                            )
+                            .is_ok()
+                        {
+                            let mut writer = self.make_writer.make_writer_for(&event.metadata());
+                            let res = io::Write::write_all(&mut writer, buf.as_bytes());
+                            if self.log_internal_errors {
+                                if let Err(e) = res {
+                                    eprintln!("[better-tracing] Unable to write an event to the Writer for this Subscriber! Error: {}\n", e);
+                                }
+                            }
+                        } else if self.log_internal_errors {
+                            let err_msg = format!("Unable to format the following event. Name: {}; Fields: {:?}\n",
+                                event.metadata().name(), event.fields());
+                            let mut writer = self.make_writer.make_writer_for(&event.metadata());
+                            let res = io::Write::write_all(&mut writer, err_msg.as_bytes());
+                            if let Err(e) = res {
+                                eprintln!("[better-tracing] Unable to write an \"event formatting error\" to the Writer for this Subscriber! Error: {}\n", e);
+                            }
+                        }
+
+                        buf.clear();
+                    });
+                    drop(span); // Drop span at the end as originally intended
                 });
             }
         }
@@ -1037,13 +1207,21 @@ where
 }
 
 /// Provides the current span context to a formatter.
-pub struct FmtContext<'a, S, N> {
+pub struct FmtContext<'a, S, N>
+where
+    S: Subscriber + for<'lookup> LookupSpan<'lookup>,
+{
     pub(crate) ctx: Context<'a, S>,
     pub(crate) fmt_fields: &'a N,
     pub(crate) event: &'a Event<'a>,
+    /// For exit/close events, this contains the ID of the span being exited/closed
+    pub(crate) exiting_span: Option<Id>,
 }
 
-impl<S, N> fmt::Debug for FmtContext<'_, S, N> {
+impl<S, N> fmt::Debug for FmtContext<'_, S, N>
+where
+    S: Subscriber + for<'lookup> LookupSpan<'lookup>,
+{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("FmtContext").finish()
     }
@@ -1134,6 +1312,48 @@ where
     {
         self.ctx.lookup_current()
     }
+
+    /// Returns [stored data] for the span being exited during exit/close events.
+    ///
+    /// This method provides access to the span that is being closed or exited,
+    /// which is not available through `lookup_current()` because the span has
+    /// already been removed from the current context.
+    ///
+    /// Returns `Some(span)` if this is an exit/close event, `None` otherwise.
+    ///
+    /// [stored data]: crate::registry::SpanRef
+    #[inline]
+    pub fn lookup_exiting_span(&self) -> Option<SpanRef<'_, S>>
+    where
+        S: for<'lookup> LookupSpan<'lookup>,
+    {
+        self.exiting_span.as_ref().and_then(|id| self.ctx.span(id))
+    }
+
+    /// Returns an iterator over the spans in the current context.
+    ///
+    /// For exit/close events, this will use the exiting span as the starting point,
+    /// providing access to the full hierarchy of the span being closed.
+    /// For regular events, this returns the event's span context.
+    ///
+    /// This method fixes the architectural limitation where external formatters
+    /// could not access the full span hierarchy during exit events.
+    ///
+    /// Returns `None` if there is no current span context.
+    pub fn scope(&self) -> Option<registry::Scope<'_, S>>
+    where
+        S: for<'lookup> LookupSpan<'lookup>,
+    {
+        // For exit/close events, use the exiting span as the starting point
+        if let Some(exiting_span_id) = &self.exiting_span {
+            self.span_scope(exiting_span_id)
+        } else {
+            // For regular events, use the event's span context
+            self.event_scope()
+        }
+    }
+
+
 
     /// Returns the current span for this formatter.
     pub fn current_span(&self) -> Current {
