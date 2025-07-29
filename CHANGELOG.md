@@ -1,14 +1,12 @@
-# 0.4.0 (Unreleased)
+# 0.4.0 (July 29, 2025)
 
 ### Fixed
 
-- **fmt**: Fixed external formatters unable to access exiting span hierarchy
-  during `FmtSpan::EXIT` and `FmtSpan::CLOSE` events
+- **fmt**: Fixed external formatters unable to access exiting span hierarchy during `FmtSpan::EXIT` and `FmtSpan::CLOSE` events
 
 ### Added
 
-- **fmt**: Added `FmtContext::scope()` method for accessing span hierarchy
-  during exit/close events ([#4])
+- **fmt**: Added `FmtContext::scope()` method for accessing span hierarchy during exit/close events
 - **fmt**: Added `FmtContext::lookup_exiting_span()` method
 
 # 0.3.19 (November 29, 2024)
