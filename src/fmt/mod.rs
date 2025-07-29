@@ -1366,3 +1366,6 @@ mod test {
         assert_lookup_span(subscriber)
     }
 }
+
+#[cfg(test)]
+mod span_hierarchy_test;
