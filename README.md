@@ -9,7 +9,7 @@ Utilities for implementing and composing [`tracing`][tracing] subscribers. This 
 | Feature | better-tracing | tracing-subscriber |
 |---------|----------------|-------------------|
 | **Drop-in compatibility** | ✅ | ✅ |
-| **External formatters access span hierarchy** | ✅ | ❌ |
+| **External formatters access exiting span on EXIT/CLOSE** | ✅ | ❌ |
 | **Sane defaults with zero configuration** | ⏳ | ❌ |
 | **Better builders** you don't have to fight with | ⏳ | ❌ |
 
