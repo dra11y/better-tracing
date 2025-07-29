@@ -2,7 +2,31 @@
 
 ### Community fork 🍴 of `tracing-subscriber` focused on usability and accessibility.
 
+[![Crates.io][crates-badge]][crates-url]
+[![Documentation][docs-badge]][docs-url]
+[![Documentation (v0.2.x)][docs-v0.2.x-badge]][docs-v0.2.x-url]
+[![MIT licensed][mit-badge]][mit-url]
+[![changelog][changelog-badge]][changelog-url]
+![maintenance status][maint-badge]
+
+[Documentation][docs-url]
+
+[tracing]: https://github.com/tokio-rs/tracing/tree/main/tracing
+[crates-badge]: https://img.shields.io/crates/v/better-tracing.svg
+[crates-url]: https://crates.io/crates/better-tracing
+[docs-badge]: https://docs.rs/better-tracing/badge.svg
+[docs-url]: https://docs.rs/better-tracing/latest
+[docs-v0.2.x-badge]: https://img.shields.io/badge/docs-v0.2.x-blue
+[docs-v0.2.x-url]: https://tracing.rs/better_tracing
+[mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[mit-url]: LICENSE
+[changelog-badge]: https://img.shields.io/badge/changelog-Keep%20a%20Changelog-E05735?labelColor=555555&logo=keepachangelog
+[maint-badge]: https://img.shields.io/badge/maintenance-experimental-blue.svg
+[changelog-url]: CHANGELOG.md
+
 **better-tracing** = **tracing-subscriber** + **smart defaults and features that just work**
+
+See the [CHANGELOG][changelog-url] for implemented features and fixes.
 
 Utilities for implementing and composing [`tracing`][tracing] subscribers. This fork provides sensible defaults, accessible formatting, and resolves architectural limitations while maintaining full drop-in compatibility.
 
@@ -56,27 +80,6 @@ where
     }
 }
 ```
-
-See the [CHANGELOG](https://github.com/dra11y/better-tracing/blob/main/CHANGELOG.md) for implemented features and fixes.
-
-[![Crates.io][crates-badge]][crates-url]
-[![Documentation][docs-badge]][docs-url]
-[![Documentation (v0.2.x)][docs-v0.2.x-badge]][docs-v0.2.x-url]
-[![MIT licensed][mit-badge]][mit-url]
-![maintenance status][maint-badge]
-
-[Documentation][docs-url]
-
-[tracing]: https://github.com/tokio-rs/tracing/tree/main/tracing
-[crates-badge]: https://img.shields.io/crates/v/better-tracing.svg
-[crates-url]: https://crates.io/crates/better-tracing
-[docs-badge]: https://docs.rs/better-tracing/badge.svg
-[docs-url]: https://docs.rs/better-tracing/latest
-[docs-v0.2.x-badge]: https://img.shields.io/badge/docs-v0.2.x-blue
-[docs-v0.2.x-url]: https://tracing.rs/better_tracing
-[mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[mit-url]: LICENSE
-[maint-badge]: https://img.shields.io/badge/maintenance-experimental-blue.svg
 
 *Compiler support: [requires `rustc` 1.65+][msrv]*
 

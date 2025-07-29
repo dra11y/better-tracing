@@ -2,7 +2,7 @@
 
 ### Breaking Changes
 
-- **fmt**: Removed `FmtContext::lookup_exiting_span()` method (added in 0.4.0 - design mistake - should have been part of FmtContext::lookup_current() logic)
+- **fmt**: Removed `FmtContext::lookup_exiting_span()` method (added in 0.4.0 - design mistake - should have been part of `FmtContext::lookup_current()` logic)
 
 ### Fixed
 
