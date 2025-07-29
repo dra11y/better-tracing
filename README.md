@@ -7,7 +7,6 @@
 [![MIT licensed][mit-badge]][mit-url]
 [![changelog][changelog-badge]][changelog-url]
 ![maintenance status][maint-badge]
-[Documentation](https://docs.rs/better-tracing/latest)
 
 **better-tracing** = **tracing-subscriber** + **smart defaults and features that just work**
 
@@ -71,7 +70,7 @@ let subscriber = better_tracing::fmt()
     .finish();
 ```
 
-## From upstream `tracing-subscriber`
+## Adapted from upstream `tracing-subscriber`
 
 [`tracing`] is a framework for instrumenting Rust programs to collect
 scoped, structured, and async-aware diagnostics. The [`Subscriber`] trait
@@ -229,6 +228,7 @@ for inclusion in better-tracing by you, shall be licensed as MIT, without any ad
 terms or conditions.
 
 [tracing]: https://github.com/tokio-rs/tracing/tree/main/tracing
+[tracing-subscriber]: https://github.com/tokio-rs/tracing/tree/main/tracing-subscriber
 [crates-badge]: https://img.shields.io/crates/v/better-tracing.svg
 [crates-url]: https://crates.io/crates/better-tracing
 [docs-badge]: https://docs.rs/better-tracing/badge.svg
