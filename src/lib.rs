@@ -2,7 +2,6 @@
 //!
 //! [![Crates.io][crates-badge]][crates-url]
 //! [![Documentation][docs-badge]][docs-url]
-//! [![Documentation (v0.2.x)][docs-v0.2.x-badge]][docs-v0.2.x-url]
 //! [![MIT licensed][mit-badge]][mit-url]
 //! [![changelog][changelog-badge]][changelog-url]
 //! ![maintenance status][maint-badge]
@@ -232,8 +231,6 @@
 //! [crates-url]: https://crates.io/crates/better-tracing
 //! [docs-badge]: https://docs.rs/better-tracing/badge.svg
 //! [docs-url]: https://docs.rs/better-tracing/latest
-//! [docs-v0.2.x-badge]: https://img.shields.io/badge/docs-v0.2.x-blue
-//! [docs-v0.2.x-url]: https://docs.rs/better-tracing
 //! [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
 //! [mit-url]: LICENSE
 //! [changelog-badge]: https://img.shields.io/badge/changelog-Keep%20a%20Changelog-E05735?labelColor=555555&logo=keepachangelog
