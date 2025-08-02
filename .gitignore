@@ -2,7 +2,7 @@
 
 /tracing
 /tracing-core
-.github/*.md
+.github/**/*.md
 
 ### macOS ###
 # General
