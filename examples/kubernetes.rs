@@ -6,7 +6,7 @@
 //! Run with:
 //!   cargo run --example kubernetes
 
-use better_tracing::{
+use tracing_subscriber::{
     layer::{transform::FieldTransformLayer, SubscriberExt},
     registry::Registry,
     util::SubscriberInitExt,
@@ -16,7 +16,7 @@ use tracing::{info, span, Level};
 /// Simulate kube-rs API calls
 mod kube {
     use tracing::info;
-    
+
     pub fn create_deployment(
         name: &str,
         namespace: &str,
@@ -38,7 +38,7 @@ mod kube {
             "Creating deployment"
         );
     }
-    
+
     pub fn watch_pods(namespace: &str, label_selector: &str) {
         info!(
             target: "kube::watch",
@@ -49,7 +49,7 @@ mod kube {
             "Starting pod watch"
         );
     }
-    
+
     pub fn pod_status_update(
         pod_name: &str,
         namespace: &str,
@@ -70,10 +70,10 @@ mod kube {
     }
 }
 
-/// Simulate container runtime logs  
+/// Simulate container runtime logs
 mod containerd {
     use tracing::info;
-    
+
     pub fn pull_image(image: &str, size_bytes: u64) {
         info!(
             target: "containerd::client",
@@ -83,7 +83,7 @@ mod containerd {
             "Image pulled successfully"
         );
     }
-    
+
     pub fn start_container(
         container_id: &str,
         image: &str,
@@ -129,7 +129,7 @@ fn main() {
                 let count: u32 = replicas.parse().unwrap_or(0);
                 match count {
                     0 => "⭕ 0".to_string(),
-                    1 => "1️⃣ 1".to_string(), 
+                    1 => "1️⃣ 1".to_string(),
                     2..=5 => format!("🔢 {}", count),
                     _ => format!("🚀 {}", count),
                 }
@@ -153,10 +153,10 @@ fn main() {
             })
         );
 
-    // Initialize the subscriber  
+    // Initialize the subscriber
     Registry::default()
         .with(transform_layer)
-        .with(better_tracing::fmt::layer()
+        .with(tracing_subscriber::fmt::layer()
             .with_target(true)
             .with_level(true)
             .with_ansi(true)
@@ -173,7 +173,7 @@ fn main() {
 
     kube::create_deployment(
         "web-app-frontend",
-        "production", 
+        "production",
         "nginx:1.21-alpine",
         3,
         "12345",  // Will be hidden
@@ -200,7 +200,7 @@ fn main() {
     );
 
     kube::pod_status_update(
-        "web-app-frontend-7d4b8c6f9-abc34", 
+        "web-app-frontend-7d4b8c6f9-abc34",
         "production",
         "Failed",
         r#"[{"name":"nginx","ready":false,"state":{"terminated":{"reason":"Error","exitCode":1}}}]"#,
@@ -209,7 +209,7 @@ fn main() {
 
     drop(_guard);
 
-    // Example 3: Container operations  
+    // Example 3: Container operations
     let span = span!(Level::INFO, "container_operations");
     let _guard = span.enter();
 

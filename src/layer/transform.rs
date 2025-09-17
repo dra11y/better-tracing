@@ -26,7 +26,9 @@ use tracing_core::{
 /// # Example
 ///
 /// ```rust
-/// use better_tracing::layer::transform::FieldTransformLayer;
+/// use tracing_subscriber::layer::transform::FieldTransformLayer;
+/// // Bring the `SubscriberExt` trait into scope to enable `.with(...)`.
+/// use tracing_subscriber::prelude::*;
 ///
 /// let transform_layer = FieldTransformLayer::new()
 ///     .with_target_transform("kube", |builder| builder
@@ -35,9 +37,9 @@ use tracing_core::{
 ///         .truncate_field("uid", 8)
 ///     );
 ///
-/// better_tracing::registry()
+/// tracing_subscriber::registry()
 ///     .with(transform_layer)
-///     .with(better_tracing::fmt::layer())
+///     .with(tracing_subscriber::fmt::layer())
 ///     .init();
 /// ```
 #[derive(Debug)]

@@ -6,7 +6,7 @@
 //! Run with:
 //!   cargo run --example third_party_crates
 
-use better_tracing::{
+use tracing_subscriber::{
     layer::{transform::FieldTransformLayer, SubscriberExt},
     registry::Registry,
     util::SubscriberInitExt,
@@ -16,12 +16,12 @@ use tracing::{info, span, Level};
 /// Simulate reqwest HTTP client logs
 mod reqwest_simulation {
     use tracing::{info, debug};
-    
+
     pub fn get(url: &str) {
         debug!(target: "reqwest::client", method = "GET", uri = url, version = "HTTP/1.1", "sending request");
         info!(target: "reqwest::client", method = "GET", uri = url, status = 200, "request completed");
     }
-    
+
     pub fn post_json(url: &str, body_size: usize) {
         debug!(target: "reqwest::client", method = "POST", uri = url, content_type = "application/json", body_length = body_size, "sending request");
         info!(target: "reqwest::client", method = "POST", uri = url, status = 201, "request completed");
@@ -31,13 +31,13 @@ mod reqwest_simulation {
 /// Simulate sqlx database logs
 mod sqlx_simulation {
     use tracing::{info, debug};
-    
+
     pub fn execute_query(sql: &str, rows_affected: u64, duration_ms: f64) {
         debug!(target: "sqlx::query", query = sql, "executing query");
         info!(
-            target: "sqlx::query", 
-            query = sql, 
-            rows_affected, 
+            target: "sqlx::query",
+            query = sql,
+            rows_affected,
             duration_ms,
             pool_id = "pool_12345",
             connection_id = "conn_67890",
@@ -49,7 +49,7 @@ mod sqlx_simulation {
 /// Simulate tokio runtime logs
 mod tokio_simulation {
     use tracing::{debug, info};
-    
+
     pub fn spawn_task() {
         debug!(target: "tokio::runtime", task_id = 42, worker_id = 1, "spawning task");
         info!(target: "tokio::runtime", task_id = 42, task_name = "my_async_task", "task completed");
@@ -59,11 +59,11 @@ mod tokio_simulation {
 /// Simulate serde_json logs
 mod serde_simulation {
     use tracing::{debug, warn};
-    
+
     pub fn parse_json(json_str: &str) {
         if json_str.contains("invalid") {
             warn!(
-                target: "serde_json", 
+                target: "serde_json",
                 input = json_str,
                 error = "missing field `required_field`",
                 line = 1,
@@ -82,14 +82,14 @@ fn main() {
         // reqwest HTTP client - clean up verbose logs
         .with_target_transform("reqwest", |builder| builder
             .rename_field("uri", "url")
-            .rename_field("method", "http_method") 
+            .rename_field("method", "http_method")
             .hide_field("version")               // HTTP/1.1 is noise
             .hide_field("content_type")          // Usually obvious from context
             .truncate_field("url", 80)           // Long URLs are noisy
             .transform_field("status", |status| {
                 match status.parse::<u16>().unwrap_or(0) {
                     200..=299 => format!("✅ {}", status),
-                    400..=499 => format!("⚠️ {}", status), 
+                    400..=499 => format!("⚠️ {}", status),
                     500..=599 => format!("🚜 {}", status),
                     _ => status.to_string(),
                 }
@@ -99,7 +99,7 @@ fn main() {
         .with_target_transform("sqlx", |builder| builder
             .rename_field("query", "sql")
             .hide_field("pool_id")               // Internal detail
-            .hide_field("connection_id")         // Internal detail  
+            .hide_field("connection_id")         // Internal detail
             .truncate_field("sql", 120)          // Long queries are noisy
             .prefix_field("rows_affected", "📊") // Visual indicator
             .transform_field("duration_ms", |duration| {
@@ -113,7 +113,7 @@ fn main() {
         // tokio runtime - simplify task management logs
         .with_target_transform("tokio", |builder| builder
             .rename_field("task_id", "task")
-            .rename_field("task_name", "name") 
+            .rename_field("task_name", "name")
             .rename_field("worker_id", "worker")
             .prefix_field("name", "🚀")         // Visual indicator for tasks
         )
@@ -129,9 +129,9 @@ fn main() {
     // Initialize the subscriber
     Registry::default()
         .with(transform_layer)
-        .with(better_tracing::fmt::layer()
+        .with(tracing_subscriber::fmt::layer()
             .with_target(true)
-            .with_level(true) 
+            .with_level(true)
             .with_ansi(true)
         )
         .init();
@@ -185,10 +185,10 @@ fn main() {
     drop(_guard);
 
     info!("Application completed - check the logs above to see the transformations!");
-    
+
     println!("\n=== Transformation Summary ===");
     println!("✅ reqwest: Cleaned URLs, added status emojis, hid HTTP version");
     println!("📊 sqlx: Truncated long queries, added performance colors, hid connection details");
-    println!("🚀 tokio: Simplified task IDs, added task emojis");  
+    println!("🚀 tokio: Simplified task IDs, added task emojis");
     println!("❌ serde_json: Highlighted errors, truncated large JSON inputs");
 }

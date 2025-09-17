@@ -9,8 +9,8 @@ mod trees;
 mod vec;
 
 use tracing::{level_filters::LevelFilter, Level};
-use better_tracing_mock::{expect, layer, subscriber};
-use better_tracing::{filter, prelude::*, Layer};
+use tracing_mock::{expect, layer, subscriber};
+use tracing_subscriber::{filter, prelude::*, Layer};
 
 #[test]
 fn basic_layer_filters() {
@@ -32,7 +32,7 @@ fn basic_layer_filters() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(trace_layer.with_filter(LevelFilter::TRACE))
         .with(debug_layer.with_filter(LevelFilter::DEBUG))
         .with(info_layer.with_filter(LevelFilter::INFO))
@@ -67,7 +67,7 @@ fn basic_layer_filter_spans() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(trace_layer.with_filter(LevelFilter::TRACE))
         .with(debug_layer.with_filter(LevelFilter::DEBUG))
         .with(info_layer.with_filter(LevelFilter::INFO))
@@ -91,7 +91,7 @@ fn global_filters_subscribers_still_work() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(expect)
         .with(LevelFilter::INFO)
         .set_default();
@@ -113,7 +113,7 @@ fn global_filter_interests_are_cached() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(expect.with_filter(filter::filter_fn(|meta| {
             assert!(
                 meta.level() <= &Level::INFO,
@@ -142,7 +142,7 @@ fn global_filters_affect_subscriber_filters() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(expect.with_filter(LevelFilter::DEBUG))
         .with(LevelFilter::INFO)
         .set_default();
@@ -174,7 +174,7 @@ fn filter_fn() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(all)
         .with(foo.with_filter(filter::filter_fn(|meta| meta.target().starts_with("foo"))))
         .with(bar.with_filter(filter::filter_fn(|meta| meta.target().starts_with("bar"))))

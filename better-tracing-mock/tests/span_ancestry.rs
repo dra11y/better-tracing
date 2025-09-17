@@ -6,8 +6,8 @@
 //!
 //! [`ExpectedSpan`]: crate::span::ExpectedSpan
 //!
-use better_tracing_mock::{expect, subscriber};
 use tracing::{subscriber::with_default, Level};
+use tracing_mock::{expect, subscriber};
 
 #[test]
 fn contextual_parent() {

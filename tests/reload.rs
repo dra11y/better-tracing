@@ -5,7 +5,7 @@ use tracing_core::{
     subscriber::Interest,
     Event, LevelFilter, Metadata, Subscriber,
 };
-use better_tracing::{layer, prelude::*, reload::*};
+use tracing_subscriber::{layer, prelude::*, reload::*};
 
 pub struct NopSubscriber;
 fn event() {
@@ -50,7 +50,7 @@ fn reload_handle() {
         Two,
     }
 
-    impl<S: Subscriber> better_tracing::Layer<S> for Filter {
+    impl<S: Subscriber> tracing_subscriber::Layer<S> for Filter {
         fn register_callsite(&self, m: &Metadata<'_>) -> Interest {
             println!("REGISTER: {:?}", m);
             Interest::sometimes()
@@ -99,7 +99,7 @@ fn reload_handle() {
 
 fn reload_filter() {
     struct NopLayer;
-    impl<S: Subscriber> better_tracing::Layer<S> for NopLayer {
+    impl<S: Subscriber> tracing_subscriber::Layer<S> for NopLayer {
         fn register_callsite(&self, _m: &Metadata<'_>) -> Interest {
             Interest::sometimes()
         }
@@ -117,7 +117,7 @@ fn reload_filter() {
         Two,
     }
 
-    impl<S: Subscriber> better_tracing::layer::Filter<S> for Filter {
+    impl<S: Subscriber> tracing_subscriber::layer::Filter<S> for Filter {
         fn enabled(&self, m: &Metadata<'_>, _: &layer::Context<'_, S>) -> bool {
             println!("ENABLED: {:?}", m);
             match self {
@@ -138,7 +138,7 @@ fn reload_filter() {
     let (filter, handle) = Layer::new(Filter::One);
 
     let dispatcher = tracing_core::Dispatch::new(
-        better_tracing::registry().with(NopLayer.with_filter(filter)),
+        tracing_subscriber::registry().with(NopLayer.with_filter(filter)),
     );
 
     tracing_core::dispatcher::with_default(&dispatcher, || {

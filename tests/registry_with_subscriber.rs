@@ -1,10 +1,10 @@
 #![cfg(feature = "registry")]
 use tracing_futures::{Instrument, WithSubscriber};
-use better_tracing::prelude::*;
+use tracing_subscriber::prelude::*;
 
 #[tokio::test]
 async fn future_with_subscriber() {
-    better_tracing::registry().init();
+    tracing_subscriber::registry().init();
     let span = tracing::info_span!("foo");
     let _e = span.enter();
     let span = tracing::info_span!("bar");
@@ -18,7 +18,7 @@ async fn future_with_subscriber() {
             .instrument(tracing::info_span!("hi"))
             .await
         }
-        .with_subscriber(better_tracing::registry()),
+        .with_subscriber(tracing_subscriber::registry()),
     )
     .await
     .unwrap();

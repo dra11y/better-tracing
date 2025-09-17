@@ -18,6 +18,10 @@ categories = ["development-tools::debugging", "development-tools::profiling", "a
 keywords = ["tracing-subscriber", "logging", "tracing", "metrics", "subscriber"]
 rust-version = "1.65.0"
 
+[lib]
+name = "tracing_subscriber"
+path = "src/lib.rs"         # needed for cargo readme
+
 [features]
 
 default = ["smallvec", "fmt", "ansi", "tracing-log", "std"]

@@ -1,8 +1,8 @@
 #![cfg(all(feature = "env-filter", feature = "tracing-log"))]
 
 use tracing::{self, Level};
-use better_tracing_mock::*;
-use better_tracing::{filter::EnvFilter, prelude::*};
+use tracing_mock::*;
+use tracing_subscriber::{filter::EnvFilter, prelude::*};
 
 mod my_module {
     pub(crate) fn test_records() {

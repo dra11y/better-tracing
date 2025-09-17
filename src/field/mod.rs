@@ -63,7 +63,7 @@ pub trait VisitOutput<Out>: Visit {
 /// ```
 /// use tracing_core::field::Visit;
 /// # use tracing_core::field::Field;
-/// use better_tracing::field::RecordFields;
+/// use tracing_subscriber::field::RecordFields;
 ///
 /// struct MyVisitor {
 ///     // ...

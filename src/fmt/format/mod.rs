@@ -114,12 +114,12 @@ pub use pretty::*;
 /// ```rust
 /// use std::fmt;
 /// use tracing_core::{Subscriber, Event};
-/// use better_tracing::fmt::{
+/// use tracing_subscriber::fmt::{
 ///     format::{self, FormatEvent, FormatFields},
 ///     FmtContext,
 ///     FormattedFields,
 /// };
-/// use better_tracing::registry::LookupSpan;
+/// use tracing_subscriber::registry::LookupSpan;
 ///
 /// struct MyFormatter;
 ///
@@ -168,7 +168,7 @@ pub use pretty::*;
 ///     }
 /// }
 ///
-/// let _subscriber = better_tracing::fmt()
+/// let _subscriber = tracing_subscriber::fmt()
 ///     .event_format(MyFormatter)
 ///     .init();
 ///
@@ -256,14 +256,14 @@ pub trait FormatFields<'writer> {
 /// configuration. For example:
 ///
 /// ```rust
-/// let format = better_tracing::fmt::format()
+/// let format = tracing_subscriber::fmt::format()
 ///     .without_time()         // Don't include timestamps
 ///     .with_target(false)     // Don't include event targets.
 ///     .with_level(false)      // Don't include event levels.
 ///     .compact();             // Use a more compact, abbreviated format.
 ///
 /// // Use the configured formatter when building a new subscriber.
-/// better_tracing::fmt()
+/// tracing_subscriber::fmt()
 ///     .event_format(format)
 ///     .init();
 /// ```
@@ -636,8 +636,8 @@ impl<F, T> Format<F, T> {
     /// so:
     ///
     /// ```
-    /// # use better_tracing::fmt::format;
-    /// better_tracing::fmt()
+    /// # use tracing_subscriber::fmt::format;
+    /// tracing_subscriber::fmt()
     ///    .pretty()
     ///    .with_ansi(false)
     ///    .fmt_fields(format::PrettyFields::new().with_ansi(false))
@@ -1837,7 +1837,7 @@ pub(super) mod test {
             .with_timer(MockTime);
 
         let expected = Regex::new(&format!(
-            "^fake time better_tracing::fmt::format::test: {}:[0-9]+: hello\n$",
+            "^fake time tracing_subscriber::fmt::format::test: {}:[0-9]+: hello\n$",
             current_path()
                 // if we're on Windows, the path might contain backslashes, which
                 // have to be escaped before compiling the regex.
@@ -1861,7 +1861,8 @@ pub(super) mod test {
             .with_timer(MockTime);
 
         let expected =
-            Regex::new("^fake time better_tracing::fmt::format::test: [0-9]+: hello\n$").unwrap();
+            Regex::new("^fake time tracing_subscriber::fmt::format::test: [0-9]+: hello\n$")
+                .unwrap();
         let _default = set_default(&subscriber.into());
         tracing::info!("hello");
         let res = make_writer.get_string();
@@ -1878,7 +1879,7 @@ pub(super) mod test {
             .with_ansi(false)
             .with_timer(MockTime);
         let expected = &format!(
-            "fake time better_tracing::fmt::format::test: {}: hello\n",
+            "fake time tracing_subscriber::fmt::format::test: {}: hello\n",
             current_path(),
         );
         assert_info_hello(subscriber, make_writer, expected);
@@ -1893,7 +1894,7 @@ pub(super) mod test {
             .with_ansi(false)
             .with_timer(MockTime);
         let expected =
-            "fake time  INFO ThreadId(NUMERIC) better_tracing::fmt::format::test: hello\n";
+            "fake time  INFO ThreadId(NUMERIC) tracing_subscriber::fmt::format::test: hello\n";
 
         assert_info_hello_ignore_numeric(subscriber, make_writer, expected);
     }
@@ -1907,7 +1908,7 @@ pub(super) mod test {
             .with_ansi(false)
             .with_timer(MockTime);
         let expected = format!(
-            r#"  fake time  INFO better_tracing::fmt::format::test: hello
+            r#"  fake time  INFO tracing_subscriber::fmt::format::test: hello
     at {}:NUMERIC
 
 "#,
@@ -2013,7 +2014,7 @@ pub(super) mod test {
                 .with_ansi(false)
                 .with_timer(MockTime);
             let expected =
-                "fake time  INFO ThreadId(NUMERIC) better_tracing::fmt::format::test: hello\n";
+                "fake time  INFO ThreadId(NUMERIC) tracing_subscriber::fmt::format::test: hello\n";
 
             assert_info_hello_ignore_numeric(subscriber, make_writer, expected);
         }
@@ -2021,42 +2022,42 @@ pub(super) mod test {
         #[cfg(feature = "ansi")]
         #[test]
         fn with_ansi_true() {
-            let expected = "\u{1b}[2mfake time\u{1b}[0m \u{1b}[32m INFO\u{1b}[0m \u{1b}[2mbetter_tracing::fmt::format::test\u{1b}[0m\u{1b}[2m:\u{1b}[0m hello\n";
+            let expected = "\u{1b}[2mfake time\u{1b}[0m \u{1b}[32m INFO\u{1b}[0m \u{1b}[2mtracing_subscriber::fmt::format::test\u{1b}[0m\u{1b}[2m:\u{1b}[0m hello\n";
             test_ansi(true, expected, crate::fmt::Subscriber::builder());
         }
 
         #[cfg(feature = "ansi")]
         #[test]
         fn with_ansi_false() {
-            let expected = "fake time  INFO better_tracing::fmt::format::test: hello\n";
+            let expected = "fake time  INFO tracing_subscriber::fmt::format::test: hello\n";
             test_ansi(false, expected, crate::fmt::Subscriber::builder());
         }
 
         #[cfg(not(feature = "ansi"))]
         #[test]
         fn without_ansi() {
-            let expected = "fake time  INFO better_tracing::fmt::format::test: hello\n";
+            let expected = "fake time  INFO tracing_subscriber::fmt::format::test: hello\n";
             test_without_ansi(expected, crate::fmt::Subscriber::builder())
         }
 
         #[test]
         fn without_level() {
-            let expected = "fake time better_tracing::fmt::format::test: hello\n";
+            let expected = "fake time tracing_subscriber::fmt::format::test: hello\n";
             test_without_level(expected, crate::fmt::Subscriber::builder())
         }
 
         #[test]
         fn overridden_parents() {
             let expected =
-                "fake time span1{span=1}:span2{span=2}: better_tracing::fmt::format::test: hello\n";
+                "fake time span1{span=1}:span2{span=2}: tracing_subscriber::fmt::format::test: hello\n";
             test_overridden_parents(expected, crate::fmt::Subscriber::builder())
         }
 
         #[test]
         fn overridden_parents_in_scope() {
             test_overridden_parents_in_scope(
-                "fake time span3{span=3}: better_tracing::fmt::format::test: hello\n",
-                "fake time span1{span=1}:span2{span=2}: better_tracing::fmt::format::test: hello\n",
+                "fake time span3{span=3}: tracing_subscriber::fmt::format::test: hello\n",
+                "fake time span1{span=1}:span2{span=2}: tracing_subscriber::fmt::format::test: hello\n",
                 crate::fmt::Subscriber::builder(),
             )
         }
@@ -2068,42 +2069,42 @@ pub(super) mod test {
         #[cfg(feature = "ansi")]
         #[test]
         fn with_ansi_true() {
-            let expected = "\u{1b}[2mfake time\u{1b}[0m \u{1b}[32m INFO\u{1b}[0m \u{1b}[2mbetter_tracing::fmt::format::test\u{1b}[0m\u{1b}[2m:\u{1b}[0m hello\n";
+            let expected = "\u{1b}[2mfake time\u{1b}[0m \u{1b}[32m INFO\u{1b}[0m \u{1b}[2mtracing_subscriber::fmt::format::test\u{1b}[0m\u{1b}[2m:\u{1b}[0m hello\n";
             test_ansi(true, expected, crate::fmt::Subscriber::builder().compact())
         }
 
         #[cfg(feature = "ansi")]
         #[test]
         fn with_ansi_false() {
-            let expected = "fake time  INFO better_tracing::fmt::format::test: hello\n";
+            let expected = "fake time  INFO tracing_subscriber::fmt::format::test: hello\n";
             test_ansi(false, expected, crate::fmt::Subscriber::builder().compact());
         }
 
         #[cfg(not(feature = "ansi"))]
         #[test]
         fn without_ansi() {
-            let expected = "fake time  INFO better_tracing::fmt::format::test: hello\n";
+            let expected = "fake time  INFO tracing_subscriber::fmt::format::test: hello\n";
             test_without_ansi(expected, crate::fmt::Subscriber::builder().compact())
         }
 
         #[test]
         fn without_level() {
-            let expected = "fake time better_tracing::fmt::format::test: hello\n";
+            let expected = "fake time tracing_subscriber::fmt::format::test: hello\n";
             test_without_level(expected, crate::fmt::Subscriber::builder().compact());
         }
 
         #[test]
         fn overridden_parents() {
             let expected =
-                "fake time span1:span2: better_tracing::fmt::format::test: hello span=1 span=2\n";
+                "fake time span1:span2: tracing_subscriber::fmt::format::test: hello span=1 span=2\n";
             test_overridden_parents(expected, crate::fmt::Subscriber::builder().compact())
         }
 
         #[test]
         fn overridden_parents_in_scope() {
             test_overridden_parents_in_scope(
-                "fake time span3: better_tracing::fmt::format::test: hello span=3\n",
-                "fake time span1:span2: better_tracing::fmt::format::test: hello span=1 span=2\n",
+                "fake time span3: tracing_subscriber::fmt::format::test: hello span=3\n",
+                "fake time span1:span2: tracing_subscriber::fmt::format::test: hello span=1 span=2\n",
                 crate::fmt::Subscriber::builder().compact(),
             )
         }
@@ -2121,7 +2122,7 @@ pub(super) mod test {
                 .with_ansi(false)
                 .with_timer(MockTime);
             let expected = format!(
-                "  fake time  INFO better_tracing::fmt::format::test: hello\n    at {}:NUMERIC\n\n",
+                "  fake time  INFO tracing_subscriber::fmt::format::test: hello\n    at {}:NUMERIC\n\n",
                 file!()
             );
 

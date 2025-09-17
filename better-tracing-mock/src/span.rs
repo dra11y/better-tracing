@@ -11,7 +11,7 @@
 //! # Examples
 //!
 //! ```
-//! use better_tracing_mock::{expect, subscriber};
+//! use tracing_mock::{expect, subscriber};
 //!
 //! let span = expect::span()
 //!     .named("interesting_span")
@@ -35,7 +35,7 @@
 //! `expect::span().named(name)`.
 //!
 //! ```
-//! use better_tracing_mock::subscriber;
+//! use tracing_mock::subscriber;
 //!
 //! let (subscriber, handle) = subscriber::mock()
 //!     .enter("interesting_span")
@@ -52,7 +52,7 @@
 //! The following example asserts the name, level, parent, and fields of the span:
 //!
 //! ```
-//! use better_tracing_mock::{expect, subscriber};
+//! use tracing_mock::{expect, subscriber};
 //!
 //! let span = expect::span()
 //!     .named("interesting_span")
@@ -87,7 +87,7 @@
 //! the following test will fail due to a mismatch in the spans' names:
 //!
 //! ```should_panic
-//! use better_tracing_mock::{expect, subscriber};
+//! use tracing_mock::{expect, subscriber};
 //!
 //! let span = expect::span()
 //!     .named("interesting_span")
@@ -236,7 +236,7 @@ impl ExpectedSpan {
     /// # Examples
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span().named("span name");
     ///
@@ -257,7 +257,7 @@ impl ExpectedSpan {
     /// to the [`MockSubscriber`] functions directly.
     ///
     /// ```
-    /// use better_tracing_mock::subscriber;
+    /// use tracing_mock::subscriber;
     ///
     /// let (subscriber, handle) = subscriber::mock()
     ///     .enter("span name")
@@ -274,7 +274,7 @@ impl ExpectedSpan {
     /// When the span name is different, the assertion will fail:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span().named("span name");
     ///
@@ -326,7 +326,7 @@ impl ExpectedSpan {
     /// second:
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     /// let id1 = expect::id();
     /// let span1 = expect::span().named("span").with_id(id1.clone());
     /// let id2 = expect::id();
@@ -359,7 +359,7 @@ impl ExpectedSpan {
     /// example can be used.
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     /// let id1 = expect::id();
     /// let id2 = expect::id();
     ///
@@ -389,7 +389,7 @@ impl ExpectedSpan {
     /// fail:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     /// let id1 = expect::id();
     /// let span1 = expect::span().named("span").with_id(id1.clone());
     /// let id2 = expect::id();
@@ -435,7 +435,7 @@ impl ExpectedSpan {
     /// # Examples
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO);
@@ -456,7 +456,7 @@ impl ExpectedSpan {
     /// recorded at any other level:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO);
@@ -490,7 +490,7 @@ impl ExpectedSpan {
     /// # Examples
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .with_target("some_target");
@@ -510,7 +510,7 @@ impl ExpectedSpan {
     /// The test will fail if the target is different:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .with_target("some_target");
@@ -563,7 +563,7 @@ impl ExpectedSpan {
     /// An explicit or contextual parent can be matched on an `ExpectedSpan`.
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let parent = expect::span()
     ///     .named("parent_span")
@@ -591,7 +591,7 @@ impl ExpectedSpan {
     /// [`ExpectedId`] can be passed to match a span with that Id.
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .with_ancestry(expect::has_explicit_parent("parent_span"));
@@ -612,7 +612,7 @@ impl ExpectedSpan {
     /// In the following example, the expected span is an explicit root:
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .with_ancestry(expect::is_explicit_root());
@@ -633,7 +633,7 @@ impl ExpectedSpan {
     /// `parent_span`:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let parent_span = expect::span().named("parent_span");
     /// let span = expect::span()
@@ -658,7 +658,7 @@ impl ExpectedSpan {
     /// a contextually-determined root:
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .with_ancestry(expect::is_contextual_root());
@@ -679,7 +679,7 @@ impl ExpectedSpan {
     /// `parent_span`:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let parent_span = expect::span().named("parent_span");
     /// let span = expect::span()
@@ -733,7 +733,7 @@ impl ExpectedSpan {
     /// # Examples
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .with_fields(expect::field("field.name").with_value(&"field_value"));
@@ -752,7 +752,7 @@ impl ExpectedSpan {
     /// A different field value will cause the expectation to fail:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let span = expect::span()
     ///     .with_fields(expect::field("field.name").with_value(&"field_value"));

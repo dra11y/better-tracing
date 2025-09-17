@@ -30,10 +30,10 @@
 //! In `tracing-subscriber`, `lookup_current()` returned the parent span instead of the exiting span during `FmtSpan::EXIT` and `FmtSpan::CLOSE` events. `better-tracing` fixes this.
 //!
 //! ```rust
-//! use better_tracing::fmt::format::FmtSpan;
+//! use tracing_subscriber::fmt::format::FmtSpan;
 //!
 //! // Custom formatter that can now access the exiting span
-//! use better_tracing::{
+//! use tracing_subscriber::{
 //!     fmt::{FmtContext, FormatEvent, FormatFields, format::Writer},
 //!     registry::LookupSpan,
 //! };
@@ -62,9 +62,9 @@
 //! }
 //!
 //! // Set up subscriber with the custom formatter and EXIT events
-//! let subscriber = better_tracing::fmt()
-//!     .event_format(MyFormatter)
+//! let subscriber = tracing_subscriber::fmt()
 //!     .with_span_events(FmtSpan::EXIT)
+//!     .event_format(MyFormatter)
 //!     .finish();
 //! ```
 //!

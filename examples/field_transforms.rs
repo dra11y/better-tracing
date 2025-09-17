@@ -2,7 +2,7 @@
 //!
 //! This example demonstrates the field transformation layer that allows you to:
 //! - Rename fields from third-party crates
-//! - Hide sensitive or noisy fields  
+//! - Hide sensitive or noisy fields
 //! - Truncate long values
 //! - Add prefixes for visual identification
 //! - Apply custom transformations
@@ -10,7 +10,7 @@
 //! Run with:
 //!   cargo run --example field_transforms
 
-use better_tracing::{
+use tracing_subscriber::{
     layer::{transform::FieldTransformLayer, SubscriberExt},
     registry::Registry,
     util::SubscriberInitExt,
@@ -20,7 +20,7 @@ use tracing::{info, span, Level};
 /// Simulate a third-party crate like kube-rs
 mod kube_client {
     use tracing::{info, instrument};
-    
+
     #[instrument]
     pub fn create_pod(
         resource_name: &str,
@@ -31,14 +31,14 @@ mod kube_client {
     ) {
         info!(
             resource_name,
-            namespace, 
+            namespace,
             uid,
             internal_token,
             status,
             "Creating Kubernetes pod"
         );
     }
-    
+
     #[instrument]
     pub fn watch_deployment(deployment_name: &str, resource_version: &str, phase: &str) {
         info!(
@@ -53,7 +53,7 @@ mod kube_client {
 /// Simulate HTTP client logging
 mod http_client {
     use tracing::{info, instrument};
-    
+
     #[instrument]
     pub fn make_request(method: &str, url: &str, status: u16, duration_ms: f64) {
         info!(
@@ -110,7 +110,7 @@ fn main() {
     // Set up the subscriber with field transformations
     Registry::default()
         .with(transform_layer)
-        .with(better_tracing::fmt::layer()
+        .with(tracing_subscriber::fmt::layer()
             .with_target(true)
             .with_level(true)
             .with_ansi(true)
@@ -134,7 +134,7 @@ fn main() {
     );
 
     kube_client::watch_deployment(
-        "my-app-deployment", 
+        "my-app-deployment",
         "123456789",  // Will be hidden
         "Pending"     // Will be transformed with emoji
     );

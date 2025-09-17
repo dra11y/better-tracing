@@ -124,9 +124,9 @@ use tracing_core::{
 /// variable](EnvFilter::from_default_env) (`RUST_LOG`):
 ///
 /// ```
-/// use better_tracing::{EnvFilter, fmt, prelude::*};
+/// use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 ///
-/// better_tracing::registry()
+/// tracing_subscriber::registry()
 ///     .with(fmt::layer())
 ///     .with(EnvFilter::from_default_env())
 ///     .init();
@@ -136,9 +136,9 @@ use tracing_core::{
 /// variable](EnvFilter::from_env):
 ///
 /// ```
-/// use better_tracing::{EnvFilter, fmt, prelude::*};
+/// use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 ///
-/// better_tracing::registry()
+/// tracing_subscriber::registry()
 ///     .with(fmt::layer())
 ///     .with(EnvFilter::from_env("MYAPP_LOG"))
 ///     .init();
@@ -148,7 +148,7 @@ use tracing_core::{
 /// [`Layer`]:
 ///
 /// ```
-/// use better_tracing::{EnvFilter, fmt, prelude::*};
+/// use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 ///
 /// // Parse an `EnvFilter` configuration from the `RUST_LOG`
 /// // environment variable.
@@ -161,7 +161,7 @@ use tracing_core::{
 /// let unfiltered_layer = // ...
 ///     # fmt::layer();
 ///
-/// better_tracing::registry()
+/// tracing_subscriber::registry()
 ///     .with(filtered_layer)
 ///     .with(unfiltered_layer)
 ///     .init();
@@ -256,7 +256,7 @@ impl EnvFilter {
     /// This function is equivalent to the following:
     ///
     /// ```rust
-    /// use better_tracing::filter::{EnvFilter, LevelFilter};
+    /// use tracing_subscriber::filter::{EnvFilter, LevelFilter};
     ///
     /// # fn docs() -> EnvFilter {
     /// EnvFilter::builder()
@@ -285,7 +285,7 @@ impl EnvFilter {
     /// This function is equivalent to the following:
     ///
     /// ```rust
-    /// use better_tracing::filter::{EnvFilter, LevelFilter};
+    /// use tracing_subscriber::filter::{EnvFilter, LevelFilter};
     ///
     /// # fn docs() -> EnvFilter {
     /// # let env = "";
@@ -316,7 +316,7 @@ impl EnvFilter {
     /// This function is equivalent to the following:
     ///
     /// ```rust
-    /// use better_tracing::filter::{EnvFilter, LevelFilter};
+    /// use tracing_subscriber::filter::{EnvFilter, LevelFilter};
     ///
     /// # fn docs() -> EnvFilter {
     /// # let directives = "";
@@ -345,9 +345,9 @@ impl EnvFilter {
     /// This function is equivalent to the following:
     ///
     /// ```rust
-    /// use better_tracing::filter::{EnvFilter, LevelFilter};
+    /// use tracing_subscriber::filter::{EnvFilter, LevelFilter};
     ///
-    /// # fn docs() -> Result<EnvFilter, better_tracing::filter::ParseError> {
+    /// # fn docs() -> Result<EnvFilter, tracing_subscriber::filter::ParseError> {
     /// # let directives = "";
     /// EnvFilter::builder()
     ///     .with_default_directive(LevelFilter::ERROR.into())
@@ -370,9 +370,9 @@ impl EnvFilter {
     /// This function is equivalent to the following:
     ///
     /// ```rust
-    /// use better_tracing::EnvFilter;
+    /// use tracing_subscriber::EnvFilter;
     ///
-    /// # fn docs() -> Result<EnvFilter, better_tracing::filter::FromEnvError> {
+    /// # fn docs() -> Result<EnvFilter, tracing_subscriber::filter::FromEnvError> {
     /// EnvFilter::builder().try_from_env()
     /// # }
     /// ```
@@ -390,9 +390,9 @@ impl EnvFilter {
     /// This function is equivalent to the following:
     ///
     /// ```rust
-    /// use better_tracing::EnvFilter;
+    /// use tracing_subscriber::EnvFilter;
     ///
-    /// # fn docs() -> Result<EnvFilter, better_tracing::filter::FromEnvError> {
+    /// # fn docs() -> Result<EnvFilter, tracing_subscriber::filter::FromEnvError> {
     /// # let env = "";
     /// EnvFilter::builder().with_env_var(env).try_from_env()
     /// # }
@@ -423,7 +423,7 @@ impl EnvFilter {
     /// From [`LevelFilter`]:
     ///
     /// ```rust
-    /// use better_tracing::filter::{EnvFilter, LevelFilter};
+    /// use tracing_subscriber::filter::{EnvFilter, LevelFilter};
     /// let mut filter = EnvFilter::from_default_env()
     ///     .add_directive(LevelFilter::INFO.into());
     /// ```
@@ -431,7 +431,7 @@ impl EnvFilter {
     /// Or from [`Level`]:
     ///
     /// ```rust
-    /// # use better_tracing::filter::{EnvFilter, LevelFilter};
+    /// # use tracing_subscriber::filter::{EnvFilter, LevelFilter};
     /// # use tracing::Level;
     /// let mut filter = EnvFilter::from_default_env()
     ///     .add_directive(Level::INFO.into());
@@ -440,7 +440,7 @@ impl EnvFilter {
     /// Parsed from a string:
     ///
     /// ```rust
-    /// use better_tracing::filter::{EnvFilter, Directive};
+    /// use tracing_subscriber::filter::{EnvFilter, Directive};
     ///
     /// # fn try_mk_filter() -> Result<(), Box<dyn ::std::error::Error>> {
     /// let mut filter = EnvFilter::try_from_default_env()?

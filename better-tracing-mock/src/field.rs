@@ -14,7 +14,7 @@
 //! specific name, without any expectation about the value:
 //!
 //! ```
-//! use better_tracing_mock::{expect, subscriber};
+//! use tracing_mock::{expect, subscriber};
 //!
 //! let event = expect::event()
 //!     .with_fields(expect::field("field_name"));
@@ -34,7 +34,7 @@
 //! each of them:
 //!
 //! ```
-//! use better_tracing_mock::{expect, subscriber};
+//! use tracing_mock::{expect, subscriber};
 //!
 //! let event = expect::event().with_fields(
 //!     expect::field("string_field")
@@ -63,7 +63,7 @@
 //! different:
 //!
 //! ```should_panic
-//! use better_tracing_mock::{expect, subscriber};
+//! use tracing_mock::{expect, subscriber};
 //!
 //! let event = expect::event()
 //!     .with_fields(expect::field("field_name").with_value(&"value"));
@@ -159,7 +159,7 @@ impl ExpectedField {
     /// # Examples
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let event = expect::event()
     ///     .with_fields(expect::field("field_name").with_value(&"value"));
@@ -178,7 +178,7 @@ impl ExpectedField {
     /// A different value will cause the test to fail:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let event = expect::event()
     ///     .with_fields(expect::field("field_name").with_value(&"value"));
@@ -209,7 +209,7 @@ impl ExpectedField {
     /// # Examples
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let event = expect::event().with_fields(
     ///     expect::field("field")
@@ -234,7 +234,7 @@ impl ExpectedField {
     /// If the second field is not present, the test will fail:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let event = expect::event().with_fields(
     ///     expect::field("field")
@@ -274,7 +274,7 @@ impl ExpectedField {
     /// used:
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let event = expect::event()
     ///     .with_fields(expect::field("field").with_value(&"value"));
@@ -292,7 +292,7 @@ impl ExpectedField {
     /// will fail:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let event = expect::event()
     ///     .with_fields(expect::field("field").with_value(&"value").only());
@@ -338,7 +338,7 @@ impl ExpectedFields {
     /// # Examples
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let event = expect::event().with_fields(
     ///     expect::field("field")
@@ -366,7 +366,7 @@ impl ExpectedFields {
     /// event, the test will fail:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let event = expect::event().with_fields(
     ///     expect::field("field")
@@ -408,7 +408,7 @@ impl ExpectedFields {
     /// recorded on the event.
     ///
     /// ```
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let event = expect::event().with_fields(
     ///     expect::field("field")
@@ -435,7 +435,7 @@ impl ExpectedFields {
     /// will fail:
     ///
     /// ```should_panic
-    /// use better_tracing_mock::{expect, subscriber};
+    /// use tracing_mock::{expect, subscriber};
     ///
     /// let event = expect::event().with_fields(
     ///     expect::field("field")

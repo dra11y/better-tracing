@@ -1,3 +1,18 @@
+# 0.6.0 (September 17, 2025)
+
+### Breaking Changes
+
+- **renamed `[lib]`** from its default of `better_tracing` **to `tracing_subscriber`** so it can be a drop-in replacement
+  - **replace** `use better_tracing::*` with `use tracing_subscriber::*`
+
+### Fixed
+
+- doc tests
+
+### Changed
+
+- **(internal):** renamed `better_tracing_mock [lib]` to `tracing_mock` - should not affect public API
+
 # 0.5.0 (July 29, 2025)
 
 ### Breaking Changes

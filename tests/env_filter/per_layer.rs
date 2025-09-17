@@ -2,7 +2,7 @@
 //! `Layer` filter).
 #![cfg(feature = "registry")]
 use super::*;
-use better_tracing_mock::{expect, layer};
+use tracing_mock::{expect, layer};
 
 #[test]
 fn level_filter_event() {
@@ -14,7 +14,7 @@ fn level_filter_event() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(layer.with_filter(filter))
         .set_default();
 
@@ -48,7 +48,7 @@ fn same_name_spans() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(layer.with_filter(filter))
         .set_default();
 
@@ -70,7 +70,7 @@ fn level_filter_event_with_target() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(layer.with_filter(filter))
         .set_default();
 
@@ -104,7 +104,7 @@ fn level_filter_event_with_target_and_span() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(layer.with_filter(filter))
         .set_default();
 
@@ -137,7 +137,7 @@ fn not_order_dependent() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(layer.with_filter(filter))
         .set_default();
 
@@ -169,7 +169,7 @@ fn add_directive_enables_event() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(layer.with_filter(filter))
         .set_default();
 
@@ -222,7 +222,7 @@ fn span_name_filter_is_dynamic() {
         .only()
         .run_with_handle();
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(layer.with_filter(filter))
         .set_default();
 
@@ -286,7 +286,7 @@ fn multiple_dynamic_filters() {
         (layer.with_filter(filter), handle)
     };
 
-    let _subscriber = better_tracing::registry()
+    let _subscriber = tracing_subscriber::registry()
         .with(layer1)
         .with(layer2)
         .set_default();

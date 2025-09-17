@@ -24,7 +24,7 @@ use tracing_core::Metadata;
 /// The simplest usage is to pass in a named function that returns a writer. For
 /// example, to log all events to stderr, we could write:
 /// ```
-/// let subscriber = better_tracing::fmt()
+/// let subscriber = tracing_subscriber::fmt()
 ///     .with_writer(std::io::stderr)
 ///     .finish();
 /// # drop(subscriber);
@@ -38,7 +38,7 @@ use tracing_core::Metadata;
 ///     # std::io::stdout()
 /// }
 ///
-/// let subscriber = better_tracing::fmt()
+/// let subscriber = tracing_subscriber::fmt()
 ///     .with_writer(make_my_great_writer)
 ///     .finish();
 /// # drop(subscriber);
@@ -53,7 +53,7 @@ use tracing_core::Metadata;
 /// use std::sync::atomic::{AtomicUsize, Ordering::Relaxed};
 ///
 /// let n = AtomicUsize::new(0);
-/// let subscriber = better_tracing::fmt()
+/// let subscriber = tracing_subscriber::fmt()
 ///     .with_writer(move || -> Box<dyn io::Write> {
 ///         if n.fetch_add(1, Relaxed) % 5 == 0 {
 ///             Box::new(io::stderr())
@@ -74,7 +74,7 @@ use tracing_core::Metadata;
 ///
 /// # fn docs() -> Result<(), Box<dyn std::error::Error>> {
 /// let log_file = File::create("my_cool_trace.log")?;
-/// let subscriber = better_tracing::fmt()
+/// let subscriber = tracing_subscriber::fmt()
 ///     .with_writer(Mutex::new(log_file))
 ///     .finish();
 /// # drop(subscriber);
@@ -133,7 +133,7 @@ pub trait MakeWriter<'a> {
     ///
     /// ```
     /// use std::io::{self, Stdout, Stderr, StdoutLock, StderrLock};
-    /// use better_tracing::fmt::writer::MakeWriter;
+    /// use tracing_subscriber::fmt::writer::MakeWriter;
     /// use tracing_core::{Metadata, Level};
     ///
     /// pub struct MyMakeWriter {
@@ -226,13 +226,13 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     ///
     /// ```
     /// use tracing::Level;
-    /// use better_tracing::fmt::writer::MakeWriterExt;
+    /// use tracing_subscriber::fmt::writer::MakeWriterExt;
     ///
     /// // Construct a writer that outputs events to `stderr` only if the span or
     /// // event's level is <= WARN (WARN and ERROR).
     /// let mk_writer = std::io::stderr.with_max_level(Level::WARN);
     ///
-    /// better_tracing::fmt().with_writer(mk_writer).init();
+    /// tracing_subscriber::fmt().with_writer(mk_writer).init();
     /// ```
     ///
     /// Writing the `ERROR` and `WARN` levels to `stderr`, and everything else
@@ -240,13 +240,13 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     ///
     /// ```
     /// # use tracing::Level;
-    /// # use better_tracing::fmt::writer::MakeWriterExt;
+    /// # use tracing_subscriber::fmt::writer::MakeWriterExt;
     ///
     /// let mk_writer = std::io::stderr
     ///     .with_max_level(Level::WARN)
     ///     .or_else(std::io::stdout);
     ///
-    /// better_tracing::fmt().with_writer(mk_writer).init();
+    /// tracing_subscriber::fmt().with_writer(mk_writer).init();
     /// ```
     ///
     /// Writing the `ERROR` level to `stderr`, the `INFO` and `WARN` levels to
@@ -254,7 +254,7 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     ///
     /// ```
     /// # use tracing::Level;
-    /// # use better_tracing::fmt::writer::MakeWriterExt;
+    /// # use tracing_subscriber::fmt::writer::MakeWriterExt;
     /// use std::{sync::Arc, fs::File};
     /// # // don't actually create the file when running the tests.
     /// # fn docs() -> std::io::Result<()> {
@@ -267,7 +267,7 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     ///         .and(debug_log.with_max_level(Level::DEBUG))
     ///     );
     ///
-    /// better_tracing::fmt().with_writer(mk_writer).init();
+    /// tracing_subscriber::fmt().with_writer(mk_writer).init();
     /// # Ok(()) }
     /// ```
     ///
@@ -290,20 +290,20 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     ///
     /// ```
     /// use tracing::Level;
-    /// use better_tracing::fmt::writer::MakeWriterExt;
+    /// use tracing_subscriber::fmt::writer::MakeWriterExt;
     ///
     /// // Construct a writer that outputs events to `stdout` only if the span or
     /// // event's level is >= DEBUG (DEBUG and TRACE).
     /// let mk_writer = std::io::stdout.with_min_level(Level::DEBUG);
     ///
-    /// better_tracing::fmt().with_writer(mk_writer).init();
+    /// tracing_subscriber::fmt().with_writer(mk_writer).init();
     /// ```
     /// This can be combined with [`MakeWriterExt::with_max_level`] to write
     /// only within a range of levels:
     ///
     /// ```
     /// # use tracing::Level;
-    /// # use better_tracing::fmt::writer::MakeWriterExt;
+    /// # use tracing_subscriber::fmt::writer::MakeWriterExt;
     /// // Only write the `DEBUG` and `INFO` levels to stdout.
     /// let mk_writer = std::io::stdout
     ///     .with_max_level(Level::DEBUG)
@@ -311,7 +311,7 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     ///     // Write the `WARN` and `ERROR` levels to stderr.
     ///     .and(std::io::stderr.with_min_level(Level::WARN));
     ///
-    /// better_tracing::fmt().with_writer(mk_writer).init();
+    /// tracing_subscriber::fmt().with_writer(mk_writer).init();
     /// ```
     /// [`Level`]: tracing_core::Level
     /// [`io::Write`]: std::io::Write
@@ -341,7 +341,7 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     /// events to stdout:
     ///
     /// ```
-    /// use better_tracing::fmt::writer::MakeWriterExt;
+    /// use tracing_subscriber::fmt::writer::MakeWriterExt;
     /// use std::{sync::Arc, fs::File};
     /// # // don't actually create the file when running the tests.
     /// # fn docs() -> std::io::Result<()> {
@@ -354,14 +354,14 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     ///     // Write events with all other targets to stdout.
     ///     .or_else(std::io::stdout);
     ///
-    /// better_tracing::fmt().with_writer(mk_writer).init();
+    /// tracing_subscriber::fmt().with_writer(mk_writer).init();
     /// # Ok(())
     /// # }
     /// ```
     ///
     /// Conditionally enabling or disabling a log file:
     /// ```
-    /// use better_tracing::fmt::writer::MakeWriterExt;
+    /// use tracing_subscriber::fmt::writer::MakeWriterExt;
     /// use std::{
     ///     sync::{Arc, atomic::{AtomicBool, Ordering}},
     ///     fs::File,
@@ -381,7 +381,7 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     ///     // Write to the debug file if it's enabled
     ///     .and(debug_file);
     ///
-    /// better_tracing::fmt().with_writer(mk_writer).init();
+    /// tracing_subscriber::fmt().with_writer(mk_writer).init();
     ///
     /// // ...
     ///
@@ -414,12 +414,12 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     /// # Examples
     ///
     /// ```
-    /// use better_tracing::fmt::writer::MakeWriterExt;
+    /// use tracing_subscriber::fmt::writer::MakeWriterExt;
     ///
     /// // Construct a writer that outputs events to `stdout` *and* `stderr`.
     /// let mk_writer = std::io::stdout.and(std::io::stderr);
     ///
-    /// better_tracing::fmt().with_writer(mk_writer).init();
+    /// tracing_subscriber::fmt().with_writer(mk_writer).init();
     /// ```
     ///
     /// `and` can be used in conjunction with filtering combinators. For
@@ -428,7 +428,7 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     ///
     /// ```
     /// use tracing::Level;
-    /// # use better_tracing::fmt::writer::MakeWriterExt;
+    /// # use tracing_subscriber::fmt::writer::MakeWriterExt;
     /// use std::{sync::Arc, fs::File};
     /// # // don't actually create the file when running the tests.
     /// # fn docs() -> std::io::Result<()> {
@@ -444,7 +444,7 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     ///         .with_min_level(Level::INFO)
     ///     );
     ///
-    /// better_tracing::fmt().with_writer(mk_writer).init();
+    /// tracing_subscriber::fmt().with_writer(mk_writer).init();
     /// # Ok(()) }
     /// ```
     ///
@@ -465,7 +465,7 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     ///
     /// ```
     /// use tracing::Level;
-    /// use better_tracing::fmt::writer::MakeWriterExt;
+    /// use tracing_subscriber::fmt::writer::MakeWriterExt;
     ///
     /// // Produces a writer that writes to `stderr` if the level is <= WARN,
     /// // or returns `OptionalWriter::none()` otherwise.
@@ -475,7 +475,7 @@ pub trait MakeWriterExt<'a>: MakeWriter<'a> {
     /// // write to stdout instead:
     /// let mk_writer = stderr.or_else(std::io::stdout);
     ///
-    /// better_tracing::fmt().with_writer(mk_writer).init();
+    /// tracing_subscriber::fmt().with_writer(mk_writer).init();
     /// ```
     ///
     /// [`make_writer`]: MakeWriter::make_writer
@@ -527,7 +527,7 @@ pub struct TestWriter {
 ///
 /// ```rust
 /// # use tracing::Subscriber;
-/// # use better_tracing::fmt::writer::BoxMakeWriter;
+/// # use tracing_subscriber::fmt::writer::BoxMakeWriter;
 ///
 /// fn dynamic_writer(use_stderr: bool) -> impl Subscriber {
 ///     let writer = if use_stderr {
@@ -536,7 +536,7 @@ pub struct TestWriter {
 ///         BoxMakeWriter::new(std::io::stdout)
 ///     };
 ///
-///     better_tracing::fmt().with_writer(writer).finish()
+///     tracing_subscriber::fmt().with_writer(writer).finish()
 /// }
 /// ```
 ///

@@ -5,8 +5,8 @@
 //! that an event has a specific contextual or explicit parent.
 //!
 //! [`ExpectedEvent`]: crate::event::ExpectedEvent
-use better_tracing_mock::{expect, subscriber};
 use tracing::{subscriber::with_default, Level};
+use tracing_mock::{expect, subscriber};
 
 #[test]
 fn contextual_parent() {

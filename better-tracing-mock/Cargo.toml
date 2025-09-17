@@ -18,6 +18,9 @@ keywords = ["tracing", "mock", "testing"]
 edition = "2018"
 rust-version = "1.65.0"
 
+[lib]
+name = "tracing_mock"
+
 [dependencies]
 tracing = { workspace = true, features = ["std", "attributes"] }
 tracing-core = { workspace = true }

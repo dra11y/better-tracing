@@ -5,8 +5,8 @@ use std::sync::{
     atomic::{AtomicUsize, Ordering},
     Arc,
 };
-use better_tracing_mock::{expect, layer};
-use better_tracing::{filter, prelude::*, Layer};
+use tracing_mock::{expect, layer};
+use tracing_subscriber::{filter, prelude::*, Layer};
 
 /// A `None` filter should always be interested in events, and it should not
 /// needlessly degrade the caching of other filters.
@@ -33,7 +33,7 @@ fn none_interest_cache() {
         }
     }));
 
-    let subscriber = better_tracing::registry()
+    let subscriber = tracing_subscriber::registry()
         .with(layer_none)
         .with(layer_filter_fn);
 

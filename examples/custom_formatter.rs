@@ -6,7 +6,7 @@
 //! Run with:
 //!   cargo run --example custom_formatter
 
-use better_tracing::{
+use tracing_subscriber::{
     fmt::{
         format::{FormatEvent, FormatFields},
         FmtContext, FormattedFields,
@@ -30,7 +30,7 @@ where
     fn format_event(
         &self,
         ctx: &FmtContext<'_, S, N>,
-        mut writer: better_tracing::fmt::format::Writer<'_>,
+        mut writer: tracing_subscriber::fmt::format::Writer<'_>,
         event: &Event<'_>,
     ) -> fmt::Result {
         // Write timestamp (using a simple format since chrono isn't available)
@@ -53,7 +53,7 @@ where
         if let Some(scope) = ctx.event_scope() {
             let mut spans: Vec<_> = scope.from_root().collect();
             spans.reverse();
-            
+
             if !spans.is_empty() {
                 write!(writer, " 📍")?;
                 for (i, span) in spans.iter().enumerate() {
@@ -61,7 +61,7 @@ where
                         write!(writer, " → ")?;
                     }
                     write!(writer, " {}", span.name())?;
-                    
+
                     // Include span fields (which may be transformed)
                     let ext = span.extensions();
                     if let Some(fields) = ext.get::<FormattedFields<N>>() {
@@ -117,7 +117,7 @@ mod http_client {
         server_header: &str,
     ) {
         info!(
-            target: "http::response", 
+            target: "http::response",
             status_code,
             content_length,
             response_time_ms,
@@ -208,7 +208,7 @@ fn main() {
     Registry::default()
         .with(transform_layer)
         .with(
-            better_tracing::fmt::layer()
+            tracing_subscriber::fmt::layer()
                 .event_format(CustomFormatter)
         )
         .init();
@@ -219,7 +219,7 @@ fn main() {
 
     // Example 1: HTTP operations with transformation
     let span = span!(
-        Level::INFO, 
+        Level::INFO,
         "api_request",
         endpoint = "/users/123",
         client_id = "web-app"
@@ -247,7 +247,7 @@ fn main() {
     // Example 2: Database operations with transformation
     let span = span!(
         Level::INFO,
-        "user_query", 
+        "user_query",
         user_id = 123,
         operation = "profile_update"
     );
@@ -269,7 +269,7 @@ fn main() {
 
     http_client::response_received(
         500,     // Will get ❌ prefix
-        5242880, // Will be formatted as MB 
+        5242880, // Will be formatted as MB
         3500,    // Will get 🐌🐌 prefix (very slow)
         "Apache/2.4.41",
     );
