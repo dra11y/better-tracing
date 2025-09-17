@@ -2,12 +2,19 @@
 
 ### Breaking Changes
 
-- **renamed `[lib]`** from its default of `better_tracing` **to `tracing_subscriber`** so it can be a drop-in replacement
+- **MAJOR: renamed `[lib]`** from its default of `better_tracing` **to `tracing_subscriber`** in Cargo.toml so it can be a drop-in replacement for `tracing_subscriber` and hopefully be compatible with other crates that use `tracing_subscriber`
   - **replace** `use better_tracing::*` with `use tracing_subscriber::*`
 
 ### Fixed
 
-- doc tests
+- **doc tests/README:** `.event_format(MyFormatter)` was out of order; it must come **after** .with_span_events(..)
+```
+ let subscriber = tracing_subscriber::fmt()
+-    .event_format(MyFormatter)
+     .with_span_events(FmtSpan::EXIT)
++    .event_format(MyFormatter)
+     .finish();
+```
 
 ### Changed
 

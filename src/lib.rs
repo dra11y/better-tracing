@@ -10,7 +10,9 @@
 //!
 //! See the [CHANGELOG](https://github.com/dra11y/better-tracing/blob/main/CHANGELOG.md) for implemented features and fixes.
 //!
-//! Utilities for implementing and composing [`tracing`][tracing] subscribers. This fork provides sensible defaults, accessible formatting, and resolves architectural limitations while maintaining full drop-in compatibility.
+//! Utilities for implementing and composing [`tracing`][tracing] subscribers. This fork provides sensible defaults, accessible formatting, and resolves architectural limitations while maintaining drop-in compatibility.
+//!
+//! **Backward compatibility and compatibility with 3rd party crates that might use `tracing_subscriber` will be maintained on a best-effort basis.**
 //!
 //! | Feature | better-tracing | tracing-subscriber |
 //! |---------|----------------|-------------------|
