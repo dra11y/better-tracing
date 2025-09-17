@@ -710,7 +710,8 @@ feature! {
 
 mod context;
 mod layered;
-pub use self::{context::*, layered::*};
+pub mod transform;
+pub use self::{context::*, layered::*, transform::*};
 
 // The `tests` module is `pub(crate)` because it contains test utilities used by
 // other modules.
