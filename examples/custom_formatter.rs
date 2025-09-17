@@ -6,6 +6,9 @@
 //! Run with:
 //!   cargo run --example custom_formatter
 
+use std::fmt;
+use tracing::{info, span, Level, Subscriber};
+use tracing_core::Event;
 use tracing_subscriber::{
     fmt::{
         format::{FormatEvent, FormatFields},
@@ -15,9 +18,6 @@ use tracing_subscriber::{
     registry::{LookupSpan, Registry},
     util::SubscriberInitExt,
 };
-use std::fmt;
-use tracing::{info, span, Level, Subscriber};
-use tracing_core::Event;
 
 /// Custom formatter that formats events in a specific style
 struct CustomFormatter;
@@ -154,63 +154,66 @@ mod database {
 fn main() {
     // Configure field transformations to clean up verbose third-party logs
     let transform_layer = FieldTransformLayer::new()
-        .with_target_transform("http", |builder| builder
-            .hide_field("connection_pool_size")      // Implementation detail
-            .hide_field("keep_alive")                // Usually not relevant
-            .hide_field("headers_count")             // Too verbose
-            .truncate_field("user_agent", 20)        // Can be very long
-            .truncate_field("url", 50)               // URLs can be extremely long
-            .transform_field("status_code", |code| { // Status with visual indicators
-                let status: u16 = code.parse().unwrap_or(0);
-                match status {
-                    200..=299 => format!("✅ {}", status),
-                    300..=399 => format!("🔄 {}", status),
-                    400..=499 => format!("⚠️ {}", status),
-                    500..=599 => format!("❌ {}", status),
-                    _ => status.to_string(),
-                }
-            })
-            .transform_field("response_time_ms", |time| { // Performance indicators
-                let ms: u64 = time.parse().unwrap_or(0);
-                match ms {
-                    0..=100 => format!("🚀 {}ms", ms),
-                    101..=500 => format!("⚡ {}ms", ms),
-                    501..=2000 => format!("🐌 {}ms", ms),
-                    _ => format!("🐌🐌 {}ms", ms),
-                }
-            })
-            .transform_field("content_length", |bytes| { // Human-readable sizes
-                let size: u64 = bytes.parse().unwrap_or(0);
-                match size {
-                    0..=1024 => format!("{}B", size),
-                    1025..=1048576 => format!("{:.1}KB", size as f64 / 1024.0),
-                    _ => format!("{:.1}MB", size as f64 / 1048576.0),
-                }
-            })
-        )
-        .with_target_transform("db", |builder| builder
-            .rename_field("connection_id", "conn")   // Shorter
-            .rename_field("database_name", "db")     // Shorter
-            .hide_field("rows_affected")             // Often not relevant for tracing
-            .truncate_field("query", 60)             // SQL queries can be very long
-            .transform_field("execution_time_ms", |time| { // Performance indicators
-                let ms: u64 = time.parse().unwrap_or(0);
-                match ms {
-                    0..=10 => format!("⚡ {}ms", ms),
-                    11..=100 => format!("🔵 {}ms", ms),
-                    101..=1000 => format!("🟡 {}ms", ms),
-                    _ => format!("🔴 {}ms", ms),
-                }
-            })
-        );
+        .with_target_transform("http", |builder| {
+            builder
+                .hide_field("connection_pool_size") // Implementation detail
+                .hide_field("keep_alive") // Usually not relevant
+                .hide_field("headers_count") // Too verbose
+                .truncate_field("user_agent", 20) // Can be very long
+                .truncate_field("url", 50) // URLs can be extremely long
+                .transform_field("status_code", |code| {
+                    // Status with visual indicators
+                    let status: u16 = code.parse().unwrap_or(0);
+                    match status {
+                        200..=299 => format!("✅ {}", status),
+                        300..=399 => format!("🔄 {}", status),
+                        400..=499 => format!("⚠️ {}", status),
+                        500..=599 => format!("❌ {}", status),
+                        _ => status.to_string(),
+                    }
+                })
+                .transform_field("response_time_ms", |time| {
+                    // Performance indicators
+                    let ms: u64 = time.parse().unwrap_or(0);
+                    match ms {
+                        0..=100 => format!("🚀 {}ms", ms),
+                        101..=500 => format!("⚡ {}ms", ms),
+                        501..=2000 => format!("🐌 {}ms", ms),
+                        _ => format!("🐌🐌 {}ms", ms),
+                    }
+                })
+                .transform_field("content_length", |bytes| {
+                    // Human-readable sizes
+                    let size: u64 = bytes.parse().unwrap_or(0);
+                    match size {
+                        0..=1024 => format!("{}B", size),
+                        1025..=1048576 => format!("{:.1}KB", size as f64 / 1024.0),
+                        _ => format!("{:.1}MB", size as f64 / 1048576.0),
+                    }
+                })
+        })
+        .with_target_transform("db", |builder| {
+            builder
+                .rename_field("connection_id", "conn") // Shorter
+                .rename_field("database_name", "db") // Shorter
+                .hide_field("rows_affected") // Often not relevant for tracing
+                .truncate_field("query", 60) // SQL queries can be very long
+                .transform_field("execution_time_ms", |time| {
+                    // Performance indicators
+                    let ms: u64 = time.parse().unwrap_or(0);
+                    match ms {
+                        0..=10 => format!("⚡ {}ms", ms),
+                        11..=100 => format!("🔵 {}ms", ms),
+                        101..=1000 => format!("🟡 {}ms", ms),
+                        _ => format!("🔴 {}ms", ms),
+                    }
+                })
+        });
 
     // Initialize with custom formatter and transformations
     Registry::default()
         .with(transform_layer)
-        .with(
-            tracing_subscriber::fmt::layer()
-                .event_format(CustomFormatter)
-        )
+        .with(tracing_subscriber::fmt::layer().event_format(CustomFormatter))
         .init();
 
     println!("=== Custom Formatter + Field Transformations Example ===\n");
@@ -229,16 +232,16 @@ fn main() {
     http_client::make_request(
         "https://api.example.com/v1/users/123?include=profile,settings,preferences&format=json",
         "GET",
-        15,     // Will be hidden
+        15, // Will be hidden
         5000,
         3,
-        "MyApp/1.0 (Linux; x86_64) RequestsLib/2.28.1 Python/3.9.0",  // Will be truncated
+        "MyApp/1.0 (Linux; x86_64) RequestsLib/2.28.1 Python/3.9.0", // Will be truncated
     );
 
     http_client::response_received(
-        200,        // Will get ✅ prefix
-        1048576,    // Will be formatted as MB
-        250,        // Will get ⚡ prefix
+        200,     // Will get ✅ prefix
+        1048576, // Will be formatted as MB
+        250,     // Will get ⚡ prefix
         "nginx/1.18.0",
     );
 

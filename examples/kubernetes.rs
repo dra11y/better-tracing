@@ -6,12 +6,12 @@
 //! Run with:
 //!   cargo run --example kubernetes
 
+use tracing::{info, span, Level};
 use tracing_subscriber::{
     layer::{transform::FieldTransformLayer, SubscriberExt},
     registry::Registry,
     util::SubscriberInitExt,
 };
-use tracing::{info, span, Level};
 
 /// Simulate kube-rs API calls
 mod kube {
@@ -84,12 +84,7 @@ mod containerd {
         );
     }
 
-    pub fn start_container(
-        container_id: &str,
-        image: &str,
-        command: &str,
-        working_dir: &str,
-    ) {
+    pub fn start_container(container_id: &str, image: &str, command: &str, working_dir: &str) {
         info!(
             target: "containerd::runtime",
             container_id,
@@ -106,60 +101,66 @@ fn main() {
     // Configure transformations specifically for Kubernetes ecosystem
     let transform_layer = FieldTransformLayer::new()
         // kube-rs API operations
-        .with_target_transform("kube", |builder| builder
-            .rename_field("resource_name", "name")       // Shorter, clearer
-            .rename_field("namespace", "ns")             // Kubernetes shorthand
-            .rename_field("api_version", "api")          // Shorter
-            .hide_field("resource_version")              // Usually not relevant for humans
-            .hide_field("timeout_seconds")               // Implementation detail
-            .truncate_field("uid", 8)                    // UUIDs are long and noisy
-            .truncate_field("label_selector", 40)        // Can be very long
-            .prefix_field("kind", "📦")                  // Visual indicator for resource type
-            .transform_field("phase", |phase| {          // Pod phases with visual status
-                match phase.trim_matches('"') {
-                    "Pending" => "🟡 Pending".to_string(),
-                    "Running" => "🟢 Running".to_string(),
-                    "Succeeded" => "✅ Succeeded".to_string(),
-                    "Failed" => "❌ Failed".to_string(),
-                    "Unknown" => "❓ Unknown".to_string(),
-                    other => other.to_string(),
-                }
-            })
-            .transform_field("replicas", |replicas| {    // Add visual indicator for scale
-                let count: u32 = replicas.parse().unwrap_or(0);
-                match count {
-                    0 => "⭕ 0".to_string(),
-                    1 => "1️⃣ 1".to_string(),
-                    2..=5 => format!("🔢 {}", count),
-                    _ => format!("🚀 {}", count),
-                }
-            })
-        )
+        .with_target_transform("kube", |builder| {
+            builder
+                .rename_field("resource_name", "name") // Shorter, clearer
+                .rename_field("namespace", "ns") // Kubernetes shorthand
+                .rename_field("api_version", "api") // Shorter
+                .hide_field("resource_version") // Usually not relevant for humans
+                .hide_field("timeout_seconds") // Implementation detail
+                .truncate_field("uid", 8) // UUIDs are long and noisy
+                .truncate_field("label_selector", 40) // Can be very long
+                .prefix_field("kind", "📦") // Visual indicator for resource type
+                .transform_field("phase", |phase| {
+                    // Pod phases with visual status
+                    match phase.trim_matches('"') {
+                        "Pending" => "🟡 Pending".to_string(),
+                        "Running" => "🟢 Running".to_string(),
+                        "Succeeded" => "✅ Succeeded".to_string(),
+                        "Failed" => "❌ Failed".to_string(),
+                        "Unknown" => "❓ Unknown".to_string(),
+                        other => other.to_string(),
+                    }
+                })
+                .transform_field("replicas", |replicas| {
+                    // Add visual indicator for scale
+                    let count: u32 = replicas.parse().unwrap_or(0);
+                    match count {
+                        0 => "⭕ 0".to_string(),
+                        1 => "1️⃣ 1".to_string(),
+                        2..=5 => format!("🔢 {}", count),
+                        _ => format!("🚀 {}", count),
+                    }
+                })
+        })
         // Container runtime operations
-        .with_target_transform("containerd", |builder| builder
-            .rename_field("container_id", "ctr_id")      // Shorter
-            .truncate_field("ctr_id", 12)                // Docker-style short IDs
-            .hide_field("runtime")                       // Usually runc, not interesting
-            .hide_field("registry")                      // Usually obvious from image name
-            .prefix_field("image", "🐳")                 // Docker/container indicator
-            .transform_field("size_bytes", |bytes| {     // Human-readable sizes
-                let size: u64 = bytes.parse().unwrap_or(0);
-                match size {
-                    0..=1024 => format!("📄 {}B", size),
-                    1025..=1048576 => format!("📄 {:.1}KB", size as f64 / 1024.0),
-                    1048577..=1073741824 => format!("📦 {:.1}MB", size as f64 / 1048576.0),
-                    _ => format!("📦 {:.1}GB", size as f64 / 1073741824.0),
-                }
-            })
-        );
+        .with_target_transform("containerd", |builder| {
+            builder
+                .rename_field("container_id", "ctr_id") // Shorter
+                .truncate_field("ctr_id", 12) // Docker-style short IDs
+                .hide_field("runtime") // Usually runc, not interesting
+                .hide_field("registry") // Usually obvious from image name
+                .prefix_field("image", "🐳") // Docker/container indicator
+                .transform_field("size_bytes", |bytes| {
+                    // Human-readable sizes
+                    let size: u64 = bytes.parse().unwrap_or(0);
+                    match size {
+                        0..=1024 => format!("📄 {}B", size),
+                        1025..=1048576 => format!("📄 {:.1}KB", size as f64 / 1024.0),
+                        1048577..=1073741824 => format!("📦 {:.1}MB", size as f64 / 1048576.0),
+                        _ => format!("📦 {:.1}GB", size as f64 / 1073741824.0),
+                    }
+                })
+        });
 
     // Initialize the subscriber
     Registry::default()
         .with(transform_layer)
-        .with(tracing_subscriber::fmt::layer()
-            .with_target(true)
-            .with_level(true)
-            .with_ansi(true)
+        .with(
+            tracing_subscriber::fmt::layer()
+                .with_target(true)
+                .with_level(true)
+                .with_ansi(true),
         )
         .init();
 
@@ -176,8 +177,8 @@ fn main() {
         "production",
         "nginx:1.21-alpine",
         3,
-        "12345",  // Will be hidden
-        "550e8400-e29b-41d4-a716-446655440000",  // Will be truncated
+        "12345",                                // Will be hidden
+        "550e8400-e29b-41d4-a716-446655440000", // Will be truncated
     );
 
     drop(_guard);
@@ -188,7 +189,7 @@ fn main() {
 
     kube::watch_pods(
         "production",
-        "app=web-frontend,version=v1.2.3,tier=frontend,environment=prod",  // Long selector
+        "app=web-frontend,version=v1.2.3,tier=frontend,environment=prod", // Long selector
     );
 
     kube::pod_status_update(
@@ -213,11 +214,11 @@ fn main() {
     let span = span!(Level::INFO, "container_operations");
     let _guard = span.enter();
 
-    containerd::pull_image("nginx:1.21-alpine", 5242880);  // 5MB
-    containerd::pull_image("postgres:13", 314572800);       // 300MB
+    containerd::pull_image("nginx:1.21-alpine", 5242880); // 5MB
+    containerd::pull_image("postgres:13", 314572800); // 300MB
 
     containerd::start_container(
-        "a1b2c3d4e5f67890123456789abcdef0",  // Long container ID
+        "a1b2c3d4e5f67890123456789abcdef0", // Long container ID
         "nginx:1.21-alpine",
         "/docker-entrypoint.sh nginx -g daemon off;",
         "/usr/share/nginx/html",

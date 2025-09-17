@@ -10,12 +10,12 @@
 //! Run with:
 //!   cargo run --example field_transforms
 
+use tracing::{info, span, Level};
 use tracing_subscriber::{
     layer::{transform::FieldTransformLayer, SubscriberExt},
     registry::Registry,
     util::SubscriberInitExt,
 };
-use tracing::{info, span, Level};
 
 /// Simulate a third-party crate like kube-rs
 mod kube_client {
@@ -31,11 +31,7 @@ mod kube_client {
     ) {
         info!(
             resource_name,
-            namespace,
-            uid,
-            internal_token,
-            status,
-            "Creating Kubernetes pod"
+            namespace, uid, internal_token, status, "Creating Kubernetes pod"
         );
     }
 
@@ -43,9 +39,7 @@ mod kube_client {
     pub fn watch_deployment(deployment_name: &str, resource_version: &str, phase: &str) {
         info!(
             deployment_name,
-            resource_version,
-            phase,
-            "Watching deployment for changes"
+            resource_version, phase, "Watching deployment for changes"
         );
     }
 }
@@ -56,13 +50,7 @@ mod http_client {
 
     #[instrument]
     pub fn make_request(method: &str, url: &str, status: u16, duration_ms: f64) {
-        info!(
-            method,
-            url,
-            status,
-            duration_ms,
-            "HTTP request completed"
-        );
+        info!(method, url, status, duration_ms, "HTTP request completed");
     }
 }
 
@@ -70,50 +58,56 @@ fn main() {
     // Set up field transformations for different third-party crates
     let transform_layer = FieldTransformLayer::new()
         // Transform Kubernetes-related logs
-        .with_target_transform("kube_client", |builder| builder
-            .rename_field("resource_name", "k8s_resource")  // More readable field name
-            .rename_field("namespace", "ns")                // Shorter field name
-            .hide_field("internal_token")                   // Hide sensitive data
-            .hide_field("resource_version")                 // Hide noisy internal field
-            .truncate_field("uid", 8)                       // Truncate long UIDs
-            .prefix_field("status", "🎯")                   // Add visual indicator
-            .transform_field("phase", |phase| {             // Custom status transformation
-                match phase.trim_matches('"') {
-                    "Running" => "✅ Running".to_string(),
-                    "Pending" => "🟡 Pending".to_string(),
-                    "Failed" => "❌ Failed".to_string(),
-                    other => other.to_string(),
-                }
-            })
-        )
+        .with_target_transform("kube_client", |builder| {
+            builder
+                .rename_field("resource_name", "k8s_resource") // More readable field name
+                .rename_field("namespace", "ns") // Shorter field name
+                .hide_field("internal_token") // Hide sensitive data
+                .hide_field("resource_version") // Hide noisy internal field
+                .truncate_field("uid", 8) // Truncate long UIDs
+                .prefix_field("status", "🎯") // Add visual indicator
+                .transform_field("phase", |phase| {
+                    // Custom status transformation
+                    match phase.trim_matches('"') {
+                        "Running" => "✅ Running".to_string(),
+                        "Pending" => "🟡 Pending".to_string(),
+                        "Failed" => "❌ Failed".to_string(),
+                        other => other.to_string(),
+                    }
+                })
+        })
         // Transform HTTP client logs
-        .with_target_transform("http_client", |builder| builder
-            .rename_field("method", "http_method")          // Clearer field name
-            .truncate_field("url", 60)                      // Limit URL length
-            .transform_field("status", |status| {           // Color-code HTTP status
-                match status.parse::<u16>().unwrap_or(0) {
-                    200..=299 => format!("✅ {}", status),
-                    400..=499 => format!("⚠️ {}", status),
-                    500..=599 => format!("🔥 {}", status),
-                    _ => status.to_string(),
-                }
-            })
-            .transform_field("duration_ms", |duration| {    // Performance indicators
-                match duration.parse::<f64>().unwrap_or(0.0) {
-                    d if d < 100.0 => format!("⚡ {:.1}ms", d),
-                    d if d < 1000.0 => format!("🟡 {:.1}ms", d),
-                    d => format!("🔴 {:.1}ms", d),
-                }
-            })
-        );
+        .with_target_transform("http_client", |builder| {
+            builder
+                .rename_field("method", "http_method") // Clearer field name
+                .truncate_field("url", 60) // Limit URL length
+                .transform_field("status", |status| {
+                    // Color-code HTTP status
+                    match status.parse::<u16>().unwrap_or(0) {
+                        200..=299 => format!("✅ {}", status),
+                        400..=499 => format!("⚠️ {}", status),
+                        500..=599 => format!("🔥 {}", status),
+                        _ => status.to_string(),
+                    }
+                })
+                .transform_field("duration_ms", |duration| {
+                    // Performance indicators
+                    match duration.parse::<f64>().unwrap_or(0.0) {
+                        d if d < 100.0 => format!("⚡ {:.1}ms", d),
+                        d if d < 1000.0 => format!("🟡 {:.1}ms", d),
+                        d => format!("🔴 {:.1}ms", d),
+                    }
+                })
+        });
 
     // Set up the subscriber with field transformations
     Registry::default()
         .with(transform_layer)
-        .with(tracing_subscriber::fmt::layer()
-            .with_target(true)
-            .with_level(true)
-            .with_ansi(true)
+        .with(
+            tracing_subscriber::fmt::layer()
+                .with_target(true)
+                .with_level(true)
+                .with_ansi(true),
         )
         .init();
 
@@ -128,15 +122,15 @@ fn main() {
     kube_client::create_pod(
         "my-application-pod-12345",
         "production",
-        "550e8400-e29b-41d4-a716-446655440000",  // Long UUID that will be truncated
-        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",  // Token that will be hidden
+        "550e8400-e29b-41d4-a716-446655440000", // Long UUID that will be truncated
+        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...", // Token that will be hidden
         "Running",
     );
 
     kube_client::watch_deployment(
         "my-app-deployment",
-        "123456789",  // Will be hidden
-        "Pending"     // Will be transformed with emoji
+        "123456789", // Will be hidden
+        "Pending",   // Will be transformed with emoji
     );
 
     drop(_guard);
@@ -147,23 +141,23 @@ fn main() {
 
     http_client::make_request(
         "GET",
-        "https://api.example.com/users/12345/profile/settings/preferences/notifications",  // Long URL
+        "https://api.example.com/users/12345/profile/settings/preferences/notifications", // Long URL
         200,
-        45.2,  // Fast response
+        45.2, // Fast response
     );
 
     http_client::make_request(
         "POST",
         "https://api.example.com/auth/login",
         401,
-        120.5,  // Slow response
+        120.5, // Slow response
     );
 
     http_client::make_request(
         "PUT",
         "https://api.example.com/data/upload",
         500,
-        2340.8,  // Very slow response
+        2340.8, // Very slow response
     );
 
     drop(_guard);

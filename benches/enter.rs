@@ -1,5 +1,5 @@
-use tracing_subscriber::prelude::*;
 use criterion::{criterion_group, criterion_main, Criterion};
+use tracing_subscriber::prelude::*;
 
 fn enter(c: &mut Criterion) {
     let mut group = c.benchmark_group("enter");

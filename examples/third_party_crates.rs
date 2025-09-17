@@ -6,16 +6,16 @@
 //! Run with:
 //!   cargo run --example third_party_crates
 
+use tracing::{info, span, Level};
 use tracing_subscriber::{
     layer::{transform::FieldTransformLayer, SubscriberExt},
     registry::Registry,
     util::SubscriberInitExt,
 };
-use tracing::{info, span, Level};
 
 /// Simulate reqwest HTTP client logs
 mod reqwest_simulation {
-    use tracing::{info, debug};
+    use tracing::{debug, info};
 
     pub fn get(url: &str) {
         debug!(target: "reqwest::client", method = "GET", uri = url, version = "HTTP/1.1", "sending request");
@@ -30,7 +30,7 @@ mod reqwest_simulation {
 
 /// Simulate sqlx database logs
 mod sqlx_simulation {
-    use tracing::{info, debug};
+    use tracing::{debug, info};
 
     pub fn execute_query(sql: &str, rows_affected: u64, duration_ms: f64) {
         debug!(target: "sqlx::query", query = sql, "executing query");
@@ -80,59 +80,70 @@ fn main() {
     // Configure transformations for popular third-party crates
     let transform_layer = FieldTransformLayer::new()
         // reqwest HTTP client - clean up verbose logs
-        .with_target_transform("reqwest", |builder| builder
-            .rename_field("uri", "url")
-            .rename_field("method", "http_method")
-            .hide_field("version")               // HTTP/1.1 is noise
-            .hide_field("content_type")          // Usually obvious from context
-            .truncate_field("url", 80)           // Long URLs are noisy
-            .transform_field("status", |status| {
-                match status.parse::<u16>().unwrap_or(0) {
-                    200..=299 => format!("✅ {}", status),
-                    400..=499 => format!("⚠️ {}", status),
-                    500..=599 => format!("🚜 {}", status),
-                    _ => status.to_string(),
-                }
-            })
-        )
+        .with_target_transform("reqwest", |builder| {
+            builder
+                .rename_field("uri", "url")
+                .rename_field("method", "http_method")
+                .hide_field("version") // HTTP/1.1 is noise
+                .hide_field("content_type") // Usually obvious from context
+                .truncate_field("url", 80) // Long URLs are noisy
+                .transform_field("status", |status| {
+                    match status.parse::<u16>().unwrap_or(0) {
+                        200..=299 => format!("✅ {}", status),
+                        400..=499 => format!("⚠️ {}", status),
+                        500..=599 => format!("🚜 {}", status),
+                        _ => status.to_string(),
+                    }
+                })
+        })
         // sqlx database - focus on performance and results
-        .with_target_transform("sqlx", |builder| builder
-            .rename_field("query", "sql")
-            .hide_field("pool_id")               // Internal detail
-            .hide_field("connection_id")         // Internal detail
-            .truncate_field("sql", 120)          // Long queries are noisy
-            .prefix_field("rows_affected", "📊") // Visual indicator
-            .transform_field("duration_ms", |duration| {
-                match duration.parse::<f64>().unwrap_or(0.0) {
-                    d if d < 10.0 => format!("⚡ {:.1}ms", d),
-                    d if d < 100.0 => format!("🟡 {:.1}ms", d),
-                    d => format!("🔴 {:.1}ms", d),
-                }
-            })
-        )
+        .with_target_transform("sqlx", |builder| {
+            builder
+                .rename_field("query", "sql")
+                .hide_field("pool_id") // Internal detail
+                .hide_field("connection_id") // Internal detail
+                .truncate_field("sql", 120) // Long queries are noisy
+                .prefix_field("rows_affected", "📊") // Visual indicator
+                .transform_field("duration_ms", |duration| {
+                    match duration.parse::<f64>().unwrap_or(0.0) {
+                        d if d < 10.0 => format!("⚡ {:.1}ms", d),
+                        d if d < 100.0 => format!("🟡 {:.1}ms", d),
+                        d => format!("🔴 {:.1}ms", d),
+                    }
+                })
+        })
         // tokio runtime - simplify task management logs
-        .with_target_transform("tokio", |builder| builder
-            .rename_field("task_id", "task")
-            .rename_field("task_name", "name")
-            .rename_field("worker_id", "worker")
-            .prefix_field("name", "🚀")         // Visual indicator for tasks
+        .with_target_transform(
+            "tokio",
+            |builder| {
+                builder
+                    .rename_field("task_id", "task")
+                    .rename_field("task_name", "name")
+                    .rename_field("worker_id", "worker")
+                    .prefix_field("name", "🚀")
+            }, // Visual indicator for tasks
         )
         // serde_json - focus on errors, hide verbose success logs
-        .with_target_transform("serde_json", |builder| builder
-            .hide_field("size")                  // Not usually important
-            .hide_field("line")                  // Error details are usually enough
-            .hide_field("column")                // Error details are usually enough
-            .truncate_field("input", 100)        // Truncate large JSON
-            .prefix_field("error", "❌")         // Highlight errors
+        .with_target_transform(
+            "serde_json",
+            |builder| {
+                builder
+                    .hide_field("size") // Not usually important
+                    .hide_field("line") // Error details are usually enough
+                    .hide_field("column") // Error details are usually enough
+                    .truncate_field("input", 100) // Truncate large JSON
+                    .prefix_field("error", "❌")
+            }, // Highlight errors
         );
 
     // Initialize the subscriber
     Registry::default()
         .with(transform_layer)
-        .with(tracing_subscriber::fmt::layer()
-            .with_target(true)
-            .with_level(true)
-            .with_ansi(true)
+        .with(
+            tracing_subscriber::fmt::layer()
+                .with_target(true)
+                .with_level(true)
+                .with_ansi(true),
         )
         .init();
 
@@ -144,7 +155,9 @@ fn main() {
     let span = span!(Level::INFO, "http_operations");
     let _guard = span.enter();
 
-    reqwest_simulation::get("https://api.github.com/users/octocat/repos?type=owner&sort=updated&per_page=50");
+    reqwest_simulation::get(
+        "https://api.github.com/users/octocat/repos?type=owner&sort=updated&per_page=50",
+    );
     reqwest_simulation::post_json("https://api.example.com/webhooks", 1024);
 
     drop(_guard);
@@ -162,7 +175,7 @@ fn main() {
     sqlx_simulation::execute_query(
         "UPDATE user_preferences SET theme = $1, notifications = $2 WHERE user_id = $3",
         1,
-        145.2  // Slow update
+        145.2, // Slow update
     );
 
     drop(_guard);

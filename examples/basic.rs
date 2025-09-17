@@ -6,8 +6,8 @@
 //! Run with:
 //!   cargo run --example basic
 
-use tracing::{debug, error, info, instrument, span, warn, Level};
 use std::time::Duration;
+use tracing::{debug, error, info, instrument, span, warn, Level};
 
 #[instrument]
 fn fetch_user(user_id: u64) -> Result<String, &'static str> {
