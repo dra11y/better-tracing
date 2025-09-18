@@ -206,3 +206,103 @@ impl FormatTime for Uptime {
         write!(w, "{:4}.{:09}s", e.as_secs(), e.subsec_nanos())
     }
 }
+
+// --- Built-in, no-deps formatters and ergonomic constructors ------------------
+
+/// Seconds since UNIX epoch (UTC), using floor semantics for pre-epoch values.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct UnixSeconds;
+/// Milliseconds since UNIX epoch (UTC), using floor semantics for pre-epoch values.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct UnixMillis;
+/// Microseconds since UNIX epoch (UTC), using floor semantics for pre-epoch values.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct UnixMicros;
+/// Nanoseconds since UNIX epoch (UTC), using floor semantics for pre-epoch values.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct UnixNanos;
+
+impl TimestampFormatter<stdtime::SystemTime> for UnixSeconds {
+    fn format(&self, input: &stdtime::SystemTime, w: &mut Writer<'_>) -> fmt::Result {
+        let v = unix_units(input, 1_000_000_000, 0);
+        write!(w, "{}", v)
+    }
+}
+impl TimestampFormatter<stdtime::SystemTime> for UnixMillis {
+    fn format(&self, input: &stdtime::SystemTime, w: &mut Writer<'_>) -> fmt::Result {
+        let v = unix_units(input, 1_000_000_000, 1_000_000);
+        write!(w, "{}", v)
+    }
+}
+impl TimestampFormatter<stdtime::SystemTime> for UnixMicros {
+    fn format(&self, input: &stdtime::SystemTime, w: &mut Writer<'_>) -> fmt::Result {
+        let v = unix_units(input, 1_000_000_000, 1_000);
+        write!(w, "{}", v)
+    }
+}
+impl TimestampFormatter<stdtime::SystemTime> for UnixNanos {
+    fn format(&self, input: &stdtime::SystemTime, w: &mut Writer<'_>) -> fmt::Result {
+        let v = unix_units(input, 1_000_000_000, 1);
+        write!(w, "{}", v)
+    }
+}
+
+fn unix_units(ts: &stdtime::SystemTime, base_nanos: u32, unit_div: u32) -> i128 {
+    match ts.duration_since(stdtime::UNIX_EPOCH) {
+        Ok(d) => {
+            let secs = d.as_secs() as i128;
+            let nanos = d.subsec_nanos() as i128;
+            if unit_div == 0 {
+                secs
+            } else {
+                secs * (base_nanos as i128 / unit_div as i128) + nanos / unit_div as i128
+            }
+        }
+        Err(e) => {
+            let d = e.duration();
+            let secs = d.as_secs() as i128;
+            let nanos = d.subsec_nanos() as i128;
+            if unit_div == 0 {
+                // floor for negative values: if any fractional part, subtract one.
+                -secs - if nanos == 0 { 0 } else { 1 }
+            } else {
+                let unit = base_nanos as i128 / unit_div as i128;
+                let whole = secs * unit;
+                let frac = nanos / unit_div as i128;
+                if frac == 0 { -whole } else { -(whole + frac) }
+            }
+        }
+    }
+}
+
+impl SystemTime {
+    /// RFC3339 with 3 fractional digits (milliseconds) and 'Z'.
+    pub const fn rfc3339_millis() -> Timer<SystemClock, Rfc3339<3, true>> {
+        Timer(SystemClock, Rfc3339)
+    }
+
+    /// RFC3339 with 9 fractional digits (nanoseconds) and 'Z'.
+    pub const fn rfc3339_nanos() -> Timer<SystemClock, Rfc3339<9, true>> {
+        Timer(SystemClock, Rfc3339)
+    }
+
+    /// Seconds since UNIX epoch (UTC).
+    pub const fn unix_seconds() -> Timer<SystemClock, UnixSeconds> {
+        Timer(SystemClock, UnixSeconds)
+    }
+
+    /// Milliseconds since UNIX epoch (UTC).
+    pub const fn unix_millis() -> Timer<SystemClock, UnixMillis> {
+        Timer(SystemClock, UnixMillis)
+    }
+
+    /// Microseconds since UNIX epoch (UTC).
+    pub const fn unix_micros() -> Timer<SystemClock, UnixMicros> {
+        Timer(SystemClock, UnixMicros)
+    }
+
+    /// Nanoseconds since UNIX epoch (UTC).
+    pub const fn unix_nanos() -> Timer<SystemClock, UnixNanos> {
+        Timer(SystemClock, UnixNanos)
+    }
+}
