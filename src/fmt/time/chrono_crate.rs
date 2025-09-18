@@ -63,12 +63,12 @@ impl ChronoLocal {
     }
 
     /// Time-of-day with whole seconds, no suffix: HH:MM:SS
-    pub fn time_only_sec() -> Self {
+    pub fn time_only_secs() -> Self {
         Self::new("%H:%M:%S".to_owned())
     }
 
     /// Time-of-day with milliseconds, no suffix: HH:MM:SS.mmm
-    pub fn time_only_ms() -> Self {
+    pub fn time_only_millis() -> Self {
         Self::new("%H:%M:%S%.3f".to_owned())
     }
 
@@ -162,12 +162,12 @@ impl ChronoUtc {
     }
 
     /// Time-of-day with whole seconds, no suffix: HH:MM:SS
-    pub fn time_only_sec() -> Self {
+    pub fn time_only_secs() -> Self {
         Self::new("%H:%M:%S".to_owned())
     }
 
     /// Time-of-day with milliseconds, no suffix: HH:MM:SS.mmm
-    pub fn time_only_ms() -> Self {
+    pub fn time_only_millis() -> Self {
         Self::new("%H:%M:%S%.3f".to_owned())
     }
 

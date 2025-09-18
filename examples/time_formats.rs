@@ -35,12 +35,12 @@ fn main() {
 
     // Time-only variants (no date)
     let _ = tracing_subscriber::fmt()
-        .with_timer(SystemTime::time_only_sec())
+        .with_timer(SystemTime::time_only_secs())
         .try_init();
     tracing::info!("time only sec");
 
     let _ = tracing_subscriber::fmt()
-        .with_timer(SystemTime::time_only_ms())
+        .with_timer(SystemTime::time_only_millis())
         .try_init();
     tracing::info!("time only ms");
 }

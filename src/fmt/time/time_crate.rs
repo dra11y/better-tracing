@@ -228,13 +228,13 @@ impl UtcTime<well_known::Rfc3339> {
 #[cfg(feature = "local-time")]
 impl LocalTime<Vec<FormatItem<'static>>> {
     /// Time-of-day with whole seconds, no suffix: HH:MM:SS
-    pub fn time_only_sec() -> Self {
+    pub fn time_only_secs() -> Self {
         let fmt = parse("[hour]:[minute]:[second]").expect("static format string must be valid");
         Self::new(fmt)
     }
 
     /// Time-of-day with milliseconds, no suffix: HH:MM:SS.mmm
-    pub fn time_only_ms() -> Self {
+    pub fn time_only_millis() -> Self {
         let fmt = parse("[hour]:[minute]:[second].[subsecond digits:3]")
             .expect("static format string must be valid");
         Self::new(fmt)
@@ -272,13 +272,13 @@ impl UtcTime<Vec<FormatItem<'static>>> {
     }
 
     /// Time-of-day with whole seconds, no suffix: HH:MM:SS
-    pub fn time_only_sec() -> Self {
+    pub fn time_only_secs() -> Self {
         let fmt = parse("[hour]:[minute]:[second]").expect("static format string must be valid");
         Self::new(fmt)
     }
 
     /// Time-of-day with milliseconds, no suffix: HH:MM:SS.mmm
-    pub fn time_only_ms() -> Self {
+    pub fn time_only_millis() -> Self {
         let fmt = parse("[hour]:[minute]:[second].[subsecond digits:3]")
             .expect("static format string must be valid");
         Self::new(fmt)
@@ -571,7 +571,7 @@ mod tests {
 
     #[test]
     fn utc_time_time_only_sec_formats() {
-        let timer = UtcTime::time_only_sec();
+        let timer = UtcTime::time_only_secs();
         let mut s = String::new();
         let mut w = Writer::new(&mut s);
         timer.format_time(&mut w).unwrap();
@@ -583,7 +583,7 @@ mod tests {
     #[cfg(feature = "local-time")]
     #[test]
     fn local_time_time_only_ms_formats() {
-        let timer = LocalTime::time_only_ms();
+        let timer = LocalTime::time_only_millis();
         let mut s = String::new();
         let mut w = Writer::new(&mut s);
         timer.format_time(&mut w).unwrap();

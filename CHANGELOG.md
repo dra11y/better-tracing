@@ -10,7 +10,7 @@
 - fmt/time: Easier time formats with no additional deps and the same `.with_timer(...)` API:
   - RFC 3339 helpers: `SystemTime::rfc3339_seconds()`, `rfc3339_millis()`, `rfc3339_nanos()`
   - Unix epoch helpers: `SystemTime::unix_seconds()`, `unix_millis()`, `unix_micros()`, `unix_nanos()`
-  - Time-only helpers (no date, compact dev logs): `SystemTime::time_only_sec()`, `time_only_ms()`, `time_only_micros()`
+  - Time-only helpers (no date, compact dev logs): `SystemTime::time_only_secs()`, `time_only_millis()`, `time_only_micros()`
 
 ### Fixed
 

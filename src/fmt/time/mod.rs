@@ -329,12 +329,12 @@ impl<const D: u8, const Z: bool> TimestampFormatter<stdtime::SystemTime> for Tim
 
 impl SystemTime {
     /// Time-of-day with whole seconds, no suffix: HH:MM:SS
-    pub const fn time_only_sec() -> Timer<SystemClock, TimeOfDay<0, false>> {
+    pub const fn time_only_secs() -> Timer<SystemClock, TimeOfDay<0, false>> {
         Timer(SystemClock, TimeOfDay)
     }
 
     /// Time-of-day with milliseconds, no suffix: HH:MM:SS.mmm
-    pub const fn time_only_ms() -> Timer<SystemClock, TimeOfDay<3, false>> {
+    pub const fn time_only_millis() -> Timer<SystemClock, TimeOfDay<3, false>> {
         Timer(SystemClock, TimeOfDay)
     }
 

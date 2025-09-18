@@ -41,15 +41,15 @@ Configure timestamps without extra crates and keep using `.with_timer(...)`:
 - Unix epoch (UTC):
   - `SystemTime::unix_seconds()` / `unix_millis()` / `unix_micros()` / `unix_nanos()`
 - Time-only (no date, great for dev logs):
-  - `SystemTime::time_only_sec()`    → `HH:MM:SS`
-  - `SystemTime::time_only_ms()`     → `HH:MM:SS.mmm`
+  - `SystemTime::time_only_secs()`    → `HH:MM:SS`
+  - `SystemTime::time_only_millis()`     → `HH:MM:SS.mmm`
   - `SystemTime::time_only_micros()` → `HH:MM:SS.uuuuuu`
 
 Examples:
 ```rust
 use tracing_subscriber::fmt::time::SystemTime;
 let subscriber = tracing_subscriber::fmt()
-    .with_timer(SystemTime::time_only_ms())
+    .with_timer(SystemTime::time_only_millis())
     .finish();
 ```
 ```rust
