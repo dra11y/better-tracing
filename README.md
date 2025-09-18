@@ -35,15 +35,15 @@ Utilities for implementing and composing [`tracing`][tracing] subscribers. This 
 Configure timestamps without extra crates and keep using `.with_timer(...)`:
 
 - RFC 3339 (UTC):
-  - `SystemTime::rfc3339_seconds()`  → `YYYY-MM-DDTHH:MM:SSZ`
-  - `SystemTime::rfc3339_millis()`   → `YYYY-MM-DDTHH:MM:SS.mmmZ`
-  - `SystemTime::rfc3339_nanos()`    → `YYYY-MM-DDTHH:MM:SS.nnnnnnnnnZ`
+  - `SystemTime::rfc3339_seconds()`     → `YYYY-MM-DDTHH:MM:SSZ`
+  - `SystemTime::rfc3339_millis()`      → `YYYY-MM-DDTHH:MM:SS.mmmZ`
+  - `SystemTime::rfc3339_nanos()`       → `YYYY-MM-DDTHH:MM:SS.nnnnnnnnnZ`
 - Unix epoch (UTC):
   - `SystemTime::unix_seconds()` / `unix_millis()` / `unix_micros()` / `unix_nanos()`
 - Time-only (no date, great for dev logs):
-  - `SystemTime::time_only_secs()`    → `HH:MM:SS`
-  - `SystemTime::time_only_millis()`     → `HH:MM:SS.mmm`
-  - `SystemTime::time_only_micros()` → `HH:MM:SS.uuuuuu`
+  - `SystemTime::time_only_secs()`      → `HH:MM:SS`
+  - `SystemTime::time_only_millis()`    → `HH:MM:SS.mmm`
+  - `SystemTime::time_only_micros()`    → `HH:MM:SS.uuuuuu`
 
 Examples:
 ```rust
