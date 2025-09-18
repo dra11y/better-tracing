@@ -282,6 +282,32 @@ impl DateTime {
             Ok(())
         }
     }
+
+    /// Write only the time-of-day component (no date): HH:MM:SS[.frac][Z].
+    /// The `digits` parameter controls fractional second precision (0..=9).
+    /// Truncates (does not round) the fractional part.
+    pub(crate) fn fmt_time_of_day_to<W: fmt::Write>(
+        &self,
+        w: &mut W,
+        digits: u8,
+        z: bool,
+    ) -> fmt::Result {
+        // Time-of-day
+        write!(w, "{:02}:{:02}:{:02}", self.hour, self.minute, self.second)?;
+
+        let d = (digits as u32).min(9);
+        if d > 0 {
+            let scale = 10u32.pow(9 - d);
+            let frac = self.nanos / scale;
+            write!(w, ".{:0width$}", frac, width = d as usize)?;
+        }
+
+        if z {
+            w.write_str("Z")
+        } else {
+            Ok(())
+        }
+    }
 }
 
 impl From<std::time::SystemTime> for DateTime {
