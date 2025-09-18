@@ -1,10 +1,5 @@
 # 0.6.0 (September 17, 2025)
 
-### Breaking Changes
-
-- **MAJOR: renamed `[lib]`** from its default of `better_tracing` **to `tracing_subscriber`** in Cargo.toml so it can be a drop-in replacement for `tracing_subscriber` and hopefully be compatible with other crates that use `tracing_subscriber`
-  - **replace** `use better_tracing::*` with `use tracing_subscriber::*`
-
 ### Added
 
 - fmt/time: Easier time formats with no additional deps and the same `.with_timer(...)` API:
@@ -16,7 +11,7 @@
 
 - **doc tests/README:** `.event_format(MyFormatter)` was out of order; it must come **after** .with_span_events(..)
 ```
- let subscriber = tracing_subscriber::fmt()
+ let subscriber = better_tracing::fmt()
 -    .event_format(MyFormatter)
      .with_span_events(FmtSpan::EXIT)
 +    .event_format(MyFormatter)
@@ -25,6 +20,7 @@
 
 ### Changed
 
+- bumped edition to 2021 and fixed `Any` -> `dyn Any` -- still compatible with rustc 1.65+
 - **(internal):** renamed `better_tracing_mock [lib]` to `tracing_mock` - should not affect public API
 
 # 0.5.0 (July 29, 2025)
@@ -481,7 +477,7 @@ Thanks to new contributor @matze for contributing to this release!
 
 # 0.3.6 (Jan 14, 2022)
 
-This release adds configuration options to `tracing_subscriber::fmt` to log
+This release adds configuration options to `better_tracing::fmt` to log
 source code locations for events.
 ### Added
 
@@ -507,7 +503,7 @@ Thanks to new contributor @renecouto for contributing to this release!
 
 # 0.3.5 (Dec 29, 2021)
 
-This release re-enables `RUST_LOG` filtering in `tracing_subscriber::fmt`'s
+This release re-enables `RUST_LOG` filtering in `better_tracing::fmt`'s
 default initialization methods, and adds an `OffsetLocalTime` formatter for
 using local timestamps with the `time` crate.
 
@@ -1158,9 +1154,9 @@ using method-chaining style. Additionally, several bugs in less commonly used
 ### Added
 
 - **fmt**: Shorthand free functions for constructing most types in `fmt`
-  (including `tracing_subscriber::fmt()` to return a `SubscriberBuilder`,
-  `tracing_subscriber::fmt::layer()` to return a format `Layer`, etc) (#660)
-- **registry**: Shorthand free function `tracing_subscriber::registry()` to
+  (including `better_tracing::fmt()` to return a `SubscriberBuilder`,
+  `better_tracing::fmt::layer()` to return a format `Layer`, etc) (#660)
+- **registry**: Shorthand free function `better_tracing::registry()` to
   construct a new registry (#660)
 - Added `SubscriberInitExt` extension trait for more ergonomic subscriber
   initialization (#660)

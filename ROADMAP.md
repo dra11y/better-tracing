@@ -4,7 +4,7 @@
 
 A drop-in fork of `tracing-subscriber` that's actually easy to use. No more 500+ lines of boilerplate!
 
-**Core Goal**: `tracing_subscriber::fmt().init()` should "just work."
+**Core Goal**: `better_tracing::fmt().init()` should "just work."
 
 ## Priority Fixes
 

@@ -5,14 +5,14 @@ use tracing_mock::{
     layer::MockLayer,
     subscriber::{self},
 };
-use tracing_subscriber::{filter::DynFilterFn, layer::Context, prelude::*};
+use better_tracing::{filter::DynFilterFn, layer::Context, prelude::*};
 
 #[test]
 fn layer_filters() {
     let (unfiltered, unfiltered_handle) = unfiltered("unfiltered");
     let (filtered, filtered_handle) = filtered("filtered");
 
-    let subscriber = tracing_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(unfiltered)
         .with(filtered.with_filter(filter()));
     assert_eq!(subscriber.max_level_hint(), None);
@@ -36,7 +36,7 @@ fn layered_layer_filters() {
         .with_filter(filter())
         .and_then(filtered2.with_filter(filter()));
 
-    let subscriber = tracing_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(unfiltered)
         .with(filtered);
     assert_eq!(subscriber.max_level_hint(), None);
@@ -58,7 +58,7 @@ fn out_of_order() {
     let (filtered1, filtered1_handle) = filtered("filtered_1");
     let (filtered2, filtered2_handle) = filtered("filtered_2");
 
-    let subscriber = tracing_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(unfiltered1)
         .with(filtered1.with_filter(filter()))
         .with(unfiltered2)
@@ -84,7 +84,7 @@ fn mixed_layered() {
     let layered1 = filtered1.with_filter(filter()).and_then(unfiltered1);
     let layered2 = unfiltered2.and_then(filtered2.with_filter(filter()));
 
-    let subscriber = tracing_subscriber::registry().with(layered1).with(layered2);
+    let subscriber = better_tracing::registry().with(layered1).with(layered2);
     assert_eq!(subscriber.max_level_hint(), None);
     let _subscriber = subscriber.set_default();
 
@@ -106,7 +106,7 @@ fn events() {
 
 fn filter<S>() -> DynFilterFn<S> {
     DynFilterFn::new(
-        (|metadata: &Metadata<'_>, _: &tracing_subscriber::layer::Context<'_, S>| {
+        (|metadata: &Metadata<'_>, _: &better_tracing::layer::Context<'_, S>| {
             metadata.level() <= &Level::INFO
         }) as fn(&Metadata<'_>, &Context<'_, S>) -> bool,
     )

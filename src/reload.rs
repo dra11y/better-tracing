@@ -16,16 +16,16 @@
 //!
 //! ```rust
 //! # use tracing::info;
-//! use tracing_subscriber::{filter, fmt, reload, prelude::*};
+//! use better_tracing::{filter, fmt, reload, prelude::*};
 //! let filter = filter::LevelFilter::WARN;
 //! let (filter, reload_handle) = reload::Layer::new(filter);
-//! tracing_subscriber::registry()
+//! better_tracing::registry()
 //!   .with(filter)
 //!   .with(fmt::Layer::default())
 //!   .init();
 //! #
 //! # // specifying the Registry type is required
-//! # let _: &reload::Handle<filter::LevelFilter, tracing_subscriber::Registry> = &reload_handle;
+//! # let _: &reload::Handle<filter::LevelFilter, better_tracing::Registry> = &reload_handle;
 //! #
 //! info!("This will be ignored");
 //! reload_handle.modify(|filter| *filter = filter::LevelFilter::INFO);
@@ -36,16 +36,16 @@
 //!
 //! ```rust
 //! # use tracing::info;
-//! use tracing_subscriber::{filter, fmt, reload, prelude::*};
+//! use better_tracing::{filter, fmt, reload, prelude::*};
 //! let filtered_layer = fmt::Layer::default().with_filter(filter::LevelFilter::WARN);
 //! let (filtered_layer, reload_handle) = reload::Layer::new(filtered_layer);
 //! #
 //! # // specifying the Registry type is required
-//! # let _: &reload::Handle<filter::Filtered<fmt::Layer<tracing_subscriber::Registry>,
-//! # filter::LevelFilter, tracing_subscriber::Registry>,tracing_subscriber::Registry>
+//! # let _: &reload::Handle<filter::Filtered<fmt::Layer<better_tracing::Registry>,
+//! # filter::LevelFilter, better_tracing::Registry>,better_tracing::Registry>
 //! # = &reload_handle;
 //! #
-//! tracing_subscriber::registry()
+//! better_tracing::registry()
 //!   .with(filtered_layer)
 //!   .init();
 //! info!("This will be ignored");

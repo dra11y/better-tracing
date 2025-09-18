@@ -190,7 +190,7 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// above a certain level:
     ///
     /// ```
-    /// use tracing_subscriber::{
+    /// use better_tracing::{
     ///     filter::{filter_fn, LevelFilter, FilterExt},
     ///     prelude::*,
     /// };
@@ -207,8 +207,8 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// // spans and events that *both* filters will enable:
     /// let filter = target_filter.and(level_filter);
     ///
-    /// tracing_subscriber::registry()
-    ///     .with(tracing_subscriber::fmt::layer().with_filter(filter))
+    /// better_tracing::registry()
+    ///     .with(better_tracing::fmt::layer().with_filter(filter))
     ///     .init();
     ///
     /// // This event will *not* be enabled:
@@ -238,7 +238,7 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// Enabling spans and events at the `INFO` level and above, and all spans
     /// and events with a particular target:
     /// ```
-    /// use tracing_subscriber::{
+    /// use better_tracing::{
     ///     filter::{filter_fn, LevelFilter, FilterExt},
     ///     prelude::*,
     /// };
@@ -256,8 +256,8 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// // `interesting_target`.
     /// let filter = level_filter.or(target_filter);
     ///
-    /// tracing_subscriber::registry()
-    ///     .with(tracing_subscriber::fmt::layer().with_filter(filter))
+    /// better_tracing::registry()
+    ///     .with(better_tracing::fmt::layer().with_filter(filter))
     ///     .init();
     ///
     /// // This event will *not* be enabled:
@@ -277,7 +277,7 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// conjunction with the [`and`] combinator:
     ///
     /// ```
-    /// use tracing_subscriber::{
+    /// use better_tracing::{
     ///     filter::{filter_fn, LevelFilter, FilterExt},
     ///     prelude::*,
     /// };
@@ -297,8 +297,8 @@ pub trait FilterExt<S>: layer::Filter<S> {
     ///     // `my_crate`, enable it if it has the `WARN` level or lower:
     ///     .or(LevelFilter::WARN);
     ///
-    /// tracing_subscriber::registry()
-    ///     .with(tracing_subscriber::fmt::layer().with_filter(filter))
+    /// better_tracing::registry()
+    ///     .with(better_tracing::fmt::layer().with_filter(filter))
     ///     .init();
     /// ```
     ///
@@ -390,7 +390,7 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// since the `if` and `else` clause produce filters of different types:
     ///
     /// ```compile_fail
-    /// use tracing_subscriber::{
+    /// use better_tracing::{
     ///     filter::{filter_fn, LevelFilter, FilterExt},
     ///     prelude::*,
     /// };
@@ -409,8 +409,8 @@ pub trait FilterExt<S>: layer::Filter<S> {
     ///         .and(LevelFilter::INFO)
     /// };
     ///
-    /// tracing_subscriber::registry()
-    ///     .with(tracing_subscriber::fmt::layer().with_filter(filter))
+    /// better_tracing::registry()
+    ///     .with(better_tracing::fmt::layer().with_filter(filter))
     ///     .init();
     /// ```
     ///
@@ -420,7 +420,7 @@ pub trait FilterExt<S>: layer::Filter<S> {
     /// following code *does* compile:
     ///
     /// ```
-    /// use tracing_subscriber::{
+    /// use better_tracing::{
     ///     filter::{filter_fn, LevelFilter, FilterExt},
     ///     prelude::*,
     /// };
@@ -441,8 +441,8 @@ pub trait FilterExt<S>: layer::Filter<S> {
     ///         .boxed()
     /// };
     ///
-    /// tracing_subscriber::registry()
-    ///     .with(tracing_subscriber::fmt::layer().with_filter(filter))
+    /// better_tracing::registry()
+    ///     .with(better_tracing::fmt::layer().with_filter(filter))
     ///     .init();
     /// ```
     ///
@@ -658,7 +658,7 @@ impl<L, F, S> Filtered<L, F, S> {
     ///
     /// ```
     /// # use tracing::info;
-    /// # use tracing_subscriber::{filter,fmt,reload,Registry,prelude::*};
+    /// # use better_tracing::{filter,fmt,reload,Registry,prelude::*};
     /// # fn main() {
     /// let filtered_layer = fmt::Layer::default().with_filter(filter::LevelFilter::WARN);
     /// let (filtered_layer, reload_handle) = reload::Layer::new(filtered_layer);
@@ -691,7 +691,7 @@ impl<L, F, S> Filtered<L, F, S> {
     ///
     /// ```
     /// # use tracing::info;
-    /// # use tracing_subscriber::{filter,fmt,reload,Registry,prelude::*};
+    /// # use better_tracing::{filter,fmt,reload,Registry,prelude::*};
     /// # fn non_blocking<T: std::io::Write>(writer: T) -> (fn() -> std::io::Stdout) {
     /// #   std::io::stdout
     /// # }

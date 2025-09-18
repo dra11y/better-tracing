@@ -5,7 +5,7 @@ use std::{
 };
 use tracing::{Level, Subscriber};
 use tracing_mock::{layer::MockLayer, *};
-use tracing_subscriber::{filter, prelude::*};
+use better_tracing::{filter, prelude::*};
 
 #[test]
 fn vec_layer_filter_interests_are_cached() {
@@ -43,7 +43,7 @@ fn vec_layer_filter_interests_are_cached() {
         .run_with_handle();
     let (warn_layer, seen_warn) = mk_filtered(Level::WARN, warn_layer);
 
-    let subscriber = tracing_subscriber::registry().with(vec![warn_layer, info_layer]);
+    let subscriber = better_tracing::registry().with(vec![warn_layer, info_layer]);
     assert!(subscriber.max_level_hint().is_none());
 
     let _subscriber = subscriber.set_default();

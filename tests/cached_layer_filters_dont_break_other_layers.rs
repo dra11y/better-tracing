@@ -5,14 +5,14 @@ use tracing_mock::{
     layer::{self, MockLayer},
     subscriber,
 };
-use tracing_subscriber::{filter::LevelFilter, prelude::*};
+use better_tracing::{filter::LevelFilter, prelude::*};
 
 #[test]
 fn layer_filters() {
     let (unfiltered, unfiltered_handle) = unfiltered("unfiltered");
     let (filtered, filtered_handle) = filtered("filtered");
 
-    let _subscriber = tracing_subscriber::registry()
+    let _subscriber = better_tracing::registry()
         .with(unfiltered)
         .with(filtered.with_filter(filter()))
         .set_default();
@@ -35,7 +35,7 @@ fn layered_layer_filters() {
         .with_filter(filter())
         .and_then(filtered2.with_filter(filter()));
 
-    let _subscriber = tracing_subscriber::registry()
+    let _subscriber = better_tracing::registry()
         .with(unfiltered)
         .with(filtered)
         .set_default();
@@ -56,7 +56,7 @@ fn out_of_order() {
     let (filtered1, filtered1_handle) = filtered("filtered_1");
     let (filtered2, filtered2_handle) = filtered("filtered_2");
 
-    let _subscriber = tracing_subscriber::registry()
+    let _subscriber = better_tracing::registry()
         .with(unfiltered1)
         .with(filtered1.with_filter(filter()))
         .with(unfiltered2)
@@ -80,7 +80,7 @@ fn mixed_layered() {
     let layered1 = filtered1.with_filter(filter()).and_then(unfiltered1);
     let layered2 = unfiltered2.and_then(filtered2.with_filter(filter()));
 
-    let _subscriber = tracing_subscriber::registry()
+    let _subscriber = better_tracing::registry()
         .with(layered1)
         .with(layered2)
         .set_default();

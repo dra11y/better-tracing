@@ -2,7 +2,7 @@
 
 use tracing::{self, Level};
 use tracing_mock::*;
-use tracing_subscriber::{filter::EnvFilter, prelude::*};
+use better_tracing::{filter::EnvFilter, prelude::*};
 
 mod my_module {
     pub(crate) fn test_records() {

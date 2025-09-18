@@ -4,7 +4,7 @@
 
 use tracing::{self, subscriber::with_default, Level};
 use tracing_mock::*;
-use tracing_subscriber::{filter::EnvFilter, prelude::*};
+use better_tracing::{filter::EnvFilter, prelude::*};
 
 #[test]
 fn same_length_targets() {

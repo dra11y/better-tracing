@@ -5,7 +5,7 @@ use std::{
 };
 use tracing::{Level, Subscriber};
 use tracing_mock::{expect, layer};
-use tracing_subscriber::{filter, prelude::*};
+use better_tracing::{filter, prelude::*};
 
 #[test]
 fn multiple_layer_filter_interests_are_cached() {
@@ -55,7 +55,7 @@ fn multiple_layer_filter_interests_are_cached() {
         .run_with_handle();
     let warn_layer = warn_layer.with_filter(filter);
 
-    let subscriber = tracing_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(warn_layer)
         .with(info_layer);
     assert!(subscriber.max_level_hint().is_none());

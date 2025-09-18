@@ -8,7 +8,7 @@
 //!
 //! ```
 //! use tracing_mock::{expect, layer};
-//! use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+//! use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
 //!
 //! let (layer, handle) = layer::mock()
 //!     // Expect a single event with a specified message
@@ -17,8 +17,8 @@
 //!
 //! // Use `set_default` to apply the `MockSubscriber` until the end
 //! // of the current scope (when the guard `_subscriber` is dropped).
-//! let _subscriber =  tracing_subscriber::registry()
-//!     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+//! let _subscriber =  better_tracing::registry()
+//!     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
 //!     .set_default();
 //!
 //! // These *are* the droids we are looking for
@@ -34,7 +34,7 @@
 //!
 //! ```
 //! use tracing_mock::{expect, layer};
-//! use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+//! use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
 //!
 //! let span = expect::span()
 //!     .named("my_span");
@@ -52,8 +52,8 @@
 //!
 //! // Use `set_default` to apply the `MockLayers` until the end
 //! // of the current scope (when the guard `_subscriber` is dropped).
-//! let _subscriber = tracing_subscriber::registry()
-//!     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+//! let _subscriber = better_tracing::registry()
+//!     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
 //!     .set_default();
 //!
 //! {
@@ -76,7 +76,7 @@
 //!
 //! ```should_panic
 //! use tracing_mock::{expect, layer};
-//! use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+//! use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
 //!
 //! let span = expect::span()
 //!     .named("my_span");
@@ -94,8 +94,8 @@
 //!
 //! // Use `set_default` to apply the `MockSubscriber` until the end
 //! // of the current scope (when the guard `_subscriber` is dropped).
-//! let _subscriber =  tracing_subscriber::registry()
-//!     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+//! let _subscriber =  better_tracing::registry()
+//!     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
 //!     .set_default();
 //!
 //! {
@@ -114,7 +114,7 @@
 //! handle.assert_finished();
 //! ```
 //!
-//! [`Layer`]: trait@tracing_subscriber::layer::Layer
+//! [`Layer`]: trait@better_tracing::layer::Layer
 use std::{
     collections::VecDeque,
     fmt,
@@ -125,7 +125,7 @@ use tracing_core::{
     span::{Attributes, Id, Record},
     Event, Subscriber,
 };
-use tracing_subscriber::{
+use better_tracing::{
     layer::{Context, Layer},
     registry::{LookupSpan, SpanRef},
 };
@@ -148,7 +148,7 @@ use crate::{
 ///
 /// ```
 /// use tracing_mock::{expect, layer};
-/// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+/// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
 ///
 /// let span = expect::span()
 ///     .named("my_span");
@@ -166,8 +166,8 @@ use crate::{
 ///
 /// // Use `set_default` to apply the `MockSubscriber` until the end
 /// // of the current scope (when the guard `_subscriber` is dropped).
-/// let _subscriber =  tracing_subscriber::registry()
-///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+/// let _subscriber =  better_tracing::registry()
+///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
 ///     .set_default();
 ///
 /// {
@@ -212,7 +212,7 @@ pub fn mock() -> MockLayerBuilder {
 ///
 /// ```should_panic
 /// use tracing_mock::{expect, layer};
-/// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+/// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
 ///
 /// let (layer_1, handle_1) = layer::named("subscriber-1")
 ///     .event(expect::event())
@@ -222,16 +222,16 @@ pub fn mock() -> MockLayerBuilder {
 ///     .event(expect::event())
 ///     .run_with_handle();
 ///
-/// let _subscriber =  tracing_subscriber::registry()
+/// let _subscriber =  better_tracing::registry()
 ///     .with(
-///         layer_2.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true))
+///         layer_2.with_filter(better_tracing::filter::filter_fn(move |_meta| true))
 ///     )
 ///     .set_default();
 /// {
-///     let _subscriber =  tracing_subscriber::registry()
+///     let _subscriber =  better_tracing::registry()
 ///         .with(
 ///             layer_1
-///                 .with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true))
+///                 .with_filter(better_tracing::filter::filter_fn(move |_meta| true))
 ///         )
 ///         .set_default();
 ///
@@ -302,7 +302,7 @@ impl MockLayerBuilder {
     ///
     /// ```should_panic
     /// use tracing_mock::{layer, expect};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let (layer_1, handle_1) = layer::mock()
     ///     .named("layer-1")
@@ -314,16 +314,16 @@ impl MockLayerBuilder {
     ///     .event(expect::event())
     ///     .run_with_handle();
     ///
-    /// let _subscriber =  tracing_subscriber::registry()
+    /// let _subscriber =  better_tracing::registry()
     ///     .with(
-    ///         layer_2.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true))
+    ///         layer_2.with_filter(better_tracing::filter::filter_fn(move |_meta| true))
     ///     )
     ///     .set_default();
     /// {
-    ///     let _subscriber =  tracing_subscriber::registry()
+    ///     let _subscriber =  better_tracing::registry()
     ///         .with(
     ///             layer_1
-    ///                 .with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true))
+    ///                 .with_filter(better_tracing::filter::filter_fn(move |_meta| true))
     ///         )
     ///         .set_default();
     ///
@@ -371,14 +371,14 @@ impl MockLayerBuilder {
     ///
     /// ```
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let (layer, handle) = layer::mock()
     ///     .event(expect::event())
     ///     .run_with_handle();
     ///
-    /// let _subscriber = tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber = better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// tracing::info!("event");
@@ -390,14 +390,14 @@ impl MockLayerBuilder {
     ///
     /// ```should_panic
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let (layer, handle) = layer::mock()
     ///     .event(expect::event())
     ///     .run_with_handle();
     ///
-    /// let _subscriber =  tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber =  better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// let span = tracing::info_span!("span");
@@ -429,7 +429,7 @@ impl MockLayerBuilder {
     ///
     /// ```
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -439,8 +439,8 @@ impl MockLayerBuilder {
     ///     .new_span(span)
     ///     .run_with_handle();
     ///
-    /// let _subscriber =  tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber =  better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// _ = tracing::info_span!("the span we're testing", testing = "yes");
@@ -453,7 +453,7 @@ impl MockLayerBuilder {
     ///
     /// ```should_panic
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -463,8 +463,8 @@ impl MockLayerBuilder {
     ///     .new_span(span)
     ///     .run_with_handle();
     ///
-    /// let _subscriber =  tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber =  better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// tracing::info!("an event");
@@ -500,7 +500,7 @@ impl MockLayerBuilder {
     ///
     /// ```
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -511,8 +511,8 @@ impl MockLayerBuilder {
     ///     .only()
     ///     .run_with_handle();
     ///
-    /// let _subscriber =  tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber =  better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// {
@@ -528,7 +528,7 @@ impl MockLayerBuilder {
     ///
     /// ```should_panic
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -539,8 +539,8 @@ impl MockLayerBuilder {
     ///     .only()
     ///     .run_with_handle();
     ///
-    /// let _subscriber =  tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber =  better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// {
@@ -580,7 +580,7 @@ impl MockLayerBuilder {
     ///
     /// ```
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -591,8 +591,8 @@ impl MockLayerBuilder {
     ///     .only()
     ///     .run_with_handle();
     ///
-    /// let _subscriber =  tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber =  better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     /// {
     ///     let span = tracing::info_span!("the span we're testing");
@@ -607,7 +607,7 @@ impl MockLayerBuilder {
     ///
     /// ```should_panic
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let span = expect::span()
     ///     .at_level(tracing::Level::INFO)
@@ -618,8 +618,8 @@ impl MockLayerBuilder {
     ///     .only()
     ///     .run_with_handle();
     ///
-    /// let _subscriber =  tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber =  better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// {
@@ -655,14 +655,14 @@ impl MockLayerBuilder {
     ///
     /// ```
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let (layer, handle) = layer::mock()
     ///     .event(expect::event())
     ///     .run_with_handle();
     ///
-    /// let _subscriber = tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber = better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// tracing::info!("a");
@@ -676,15 +676,15 @@ impl MockLayerBuilder {
     ///
     /// ```should_panic
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let (layer, handle) = layer::mock()
     ///     .event(expect::event())
     ///     .only()
     ///     .run_with_handle();
     ///
-    /// let _subscriber =  tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber =  better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// tracing::info!("a");
@@ -716,7 +716,7 @@ impl MockLayerBuilder {
     /// ```
     /// use tracing::Subscriber;
     /// use tracing_mock::layer;
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let unfiltered = layer::named("unfiltered").run().boxed();
     /// let info = layer::named("info")
@@ -728,7 +728,7 @@ impl MockLayerBuilder {
     ///     .with_filter(tracing_core::LevelFilter::DEBUG)
     ///     .boxed();
     ///
-    /// let subscriber = tracing_subscriber::registry().with(vec![unfiltered, info, debug]);
+    /// let subscriber = better_tracing::registry().with(vec![unfiltered, info, debug]);
     ///
     /// assert_eq!(subscriber.max_level_hint(), None);
     /// ```
@@ -751,14 +751,14 @@ impl MockLayerBuilder {
     ///
     /// ```
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let (layer, handle) = layer::mock()
     ///     .event(expect::event())
     ///     .run_with_handle();
     ///
-    /// let _subscriber =  tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber =  better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// tracing::info!("event");
@@ -792,10 +792,10 @@ where
 impl MockLayer {
     fn check_event_scope<C>(
         &self,
-        current_scope: Option<tracing_subscriber::registry::Scope<'_, C>>,
+        current_scope: Option<better_tracing::registry::Scope<'_, C>>,
         expected_scope: &mut [ExpectedSpan],
     ) where
-        C: for<'lookup> tracing_subscriber::registry::LookupSpan<'lookup>,
+        C: for<'lookup> better_tracing::registry::LookupSpan<'lookup>,
     {
         let mut current_scope = current_scope.into_iter().flatten();
         let mut i = 0;

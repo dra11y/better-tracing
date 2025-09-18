@@ -9,7 +9,7 @@
 use std::fmt;
 use tracing::{info, span, Level, Subscriber};
 use tracing_core::Event;
-use tracing_subscriber::{
+use better_tracing::{
     fmt::{
         format::{FormatEvent, FormatFields},
         FmtContext, FormattedFields,
@@ -30,7 +30,7 @@ where
     fn format_event(
         &self,
         ctx: &FmtContext<'_, S, N>,
-        mut writer: tracing_subscriber::fmt::format::Writer<'_>,
+        mut writer: better_tracing::fmt::format::Writer<'_>,
         event: &Event<'_>,
     ) -> fmt::Result {
         // Write timestamp (using a simple format since chrono isn't available)
@@ -213,7 +213,7 @@ fn main() {
     // Initialize with custom formatter and transformations
     Registry::default()
         .with(transform_layer)
-        .with(tracing_subscriber::fmt::layer().event_format(CustomFormatter))
+        .with(better_tracing::fmt::layer().event_format(CustomFormatter))
         .init();
 
     println!("=== Custom Formatter + Field Transformations Example ===\n");

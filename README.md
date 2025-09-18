@@ -47,14 +47,14 @@ Configure timestamps without extra crates and keep using `.with_timer(...)`:
 
 Examples:
 ```rust
-use tracing_subscriber::fmt::time::SystemTime;
-let subscriber = tracing_subscriber::fmt()
+use better_tracing::fmt::time::SystemTime;
+let subscriber = better_tracing::fmt()
     .with_timer(SystemTime::time_only_millis())
     .finish();
 ```
 ```rust
-use tracing_subscriber::fmt::time::SystemTime;
-let subscriber = tracing_subscriber::fmt()
+use better_tracing::fmt::time::SystemTime;
+let subscriber = better_tracing::fmt()
     .with_timer(SystemTime::rfc3339_millis())
     .finish();
 ```
@@ -66,10 +66,10 @@ With optional engines, pick the matching helpers: `fmt::time::ChronoUtc::*` (chr
 In `tracing-subscriber`, `lookup_current()` returned the parent span instead of the exiting span during `FmtSpan::EXIT` and `FmtSpan::CLOSE` events. `better-tracing` fixes this.
 
 ```rust
-use tracing_subscriber::fmt::format::FmtSpan;
+use better_tracing::fmt::format::FmtSpan;
 
 // Custom formatter that can now access the exiting span
-use tracing_subscriber::{
+use better_tracing::{
     fmt::{FmtContext, FormatEvent, FormatFields, format::Writer},
     registry::LookupSpan,
 };
@@ -98,7 +98,7 @@ where
 }
 
 // Set up subscriber with the custom formatter and EXIT events
-let subscriber = tracing_subscriber::fmt()
+let subscriber = better_tracing::fmt()
     .with_span_events(FmtSpan::EXIT)
     .event_format(MyFormatter)
     .finish();

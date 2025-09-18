@@ -1,6 +1,6 @@
 use super::*;
 use tracing::Subscriber;
-use tracing_subscriber::{
+use better_tracing::{
     filter::{self, LevelFilter},
     prelude::*,
     Layer,
@@ -17,7 +17,7 @@ fn option_some() {
     let (layer, handle) = layer::mock().only().run_with_handle();
     let layer = layer.with_filter(Some(filter_out_everything()));
 
-    let _guard = tracing_subscriber::registry().with(layer).set_default();
+    let _guard = better_tracing::registry().with(layer).set_default();
 
     for i in 0..2 {
         tracing::info!(i);
@@ -35,7 +35,7 @@ fn option_none() {
         .run_with_handle();
     let layer = layer.with_filter(None::<filter::DynFilterFn<_>>);
 
-    let _guard = tracing_subscriber::registry().with(layer).set_default();
+    let _guard = better_tracing::registry().with(layer).set_default();
 
     for i in 0..2 {
         tracing::info!(i);
@@ -56,7 +56,7 @@ fn option_mixed() {
         }))
         .with_filter(None::<filter::DynFilterFn<_>>);
 
-    let _guard = tracing_subscriber::registry().with(layer).set_default();
+    let _guard = better_tracing::registry().with(layer).set_default();
 
     tracing::info!(target: "interesting", x="foo");
     tracing::info!(target: "boring", x="bar");
@@ -87,7 +87,7 @@ fn none_max_level_hint() {
     );
     assert_eq!(layer_filter_fn.max_level_hint(), Some(LevelFilter::INFO));
 
-    let subscriber = tracing_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(subscribe_none)
         .with(layer_filter_fn);
     // The absence of a hint from the `None` filter upgrades the `INFO` hint
@@ -127,7 +127,7 @@ fn some_max_level_hint() {
     );
     assert_eq!(layer_filter_fn.max_level_hint(), Some(LevelFilter::INFO));
 
-    let subscriber = tracing_subscriber::registry()
+    let subscriber = better_tracing::registry()
         .with(layer_some)
         .with(layer_filter_fn);
     // The `DEBUG` hint from the `Some` filter upgrades the `INFO` hint from the

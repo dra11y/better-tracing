@@ -13,7 +13,7 @@
 //!
 //! For example, we might create a `Registry` and add multiple `Layer`s like so:
 //! ```rust
-//! use tracing_subscriber::{registry::Registry, Layer, prelude::*};
+//! use better_tracing::{registry::Registry, Layer, prelude::*};
 //! # use tracing_core::Subscriber;
 //! # pub struct FooLayer {}
 //! # pub struct BarLayer {}
@@ -36,7 +36,7 @@
 //! [`LookupSpan`] trait, like so:
 //!
 //! ```rust
-//! use tracing_subscriber::{registry, Layer};
+//! use better_tracing::{registry, Layer};
 //! use tracing_core::Subscriber;
 //!
 //! pub struct MyLayer {
@@ -401,7 +401,7 @@ where
     ///
     /// ```rust
     /// use tracing::{span, Subscriber};
-    /// use tracing_subscriber::{
+    /// use better_tracing::{
     ///     layer::{Context, Layer},
     ///     prelude::*,
     ///     registry::LookupSpan,
@@ -419,7 +419,7 @@ where
     ///     }
     /// }
     ///
-    /// tracing::subscriber::with_default(tracing_subscriber::registry().with(PrintingLayer), || {
+    /// tracing::subscriber::with_default(better_tracing::registry().with(PrintingLayer), || {
     ///     let _root = tracing::info_span!("root").entered();
     ///     // Prints: Entering span: ["root"]
     ///     let _child = tracing::info_span!("child").entered();
@@ -434,7 +434,7 @@ where
     ///
     /// ```rust
     /// # use tracing::{span, Subscriber};
-    /// # use tracing_subscriber::{
+    /// # use better_tracing::{
     /// #     layer::{Context, Layer},
     /// #     prelude::*,
     /// #     registry::LookupSpan,
@@ -451,7 +451,7 @@ where
     ///     }
     /// }
     ///
-    /// tracing::subscriber::with_default(tracing_subscriber::registry().with(PrintingLayer), || {
+    /// tracing::subscriber::with_default(better_tracing::registry().with(PrintingLayer), || {
     ///     let _root = tracing::info_span!("root").entered();
     ///     // Prints: Entering span: ["root"]
     ///     let _child = tracing::info_span!("child").entered();

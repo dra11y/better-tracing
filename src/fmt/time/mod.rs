@@ -120,8 +120,8 @@ impl<const D: u8, const Z: bool> TimestampFormatter<stdtime::SystemTime> for Rfc
 ///
 /// This is equivalent to calling
 /// ```rust
-/// # fn timer() -> tracing_subscriber::fmt::time::SystemTime {
-/// tracing_subscriber::fmt::time::SystemTime::default()
+/// # fn timer() -> better_tracing::fmt::time::SystemTime {
+/// better_tracing::fmt::time::SystemTime::default()
 /// # }
 /// ```
 pub fn time() -> SystemTime {
@@ -138,8 +138,8 @@ pub fn time() -> SystemTime {
 ///
 /// This is equivalent to calling
 /// ```rust
-/// # fn timer() -> tracing_subscriber::fmt::time::Uptime {
-/// tracing_subscriber::fmt::time::Uptime::default()
+/// # fn timer() -> better_tracing::fmt::time::Uptime {
+/// better_tracing::fmt::time::Uptime::default()
 /// # }
 /// ```
 pub fn uptime() -> Uptime {

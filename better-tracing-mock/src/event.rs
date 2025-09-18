@@ -435,7 +435,7 @@ impl ExpectedEvent {
     ///
     /// ```
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let event = expect::event().in_scope([
     ///     expect::span().named("parent_span"),
@@ -448,8 +448,8 @@ impl ExpectedEvent {
     ///     .event(event)
     ///     .run_with_handle();
     ///
-    /// let _subscriber = tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber = better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// let grandparent = tracing::info_span!("grandparent_span");
@@ -465,7 +465,7 @@ impl ExpectedEvent {
     ///
     /// ```should_panic
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let event = expect::event().in_scope([
     ///     expect::span().named("parent_span"),
@@ -477,8 +477,8 @@ impl ExpectedEvent {
     ///     .event(event)
     ///     .run_with_handle();
     ///
-    /// let _subscriber = tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber = better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// let parent = tracing::info_span!("parent_span");
@@ -494,7 +494,7 @@ impl ExpectedEvent {
     ///
     /// ```should_panic
     /// use tracing_mock::{expect, layer};
-    /// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+    /// use better_tracing::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
     ///
     /// let event = expect::event().in_scope(None);
     ///
@@ -503,8 +503,8 @@ impl ExpectedEvent {
     ///     .event(event)
     ///     .run_with_handle();
     ///
-    /// let _subscriber = tracing_subscriber::registry()
-    ///     .with(layer.with_filter(tracing_subscriber::filter::filter_fn(move |_meta| true)))
+    /// let _subscriber = better_tracing::registry()
+    ///     .with(layer.with_filter(better_tracing::filter::filter_fn(move |_meta| true)))
     ///     .set_default();
     ///
     /// let parent = tracing::info_span!("parent_span");

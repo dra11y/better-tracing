@@ -2,7 +2,7 @@
 
 use tracing::{self, Level};
 use tracing_mock::{expect, subscriber};
-use tracing_subscriber::{filter::LevelFilter, prelude::*, reload};
+use better_tracing::{filter::LevelFilter, prelude::*, reload};
 
 #[test]
 fn reload_max_log_level() {

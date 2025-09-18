@@ -11,7 +11,7 @@
 //!   cargo run --example field_transforms
 
 use tracing::{info, span, Level};
-use tracing_subscriber::{
+use better_tracing::{
     layer::{transform::FieldTransformLayer, SubscriberExt},
     registry::Registry,
     util::SubscriberInitExt,
@@ -104,7 +104,7 @@ fn main() {
     Registry::default()
         .with(transform_layer)
         .with(
-            tracing_subscriber::fmt::layer()
+            better_tracing::fmt::layer()
                 .with_target(true)
                 .with_level(true)
                 .with_ansi(true),

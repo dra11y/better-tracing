@@ -47,7 +47,7 @@ fn process_request(request_id: String, user_id: u64) {
 
 fn main() {
     // This is the "just works" experience - one line setup!
-    tracing_subscriber::fmt().init();
+    better_tracing::fmt().init();
 
     println!("=== Better Tracing Basic Example ===\n");
 
