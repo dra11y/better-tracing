@@ -315,46 +315,33 @@ impl SystemTime {
     }
 }
 
-/// Time-of-day only (no date): HH:MM:SS[.frac][Z].
+/// Used internally for time-of-day formatting. May change in future without deprecation.
+#[doc(hidden)]
 #[derive(Debug, Clone, Copy, Default)]
-pub struct TimeOfDay<const DIGITS: u8, const Z: bool>;
+pub struct TimeOfDay<const DIGITS: u8>;
 
-impl<const D: u8, const Z: bool> TimestampFormatter<stdtime::SystemTime> for TimeOfDay<D, Z> {
+impl<const D: u8> TimestampFormatter<stdtime::SystemTime> for TimeOfDay<D> {
     fn format(&self, input: &stdtime::SystemTime, w: &mut Writer<'_>) -> fmt::Result {
         let dt = datetime::DateTime::from(*input);
         let digits = if D > 9 { 9 } else { D } as u8;
-        dt.fmt_time_of_day_to(w, digits, Z)
+        // Emit time-of-day without a timezone suffix.
+        dt.fmt_time_of_day_to(w, digits, false)
     }
 }
 
 impl SystemTime {
     /// Time-of-day with whole seconds, no suffix: HH:MM:SS
-    pub const fn time_only_secs() -> Timer<SystemClock, TimeOfDay<0, false>> {
+    pub const fn time_only_secs() -> Timer<SystemClock, TimeOfDay<0>> {
         Timer(SystemClock, TimeOfDay)
     }
 
     /// Time-of-day with milliseconds, no suffix: HH:MM:SS.mmm
-    pub const fn time_only_millis() -> Timer<SystemClock, TimeOfDay<3, false>> {
+    pub const fn time_only_millis() -> Timer<SystemClock, TimeOfDay<3>> {
         Timer(SystemClock, TimeOfDay)
     }
 
     /// Time-of-day with microseconds, no suffix: HH:MM:SS.uuuuuu
-    pub const fn time_only_micros() -> Timer<SystemClock, TimeOfDay<6, false>> {
-        Timer(SystemClock, TimeOfDay)
-    }
-
-    /// Time-of-day with whole seconds, 'Z' suffix: HH:MM:SSZ
-    pub const fn time_only_sec_z() -> Timer<SystemClock, TimeOfDay<0, true>> {
-        Timer(SystemClock, TimeOfDay)
-    }
-
-    /// Time-of-day with milliseconds, 'Z' suffix: HH:MM:SS.mmmZ
-    pub const fn time_only_ms_z() -> Timer<SystemClock, TimeOfDay<3, true>> {
-        Timer(SystemClock, TimeOfDay)
-    }
-
-    /// Time-of-day with microseconds, 'Z' suffix: HH:MM:SS.uuuuuuZ
-    pub const fn time_only_micros_z() -> Timer<SystemClock, TimeOfDay<6, true>> {
+    pub const fn time_only_micros() -> Timer<SystemClock, TimeOfDay<6>> {
         Timer(SystemClock, TimeOfDay)
     }
 }
