@@ -1,8 +1,8 @@
 #![cfg(feature = "env-filter")]
 
+use better_tracing::{filter::EnvFilter, prelude::*};
 use tracing::{self, subscriber::with_default, Level};
 use tracing_mock::*;
-use better_tracing::{filter::EnvFilter, prelude::*};
 
 #[test]
 #[cfg_attr(not(flaky_tests), ignore)]

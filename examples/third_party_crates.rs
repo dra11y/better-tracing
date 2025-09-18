@@ -6,12 +6,12 @@
 //! Run with:
 //!   cargo run --example third_party_crates
 
-use tracing::{info, span, Level};
 use better_tracing::{
     layer::{transform::FieldTransformLayer, SubscriberExt},
     registry::Registry,
     util::SubscriberInitExt,
 };
+use tracing::{info, span, Level};
 
 /// Simulate reqwest HTTP client logs
 mod reqwest_simulation {

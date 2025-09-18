@@ -1,6 +1,6 @@
 #![cfg(feature = "registry")]
-use tracing_futures::{Instrument, WithSubscriber};
 use better_tracing::prelude::*;
+use tracing_futures::{Instrument, WithSubscriber};
 
 #[tokio::test]
 async fn future_with_subscriber() {

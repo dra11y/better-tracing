@@ -6,12 +6,12 @@
 //! Run with:
 //!   cargo run --example kubernetes
 
-use tracing::{info, span, Level};
 use better_tracing::{
     layer::{transform::FieldTransformLayer, SubscriberExt},
     registry::Registry,
     util::SubscriberInitExt,
 };
+use tracing::{info, span, Level};
 
 /// Simulate kube-rs API calls
 mod kube {

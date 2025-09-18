@@ -10,12 +10,12 @@
 //! Run with:
 //!   cargo run --example field_transforms
 
-use tracing::{info, span, Level};
 use better_tracing::{
     layer::{transform::FieldTransformLayer, SubscriberExt},
     registry::Registry,
     util::SubscriberInitExt,
 };
+use tracing::{info, span, Level};
 
 /// Simulate a third-party crate like kube-rs
 mod kube_client {

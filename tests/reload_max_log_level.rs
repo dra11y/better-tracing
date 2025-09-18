@@ -1,8 +1,8 @@
 #![cfg(all(feature = "env-filter", feature = "tracing-log"))]
 
+use better_tracing::{filter::LevelFilter, prelude::*, reload};
 use tracing::{self, Level};
 use tracing_mock::{expect, subscriber};
-use better_tracing::{filter::LevelFilter, prelude::*, reload};
 
 #[test]
 fn reload_max_log_level() {

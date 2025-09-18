@@ -1,10 +1,10 @@
 use super::*;
-use tracing::Subscriber;
 use better_tracing::{
     filter::{self, LevelFilter},
     prelude::*,
     Layer,
 };
+use tracing::Subscriber;
 
 fn filter_out_everything<S>() -> filter::DynFilterFn<S> {
     // Use dynamic filter fn to disable interest caching and max-level hints,

@@ -1,4 +1,4 @@
-# 0.6.0 (September 17, 2025)
+# 0.6.0 (September 18, 2025)
 
 ### Added
 

@@ -1,7 +1,7 @@
 #![cfg(feature = "registry")]
+use better_tracing::prelude::*;
 use tracing::level_filters::LevelFilter;
 use tracing::Subscriber;
-use better_tracing::prelude::*;
 
 #[test]
 fn just_empty_vec() {

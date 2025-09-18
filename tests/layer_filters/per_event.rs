@@ -1,6 +1,6 @@
+use better_tracing::{field::Visit, layer::Filter, prelude::*};
 use tracing::Level;
 use tracing_mock::{expect, layer};
-use better_tracing::{field::Visit, layer::Filter, prelude::*};
 
 struct FilterEvent;
 

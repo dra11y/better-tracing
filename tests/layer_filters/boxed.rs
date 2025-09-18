@@ -1,6 +1,6 @@
 use super::*;
-use tracing_mock::layer::MockLayer;
 use better_tracing::{filter, prelude::*, Layer};
+use tracing_mock::layer::MockLayer;
 
 fn layer() -> (MockLayer, subscriber::MockHandle) {
     layer::mock().only().run_with_handle()

@@ -1,11 +1,11 @@
 #![cfg(feature = "registry")]
+use better_tracing::{layer, prelude::*, reload::*};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use tracing_core::{
     span::{Attributes, Id, Record},
     subscriber::Interest,
     Event, LevelFilter, Metadata, Subscriber,
 };
-use better_tracing::{layer, prelude::*, reload::*};
 
 pub struct NopSubscriber;
 fn event() {
@@ -137,9 +137,8 @@ fn reload_filter() {
 
     let (filter, handle) = Layer::new(Filter::One);
 
-    let dispatcher = tracing_core::Dispatch::new(
-        better_tracing::registry().with(NopLayer.with_filter(filter)),
-    );
+    let dispatcher =
+        tracing_core::Dispatch::new(better_tracing::registry().with(NopLayer.with_filter(filter)));
 
     tracing_core::dispatcher::with_default(&dispatcher, || {
         assert_eq!(FILTER1_CALLS.load(Ordering::SeqCst), 0);

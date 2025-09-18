@@ -1,8 +1,8 @@
 #![cfg(feature = "registry")]
 
+use better_tracing::{layer::Context, prelude::*, registry, Layer};
 use std::sync::{Arc, Mutex};
 use tracing::{subscriber::with_default, Event, Metadata, Subscriber};
-use better_tracing::{layer::Context, prelude::*, registry, Layer};
 
 struct TrackingLayer {
     enabled: bool,

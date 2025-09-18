@@ -2,13 +2,13 @@
 
 mod per_layer;
 
-use tracing::{self, subscriber::with_default, Level};
-use tracing_mock::{expect, layer, subscriber};
 use better_tracing::{
     filter::{EnvFilter, LevelFilter},
     prelude::*,
     Registry,
 };
+use tracing::{self, subscriber::with_default, Level};
+use tracing_mock::{expect, layer, subscriber};
 
 #[test]
 fn level_filter_event() {

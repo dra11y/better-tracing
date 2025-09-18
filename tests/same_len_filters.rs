@@ -2,9 +2,9 @@
 // separate file.
 #![cfg(feature = "env-filter")]
 
+use better_tracing::{filter::EnvFilter, prelude::*};
 use tracing::{self, subscriber::with_default, Level};
 use tracing_mock::*;
-use better_tracing::{filter::EnvFilter, prelude::*};
 
 #[test]
 fn same_length_targets() {

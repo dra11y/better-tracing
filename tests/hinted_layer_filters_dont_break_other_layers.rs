@@ -1,11 +1,11 @@
 #![cfg(feature = "registry")]
+use better_tracing::{filter::DynFilterFn, layer::Context, prelude::*};
 use tracing::{Level, Metadata, Subscriber};
 use tracing_mock::{
     expect, layer,
     layer::MockLayer,
     subscriber::{self},
 };
-use better_tracing::{filter::DynFilterFn, layer::Context, prelude::*};
 
 #[test]
 fn layer_filters() {
@@ -36,9 +36,7 @@ fn layered_layer_filters() {
         .with_filter(filter())
         .and_then(filtered2.with_filter(filter()));
 
-    let subscriber = better_tracing::registry()
-        .with(unfiltered)
-        .with(filtered);
+    let subscriber = better_tracing::registry().with(unfiltered).with(filtered);
     assert_eq!(subscriber.max_level_hint(), None);
     let _subscriber = subscriber.set_default();
 

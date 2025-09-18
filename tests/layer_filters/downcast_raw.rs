@@ -1,7 +1,7 @@
-use tracing::Subscriber;
 use better_tracing::filter::Targets;
 use better_tracing::prelude::*;
 use better_tracing::Layer;
+use tracing::Subscriber;
 
 #[test]
 fn downcast_ref_to_inner_layer_and_filter() {

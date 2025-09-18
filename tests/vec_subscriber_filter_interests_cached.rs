@@ -1,11 +1,11 @@
 #![cfg(feature = "registry")]
+use better_tracing::{filter, prelude::*};
 use std::{
     collections::HashMap,
     sync::{Arc, Mutex},
 };
 use tracing::{Level, Subscriber};
 use tracing_mock::{layer::MockLayer, *};
-use better_tracing::{filter, prelude::*};
 
 #[test]
 fn vec_layer_filter_interests_are_cached() {

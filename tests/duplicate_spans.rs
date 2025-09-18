@@ -1,6 +1,6 @@
 #![cfg(all(feature = "env-filter", feature = "fmt"))]
-use tracing::{self, subscriber::with_default, Span};
 use better_tracing::{filter::EnvFilter, FmtSubscriber};
+use tracing::{self, subscriber::with_default, Span};
 
 #[test]
 fn duplicate_spans() {

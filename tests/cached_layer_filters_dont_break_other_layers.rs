@@ -1,11 +1,11 @@
 #![cfg(feature = "registry")]
+use better_tracing::{filter::LevelFilter, prelude::*};
 use tracing::Level;
 use tracing_mock::{
     expect,
     layer::{self, MockLayer},
     subscriber,
 };
-use better_tracing::{filter::LevelFilter, prelude::*};
 
 #[test]
 fn layer_filters() {

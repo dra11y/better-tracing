@@ -1,7 +1,7 @@
 #![cfg(feature = "std")]
 
-use tracing_mock::*;
 use better_tracing::prelude::*;
+use tracing_mock::*;
 
 #[test]
 fn init_ext_works() {

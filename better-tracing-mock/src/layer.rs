@@ -121,13 +121,13 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use tracing_core::{
-    span::{Attributes, Id, Record},
-    Event, Subscriber,
-};
 use better_tracing::{
     layer::{Context, Layer},
     registry::{LookupSpan, SpanRef},
+};
+use tracing_core::{
+    span::{Attributes, Id, Record},
+    Event, Subscriber,
 };
 
 use crate::{

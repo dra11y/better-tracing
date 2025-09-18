@@ -21,8 +21,7 @@ fn log_events() {
         .with_default(LevelFilter::DEBUG)
         .with_target(inner::MODULE_PATH, LevelFilter::WARN);
 
-    let layer =
-        better_tracing::layer::Identity::new().with_filter(filter_fn(move |_meta| true));
+    let layer = better_tracing::layer::Identity::new().with_filter(filter_fn(move |_meta| true));
 
     let _guard = better_tracing::registry()
         .with(filter)

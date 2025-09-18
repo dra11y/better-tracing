@@ -6,9 +6,6 @@
 //! Run with:
 //!   cargo run --example custom_formatter
 
-use std::fmt;
-use tracing::{info, span, Level, Subscriber};
-use tracing_core::Event;
 use better_tracing::{
     fmt::{
         format::{FormatEvent, FormatFields},
@@ -18,6 +15,9 @@ use better_tracing::{
     registry::{LookupSpan, Registry},
     util::SubscriberInitExt,
 };
+use std::fmt;
+use tracing::{info, span, Level, Subscriber};
+use tracing_core::Event;
 
 /// Custom formatter that formats events in a specific style
 struct CustomFormatter;

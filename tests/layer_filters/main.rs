@@ -8,9 +8,9 @@ mod targets;
 mod trees;
 mod vec;
 
+use better_tracing::{filter, prelude::*, Layer};
 use tracing::{level_filters::LevelFilter, Level};
 use tracing_mock::{expect, layer, subscriber};
-use better_tracing::{filter, prelude::*, Layer};
 
 #[test]
 fn basic_layer_filters() {

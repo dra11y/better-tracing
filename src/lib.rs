@@ -103,7 +103,6 @@
 //!     .event_format(MyFormatter)
 //!     .finish();
 //! ```
-//!
 //! # Adapted from upstream `tracing-subscriber`
 //!
 //! [`tracing`] is a framework for instrumenting Rust programs to collect

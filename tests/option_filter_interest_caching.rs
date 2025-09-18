@@ -1,12 +1,12 @@
 // A separate test crate for `Option<Filter>` for isolation from other tests
 // that may influence the interest cache.
 
+use better_tracing::{filter, prelude::*, Layer};
 use std::sync::{
     atomic::{AtomicUsize, Ordering},
     Arc,
 };
 use tracing_mock::{expect, layer};
-use better_tracing::{filter, prelude::*, Layer};
 
 /// A `None` filter should always be interested in events, and it should not
 /// needlessly degrade the caching of other filters.

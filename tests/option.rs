@@ -1,6 +1,6 @@
 #![cfg(feature = "registry")]
-use tracing_core::{subscriber::Interest, LevelFilter, Metadata, Subscriber};
 use better_tracing::{layer, prelude::*};
+use tracing_core::{subscriber::Interest, LevelFilter, Metadata, Subscriber};
 
 // A basic layer that returns its inner for `max_level_hint`
 #[derive(Debug)]
