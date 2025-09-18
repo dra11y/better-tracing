@@ -192,7 +192,6 @@
 // permissive licensing, and of not having licensing issues being an
 // obstacle to adoption, that text has been removed.
 
-
 use std::fmt;
 
 /// A date/time type which exists primarily to convert `SystemTime` timestamps into an ISO 8601
@@ -240,6 +239,48 @@ impl fmt::Display for DateTime {
             self.second,
             self.nanos / 1_000
         )
+    }
+}
+
+impl DateTime {
+    /// Write this timestamp as RFC3339 with a configurable number of
+    /// fractional second digits (0..=9) and optional trailing 'Z'.
+    /// Truncates (does not round) the fractional part.
+    pub(crate) fn fmt_rfc3339_with_subsec_to<W: fmt::Write>(
+        &self,
+        w: &mut W,
+        digits: u8,
+        z: bool,
+    ) -> fmt::Result {
+        // Year (extended)
+        if self.year > 9999 {
+            write!(w, "+{}", self.year)?;
+        } else if self.year < 0 {
+            write!(w, "{:05}", self.year)?;
+        } else {
+            write!(w, "{:04}", self.year)?;
+        }
+
+        // Date/time
+        write!(
+            w,
+            "-{:02}-{:02}T{:02}:{:02}:{:02}",
+            self.month, self.day, self.hour, self.minute, self.second
+        )?;
+
+        // Fractional seconds
+        let d = (digits as u32).min(9);
+        if d > 0 {
+            let scale = 10u32.pow(9 - d);
+            let frac = self.nanos / scale;
+            write!(w, ".{:0width$}", frac, width = d as usize)?;
+        }
+
+        if z {
+            w.write_str("Z")
+        } else {
+            Ok(())
+        }
     }
 }
 

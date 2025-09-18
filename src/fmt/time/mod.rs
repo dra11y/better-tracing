@@ -1,6 +1,7 @@
 //! Formatters for event timestamps.
 use crate::fmt::format::Writer;
 use std::fmt;
+use std::time as stdtime;
 use std::time::Instant;
 
 mod datetime;
@@ -51,6 +52,65 @@ pub trait FormatTime {
     /// mechanism, and write it out to the given `fmt::Write`. Implementors must insert a trailing
     /// space themselves if they wish to separate the time from subsequent log message text.
     fn format_time(&self, w: &mut Writer<'_>) -> fmt::Result;
+}
+
+// --- Core time architecture: Clock + Formatter + Timer -----------------------
+
+/// Captures the notion of "now" and returns a snapshot value.
+/// Captures the notion of time ("now") and returns a snapshot value.
+pub trait Clock {
+    /// The concrete timestamp representation captured by this clock.
+    type Snapshot;
+    /// Get the current time snapshot.
+    fn now(&self) -> Self::Snapshot;
+}
+
+/// Formats a captured snapshot into the Writer without allocating.
+/// Formats a captured time snapshot into the writer with no allocations.
+pub trait TimestampFormatter<Input> {
+    /// Write a textual representation of `input` into `w`.
+    fn format(&self, input: &Input, w: &mut Writer<'_>) -> fmt::Result;
+}
+
+/// A combinator that implements `FormatTime` as `F(C::now())`.
+/// Composes a `Clock` and a `TimestampFormatter` to implement `FormatTime`.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct Timer<C, F>(pub C, pub F);
+
+impl<C, F> FormatTime for Timer<C, F>
+where
+    C: Clock,
+    F: TimestampFormatter<C::Snapshot>,
+{
+    fn format_time(&self, w: &mut Writer<'_>) -> fmt::Result {
+        let snap = self.0.now();
+        self.1.format(&snap, w)
+    }
+}
+
+/// System wall-clock now.
+/// A `Clock` that returns `std::time::SystemTime::now()`.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct SystemClock;
+
+impl Clock for SystemClock {
+    type Snapshot = stdtime::SystemTime;
+    fn now(&self) -> Self::Snapshot {
+        stdtime::SystemTime::now()
+    }
+}
+
+/// RFC3339 formatter with configurable fractional digits and optional 'Z'.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct Rfc3339<const DIGITS: u8, const Z: bool>;
+
+impl<const D: u8, const Z: bool> TimestampFormatter<stdtime::SystemTime> for Rfc3339<D, Z> {
+    fn format(&self, input: &stdtime::SystemTime, w: &mut Writer<'_>) -> fmt::Result {
+        // Leverage the existing no-deps DateTime to render RFC3339 with truncation.
+        let dt = datetime::DateTime::from(*input);
+        let digits = if D > 9 { 9 } else { D } as u8;
+        dt.fmt_rfc3339_with_subsec_to(w, digits, Z)
+    }
 }
 
 /// Returns a new `SystemTime` timestamp provider.
@@ -135,11 +195,8 @@ impl From<Instant> for Uptime {
 
 impl FormatTime for SystemTime {
     fn format_time(&self, w: &mut Writer<'_>) -> fmt::Result {
-        write!(
-            w,
-            "{}",
-            datetime::DateTime::from(std::time::SystemTime::now())
-        )
+        // Delegate to the unified path: SystemClock + RFC3339 micros with Z.
+        Timer(SystemClock, Rfc3339::<6, true>).format_time(w)
     }
 }
 
