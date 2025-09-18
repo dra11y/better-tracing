@@ -35,21 +35,30 @@ impl ChronoLocal {
     /// RFC3339 with no fractional seconds and 'Z'.
     pub fn rfc3339_seconds() -> Self {
         Self {
-            format: Arc::new(ChronoFmtType::Rfc3339Opts(chrono::SecondsFormat::Secs, true)),
+            format: Arc::new(ChronoFmtType::Rfc3339Opts(
+                chrono::SecondsFormat::Secs,
+                true,
+            )),
         }
     }
 
     /// RFC3339 with 3 fractional digits (milliseconds) and 'Z'.
     pub fn rfc3339_millis() -> Self {
         Self {
-            format: Arc::new(ChronoFmtType::Rfc3339Opts(chrono::SecondsFormat::Millis, true)),
+            format: Arc::new(ChronoFmtType::Rfc3339Opts(
+                chrono::SecondsFormat::Millis,
+                true,
+            )),
         }
     }
 
     /// RFC3339 with 9 fractional digits (nanoseconds) and 'Z'.
     pub fn rfc3339_nanos() -> Self {
         Self {
-            format: Arc::new(ChronoFmtType::Rfc3339Opts(chrono::SecondsFormat::Nanos, true)),
+            format: Arc::new(ChronoFmtType::Rfc3339Opts(
+                chrono::SecondsFormat::Nanos,
+                true,
+            )),
         }
     }
 
@@ -70,7 +79,9 @@ impl ChronoLocal {
 
     /// Format the time using the given `ChronoFmtType` (chrono-specific API).
     pub fn new_fmt(fmt: ChronoFmtType) -> Self {
-        Self { format: Arc::new(fmt) }
+        Self {
+            format: Arc::new(fmt),
+        }
     }
 
     /// Format the time using the given format string.
@@ -133,21 +144,30 @@ impl ChronoUtc {
     /// RFC3339 with no fractional seconds and 'Z'.
     pub fn rfc3339_seconds() -> Self {
         Self {
-            format: Arc::new(ChronoFmtType::Rfc3339Opts(chrono::SecondsFormat::Secs, true)),
+            format: Arc::new(ChronoFmtType::Rfc3339Opts(
+                chrono::SecondsFormat::Secs,
+                true,
+            )),
         }
     }
 
     /// RFC3339 with 3 fractional digits (milliseconds) and 'Z'.
     pub fn rfc3339_millis() -> Self {
         Self {
-            format: Arc::new(ChronoFmtType::Rfc3339Opts(chrono::SecondsFormat::Millis, true)),
+            format: Arc::new(ChronoFmtType::Rfc3339Opts(
+                chrono::SecondsFormat::Millis,
+                true,
+            )),
         }
     }
 
     /// RFC3339 with 9 fractional digits (nanoseconds) and 'Z'.
     pub fn rfc3339_nanos() -> Self {
         Self {
-            format: Arc::new(ChronoFmtType::Rfc3339Opts(chrono::SecondsFormat::Nanos, true)),
+            format: Arc::new(ChronoFmtType::Rfc3339Opts(
+                chrono::SecondsFormat::Nanos,
+                true,
+            )),
         }
     }
 
@@ -168,7 +188,9 @@ impl ChronoUtc {
 
     /// Format the time using the given `ChronoFmtType` (chrono-specific API).
     pub fn new_fmt(fmt: ChronoFmtType) -> Self {
-        Self { format: Arc::new(fmt) }
+        Self {
+            format: Arc::new(fmt),
+        }
     }
 
     /// Format the time using the given format string.
@@ -232,7 +254,6 @@ impl ChronoFmtType {
         ChronoFmtType::Items(items.into_iter().collect())
     }
 }
-
 
 #[cfg(test)]
 mod tests {

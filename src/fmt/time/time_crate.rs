@@ -1,6 +1,11 @@
 use crate::fmt::{format::Writer, time::FormatTime, writer::WriteAdaptor};
 use std::fmt;
-use time::{format_description::well_known, formatting::Formattable, OffsetDateTime, UtcOffset};
+use time::{
+    format_description::parse,
+    format_description::{well_known, FormatItem},
+    formatting::Formattable,
+    OffsetDateTime, UtcOffset,
+};
 
 /// Formats the current [local time] using a [formatter] from the [`time` crate].
 ///
@@ -217,6 +222,73 @@ impl UtcTime<well_known::Rfc3339> {
     /// [ISO 8601]: https://en.wikipedia.org/wiki/ISO_8601
     pub fn rfc_3339() -> Self {
         Self::new(well_known::Rfc3339)
+    }
+}
+
+#[cfg(feature = "local-time")]
+impl LocalTime<Vec<FormatItem<'static>>> {
+    /// Time-of-day with whole seconds, no suffix: HH:MM:SS
+    pub fn time_only_sec() -> Self {
+        let fmt = parse("[hour]:[minute]:[second]").expect("static format string must be valid");
+        Self::new(fmt)
+    }
+
+    /// Time-of-day with milliseconds, no suffix: HH:MM:SS.mmm
+    pub fn time_only_ms() -> Self {
+        let fmt = parse("[hour]:[minute]:[second].[subsecond digits:3]")
+            .expect("static format string must be valid");
+        Self::new(fmt)
+    }
+
+    /// Time-of-day with microseconds, no suffix: HH:MM:SS.uuuuuu
+    pub fn time_only_micros() -> Self {
+        let fmt = parse("[hour]:[minute]:[second].[subsecond digits:6]")
+            .expect("static format string must be valid");
+        Self::new(fmt)
+    }
+}
+
+// Convenience helpers using parsed format descriptions for varying precision and time-only.
+impl UtcTime<Vec<FormatItem<'static>>> {
+    /// RFC3339 with no fractional seconds and 'Z'.
+    pub fn rfc3339_seconds() -> Self {
+        let fmt = parse("[year]-[month]-[day]T[hour]:[minute]:[second]Z")
+            .expect("static format string must be valid");
+        Self::new(fmt)
+    }
+
+    /// RFC3339 with 3 fractional digits (milliseconds) and 'Z'.
+    pub fn rfc3339_millis() -> Self {
+        let fmt = parse("[year]-[month]-[day]T[hour]:[minute]:[second].[subsecond digits:3]Z")
+            .expect("static format string must be valid");
+        Self::new(fmt)
+    }
+
+    /// RFC3339 with 9 fractional digits (nanoseconds) and 'Z'.
+    pub fn rfc3339_nanos() -> Self {
+        let fmt = parse("[year]-[month]-[day]T[hour]:[minute]:[second].[subsecond digits:9]Z")
+            .expect("static format string must be valid");
+        Self::new(fmt)
+    }
+
+    /// Time-of-day with whole seconds, no suffix: HH:MM:SS
+    pub fn time_only_sec() -> Self {
+        let fmt = parse("[hour]:[minute]:[second]").expect("static format string must be valid");
+        Self::new(fmt)
+    }
+
+    /// Time-of-day with milliseconds, no suffix: HH:MM:SS.mmm
+    pub fn time_only_ms() -> Self {
+        let fmt = parse("[hour]:[minute]:[second].[subsecond digits:3]")
+            .expect("static format string must be valid");
+        Self::new(fmt)
+    }
+
+    /// Time-of-day with microseconds, no suffix: HH:MM:SS.uuuuuu
+    pub fn time_only_micros() -> Self {
+        let fmt = parse("[hour]:[minute]:[second].[subsecond digits:6]")
+            .expect("static format string must be valid");
+        Self::new(fmt)
     }
 }
 
@@ -467,4 +539,56 @@ fn format_datetime(
     now.format_into(&mut into, fmt)
         .map_err(|_| fmt::Error)
         .map(|_| ())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::fmt::format::Writer;
+
+    #[test]
+    fn utc_time_rfc3339_seconds_formats() {
+        let timer = UtcTime::rfc3339_seconds();
+        let mut s = String::new();
+        let mut w = Writer::new(&mut s);
+        timer.format_time(&mut w).unwrap();
+        // Expect pattern: YYYY-MM-DDTHH:MM:SSZ (no frac)
+        assert!(s.ends_with('Z'));
+        assert_eq!(s.len(), "YYYY-MM-DDTHH:MM:SSZ".len());
+    }
+
+    #[test]
+    fn utc_time_rfc3339_millis_formats() {
+        let timer = UtcTime::rfc3339_millis();
+        let mut s = String::new();
+        let mut w = Writer::new(&mut s);
+        timer.format_time(&mut w).unwrap();
+        // Rough shape contains .mmmZ
+        let (pre, suf) = s.split_at(s.len() - 4);
+        assert!(pre.contains('.'));
+        assert!(suf.ends_with('Z'));
+    }
+
+    #[test]
+    fn utc_time_time_only_sec_formats() {
+        let timer = UtcTime::time_only_sec();
+        let mut s = String::new();
+        let mut w = Writer::new(&mut s);
+        timer.format_time(&mut w).unwrap();
+        // Expect HH:MM:SS
+        assert_eq!(s.chars().filter(|&c| c == ':').count(), 2);
+        assert_eq!(s.len(), 8);
+    }
+
+    #[cfg(feature = "local-time")]
+    #[test]
+    fn local_time_time_only_ms_formats() {
+        let timer = LocalTime::time_only_ms();
+        let mut s = String::new();
+        let mut w = Writer::new(&mut s);
+        timer.format_time(&mut w).unwrap();
+        // Expect HH:MM:SS.mmm
+        assert!(s.len() >= 12);
+        assert!(s.contains('.'));
+    }
 }
