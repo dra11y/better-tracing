@@ -269,7 +269,11 @@ fn unix_units(ts: &stdtime::SystemTime, base_nanos: u32, unit_div: u32) -> i128 
                 let unit = base_nanos as i128 / unit_div as i128;
                 let whole = secs * unit;
                 let frac = nanos / unit_div as i128;
-                if frac == 0 { -whole } else { -(whole + frac) }
+                if frac == 0 {
+                    -whole
+                } else {
+                    -(whole + frac)
+                }
             }
         }
     }
