@@ -77,13 +77,6 @@ impl ChronoLocal {
         Self::new("%H:%M:%S%.6f".to_owned())
     }
 
-    /// Format the time using the given `ChronoFmtType` (chrono-specific API).
-    pub fn new_fmt(fmt: ChronoFmtType) -> Self {
-        Self {
-            format: Arc::new(fmt),
-        }
-    }
-
     /// Format the time using the given format string.
     ///
     /// See [`chrono::format::strftime`] for details on the supported syntax.
@@ -111,9 +104,6 @@ impl FormatTime for ChronoLocal {
             }
             ChronoFmtType::Custom(fmt) => {
                 write!(w, "{}", t.format(fmt))
-            }
-            ChronoFmtType::Items(items) => {
-                write!(w, "{}", t.format_with_items(items.iter()))
             }
         }
     }
@@ -186,13 +176,6 @@ impl ChronoUtc {
         Self::new("%H:%M:%S%.6f".to_owned())
     }
 
-    /// Format the time using the given `ChronoFmtType` (chrono-specific API).
-    pub fn new_fmt(fmt: ChronoFmtType) -> Self {
-        Self {
-            format: Arc::new(fmt),
-        }
-    }
-
     /// Format the time using the given format string.
     ///
     /// See [`chrono::format::strftime`] for details on the supported syntax.
@@ -209,9 +192,6 @@ impl FormatTime for ChronoUtc {
         match self.format.as_ref() {
             ChronoFmtType::Rfc3339 => w.write_str(&t.to_rfc3339()),
             ChronoFmtType::Custom(fmt) => w.write_str(&format!("{}", t.format(fmt))),
-            ChronoFmtType::Items(items) => {
-                w.write_str(&format!("{}", t.format_with_items(items.iter())))
-            }
             ChronoFmtType::Rfc3339Opts(secs_fmt, z) => {
                 w.write_str(&format!("{}", t.to_rfc3339_opts(*secs_fmt, *z)))
             }
@@ -228,32 +208,22 @@ impl FormatTime for ChronoUtc {
 /// can be used. See [`chrono::format::strftime`]for details on
 /// the supported syntax.
 ///
-/// `better-tracing`: Public to expose chrono formatting options; feature-gated by `chrono`.
+/// `better-tracing`: Internal to keep the public API crate-agnostic.
 ///
 /// [`chrono::format::strftime`]: https://docs.rs/chrono/latest/chrono/format/strftime/index.html
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
-pub enum ChronoFmtType {
+enum ChronoFmtType {
     /// Format according to the RFC 3339 convention.
     #[default]
     Rfc3339,
     /// Format with [`SecondsFormat`] seconds and with/without `Z`.
     /// Passes these options to [`chrono::DateTime::to_rfc3339_opts`].
     Rfc3339Opts(chrono::SecondsFormat, bool),
-    /// Format according to multiple `chrono` format Items.
-    Items(Vec<chrono::format::Item<'static>>),
     /// Format according to a custom format string.
     Custom(String),
 }
 
-impl ChronoFmtType {
-    /// Build from an iterator of chrono Items.
-    pub fn items<I>(items: I) -> Self
-    where
-        I: IntoIterator<Item = chrono::format::Item<'static>>,
-    {
-        ChronoFmtType::Items(items.into_iter().collect())
-    }
-}
+// Internal helper enum; constructors above build instances as needed.
 
 #[cfg(test)]
 mod tests {

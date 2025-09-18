@@ -59,6 +59,8 @@ let subscriber = tracing_subscriber::fmt()
     .finish();
 ```
 
+With optional engines, pick the matching helpers: `fmt::time::ChronoUtc::*` (chrono), `fmt::time::UtcTime::*` (time), or `fmt::time::SystemTime::*` (default).
+
 ### Fixed Span Context for EXIT/CLOSE Events
 
 In `tracing-subscriber`, `lookup_current()` returned the parent span instead of the exiting span during `FmtSpan::EXIT` and `FmtSpan::CLOSE` events. `better-tracing` fixes this.
