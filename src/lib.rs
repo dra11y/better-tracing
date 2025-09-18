@@ -17,6 +17,7 @@
 //! | Feature | better-tracing | tracing-subscriber |
 //! |---------|----------------|-------------------|
 //! | **Drop-in compatibility** | ✅ | ✅ |
+//! | **Easier time formats** | ✅ | ❌ |
 //! | **External formatters access exiting span on EXIT/CLOSE** | ✅ | ❌ |
 //! | **Sane defaults with zero configuration** | ⏳ | ❌ |
 //! | **Better builders** you don't have to fight with | ⏳ | ❌ |
@@ -26,6 +27,37 @@
 //! [msrv]: #supported-rust-versions
 //!
 //! # Fork Improvements
+//!
+//! ## Easier Time Formats
+//!
+//! Configure timestamps without extra crates and keep using `.with_timer(...)`:
+//!
+//! - RFC 3339 (UTC):
+//!   - `SystemTime::rfc3339_seconds()`  → `YYYY-MM-DDTHH:MM:SSZ`
+//!   - `SystemTime::rfc3339_millis()`   → `YYYY-MM-DDTHH:MM:SS.mmmZ`
+//!   - `SystemTime::rfc3339_nanos()`    → `YYYY-MM-DDTHH:MM:SS.nnnnnnnnnZ`
+//! - Unix epoch (UTC):
+//!   - `SystemTime::unix_seconds()` / `unix_millis()` / `unix_micros()` / `unix_nanos()`
+//! - Time-only (no date, great for dev logs):
+//!   - `SystemTime::time_only_sec()`    → `HH:MM:SS`
+//!   - `SystemTime::time_only_ms()`     → `HH:MM:SS.mmm`
+//!   - `SystemTime::time_only_micros()` → `HH:MM:SS.uuuuuu`
+//!
+//! Examples:
+//! ```rust
+//! use tracing_subscriber::fmt::time::SystemTime;
+//! let subscriber = tracing_subscriber::fmt()
+//!     .with_timer(SystemTime::time_only_ms())
+//!     .finish();
+//! # drop(subscriber);
+//! ```
+//! ```rust
+//! use tracing_subscriber::fmt::time::SystemTime;
+//! let subscriber = tracing_subscriber::fmt()
+//!     .with_timer(SystemTime::rfc3339_millis())
+//!     .finish();
+//! # drop(subscriber);
+//! ```
 //!
 //! ## Fixed Span Context for EXIT/CLOSE Events
 //!

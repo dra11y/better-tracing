@@ -5,6 +5,13 @@
 - **MAJOR: renamed `[lib]`** from its default of `better_tracing` **to `tracing_subscriber`** in Cargo.toml so it can be a drop-in replacement for `tracing_subscriber` and hopefully be compatible with other crates that use `tracing_subscriber`
   - **replace** `use better_tracing::*` with `use tracing_subscriber::*`
 
+### Added
+
+- fmt/time: Easier time formats with no additional deps and the same `.with_timer(...)` API:
+  - RFC 3339 helpers: `SystemTime::rfc3339_seconds()`, `rfc3339_millis()`, `rfc3339_nanos()`
+  - Unix epoch helpers: `SystemTime::unix_seconds()`, `unix_millis()`, `unix_micros()`, `unix_nanos()`
+  - Time-only helpers (no date, compact dev logs): `SystemTime::time_only_sec()`, `time_only_ms()`, `time_only_micros()`
+
 ### Fixed
 
 - **doc tests/README:** `.event_format(MyFormatter)` was out of order; it must come **after** .with_span_events(..)
