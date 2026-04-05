@@ -187,7 +187,7 @@
 //!     https://docs.rs/tracing/latest/tracing/trait.Subscriber.html
 //! [`tracing`]: https://crates.io/crates/tracing
 //! [`fmt::format`]: mod@crate::fmt::format
-use std::{any::TypeId, error::Error, io};
+use std::{any::TypeId, io};
 use tracing_core::{span, subscriber::Interest, Event, Metadata};
 
 mod fmt_layer;
@@ -202,6 +202,7 @@ pub use fmt_layer::{FmtContext, FormattedFields, Layer};
 
 use crate::layer::Layer as _;
 use crate::util::SubscriberInitExt;
+pub use crate::util::TryInitError;
 use crate::{
     filter::LevelFilter,
     layer,
@@ -495,11 +496,9 @@ where
     /// Returns an Error if the initialization was unsuccessful, likely
     /// because a global subscriber was already installed by another
     /// call to `try_init`.
-    pub fn try_init(self) -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
+    pub fn try_init(self) -> Result<(), TryInitError> {
         use crate::util::SubscriberInitExt;
-        self.finish().try_init()?;
-
-        Ok(())
+        self.finish().try_init()
     }
 
     /// Install this Subscriber as the global default.
@@ -552,6 +551,18 @@ where
             filter: self.filter,
             inner: self.inner.with_timer(timer),
         }
+    }
+
+    /// TODO! Docs
+    pub fn with_timer_micros(
+        self,
+    ) -> SubscriberBuilder<
+        N,
+        format::Format<L, time::Timer<time::SystemClock, time::TimeOfDay<6>>>,
+        F,
+        W,
+    > {
+        self.with_timer(time::SystemTime::time_only_micros())
     }
 
     /// Do not emit timestamps with log messages.
@@ -947,6 +958,25 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
         }
     }
 
+    /// TODO! Docs
+    #[cfg(feature = "env-filter")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "env-filter")))]
+    pub fn with_default_env_level(
+        self,
+        level: impl Into<crate::filter::LevelFilter>,
+    ) -> SubscriberBuilder<N, E, crate::EnvFilter, W>
+    where
+        Formatter<N, E, W>: tracing_core::Subscriber + 'static,
+    {
+        let level = level.into();
+        SubscriberBuilder {
+            filter: crate::EnvFilter::builder()
+                .with_default_directive(level.into())
+                .from_env_lossy(),
+            inner: self.inner,
+        }
+    }
+
     /// Sets the maximum [verbosity level] that will be enabled by the
     /// subscriber.
     ///
@@ -1161,7 +1191,7 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
 /// This is shorthand for
 ///
 /// ```rust
-/// # fn doc() -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
+/// # fn doc() -> Result<(), better_tracing::fmt::TryInitError> {
 /// better_tracing::fmt().try_init()
 /// # }
 /// ```
@@ -1176,7 +1206,7 @@ impl<N, E, F, W> SubscriberBuilder<N, E, F, W> {
 /// [`LogTracer`]:
 ///     https://docs.rs/tracing-log/0.1.0/tracing_log/struct.LogTracer.html
 /// [`RUST_LOG` environment variable]: crate::filter::EnvFilter::DEFAULT_ENV
-pub fn try_init() -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
+pub fn try_init() -> Result<(), TryInitError> {
     let builder = Subscriber::builder();
 
     #[cfg(feature = "env-filter")]
@@ -1212,7 +1242,7 @@ pub fn try_init() -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
         subscriber.with(targets)
     };
 
-    subscriber.try_init().map_err(Into::into)
+    subscriber.try_init()
 }
 
 /// Install a global tracing subscriber that listens for events and
