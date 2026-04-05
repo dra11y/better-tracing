@@ -196,14 +196,14 @@ impl From<Instant> for Uptime {
 impl FormatTime for SystemTime {
     fn format_time(&self, w: &mut Writer<'_>) -> fmt::Result {
         // Delegate to the unified path: SystemClock + RFC3339 micros with Z.
-        Timer(SystemClock, Rfc3339::<6, true>).format_time(w)
+        Timer(SystemClock, Rfc3339::<3, true>).format_time(w)
     }
 }
 
 impl FormatTime for Uptime {
     fn format_time(&self, w: &mut Writer<'_>) -> fmt::Result {
         let e = self.epoch.elapsed();
-        write!(w, "{:4}.{:09}s", e.as_secs(), e.subsec_nanos())
+        write!(w, "{:4}.{:03}s", e.as_secs(), e.subsec_millis())
     }
 }
 
